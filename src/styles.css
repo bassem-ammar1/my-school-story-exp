@@ -18,6 +18,15 @@
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
+/* Phone-style app on every screen: wide-screen layouts are disabled so all pages use the mobile layout. */
+@theme {
+  --breakpoint-sm: 100000px;
+  --breakpoint-md: 100000px;
+  --breakpoint-lg: 100000px;
+  --breakpoint-xl: 100000px;
+  --breakpoint-2xl: 100000px;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
