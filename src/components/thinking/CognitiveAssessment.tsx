@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, equalCategoryAverage, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -65,33 +65,65 @@ function Assessment({ studentId }: { studentId: string }) {
     const url = URL.createObjectURL(new Blob([JSON.stringify({ ...attempt, student_id: undefined, results: scoreAssessment(parseAnswers(attempt.responses)) }, null, 2)], { type: "application/json" }));
     const link = document.createElement("a"); link.href = url; link.download = "my-private-reflection.json"; link.click(); URL.revokeObjectURL(url);
   };
-  if (view === "questions") return <div className="space-y-5 py-3">
-    <div className="flex items-center justify-between"><Button variant="ghost" size="sm" onClick={() => { if (window.confirm("Leave this page? Save your draft first to keep unsaved answers.")) setView("overview"); }}><ArrowLeft className="size-4" />Back</Button><span className="text-xs text-muted-foreground">{answered} / {QUESTIONS.length} answered</span></div>
-    <progress aria-label="Questionnaire progress" className="h-2 w-full accent-primary" value={answered} max={QUESTIONS.length} />
-    <div><p className="text-xs font-semibold text-primary">{section + 1} OF 6</p><h2 className="mt-1 text-xl font-bold">{category.label}</h2><p className="mt-2 text-sm text-muted-foreground">{category.note}</p></div>
-    {current.map((question, i) => <fieldset key={question.id} className="rounded-lg bg-card p-4 shadow-soft">
-      <legend className="sr-only">{question.text}</legend><p id={`${question.id}-label`} className="mb-4 font-medium">{i + 1}. {question.text}</p>
-      <RadioGroup aria-labelledby={`${question.id}-label`} value={answers[question.id] ? String(answers[question.id]) : ""} onValueChange={value => setAnswers(prev => ({ ...prev, [question.id]: Number(value) }))}>
-        {(question.format === "interest" ? INTEREST : AGREEMENT).map((label, index) => <label key={label} className="flex min-h-9 cursor-pointer items-center gap-3 text-sm"><RadioGroupItem value={String(index + 1)} />{label}</label>)}
-      </RadioGroup>
-      <Button variant="ghost" size="sm" className="mt-2 text-muted-foreground" onClick={() => setAnswers(prev => { const next = { ...prev }; delete next[question.id]; return next; })}>Skip / clear answer</Button>
-    </fieldset>)}
-    {section === 5 && <div className="space-y-3 border-t pt-4"><label htmlFor="reflection-goal" className="font-medium">A goal I would like to explore (optional)</label><Textarea id="reflection-goal" value={goal} maxLength={300} onChange={e => setGoal(e.target.value)} placeholder="For example: try a new way of planning my homework" /><label className="flex items-start gap-3 text-sm"><Checkbox checked={coach} onCheckedChange={value => setCoach(value === true)} /><span>Use a summary of this reflection for my thinking coach. I can turn this off later.</span></label><p className="text-xs text-muted-foreground">Skipped questions stay unanswered. Partial results will show their coverage.</p></div>}
-    <div className="flex flex-wrap gap-2"><Button variant="outline" disabled={busy} onClick={() => persist(false)}><Save className="size-4" />Save draft</Button>{section > 0 && <Button size="icon" variant="outline" aria-label="Previous category" onClick={() => setSection(s => s - 1)}><ArrowLeft className="size-4" /></Button>}{section < 5 ? <Button className="ml-auto" onClick={() => { setSection(s => s + 1); window.scrollTo({ top: 0 }); }}>Next<ArrowRight className="size-4" /></Button> : <Button className="ml-auto" disabled={busy} onClick={() => persist(true)}>Save & view results</Button>}</div>
-  </div>;
+  if (view === "questions") {
+    const total = QUESTIONS.length;
+    const finalStep = section >= total;
+    const q = QUESTIONS[Math.min(section, total - 1)];
+    const cat = CATEGORIES.find(c => c.id === q.category) ?? CATEGORIES[0];
+    const labels = q.format === "interest" ? INTEREST : AGREEMENT;
+    const sizes = ["size-12", "size-10", "size-8", "size-10", "size-12"];
+    const pick = (v: number) => { setAnswers(prev => ({ ...prev, [q.id]: v })); setTimeout(() => setSection(s => Math.min(s + 1, total)), 250); };
+    return <div className="flex min-h-[70vh] flex-col gap-6 py-3">
+      <div className="flex items-center justify-between"><Button variant="ghost" size="sm" onClick={() => { if (window.confirm("Leave this page? Save your draft first to keep unsaved answers.")) setView("overview"); }}><ArrowLeft className="size-4" />Exit</Button><Button variant="ghost" size="sm" disabled={busy} onClick={() => persist(false)}><Save className="size-4" />Save draft</Button></div>
+      <div className="space-y-2"><div className="flex justify-between text-xs text-muted-foreground"><span>{finalStep ? "Almost done" : `Question ${section + 1} of ${total}`}</span><span>{answered} answered</span></div>
+        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${(Math.min(section, total) / total) * 100}%` }} /></div></div>
+      {finalStep ? <div className="flex-1 space-y-4"><h2 className="text-2xl font-bold">One last thing</h2><label htmlFor="reflection-goal" className="block font-medium">A goal I would like to explore (optional)</label><Textarea id="reflection-goal" value={goal} maxLength={300} onChange={e => setGoal(e.target.value)} placeholder="For example: try a new way of planning my homework" /><label className="flex items-start gap-3 text-sm"><Checkbox checked={coach} onCheckedChange={value => setCoach(value === true)} /><span>Use a summary of this reflection for my thinking coach. I can turn this off later.</span></label><p className="text-xs text-muted-foreground">Skipped questions stay unanswered. Partial results will show their coverage.</p></div>
+      : <div key={q.id} className="flex flex-1 flex-col justify-center gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="text-center"><p className="text-xs font-semibold uppercase tracking-wide text-primary">{cat.label}</p><h2 className="mt-3 text-2xl font-bold leading-snug">{q.text}</h2></div>
+        <div role="radiogroup" aria-label={q.text} className="space-y-3">
+          <div className="flex items-center justify-between gap-1">{labels.map((label, i) => { const v = i + 1; const on = answers[q.id] === v; const tone = i < 2 ? "border-destructive/60" : i === 2 ? "border-muted-foreground/40" : "border-primary"; return <button key={label} type="button" role="radio" aria-checked={on} aria-label={label} title={label} onClick={() => pick(v)} className={`${sizes[i]} shrink-0 rounded-full border-2 transition hover:scale-110 ${tone} ${on ? (i < 2 ? "bg-destructive/70" : i === 2 ? "bg-muted-foreground/50" : "bg-primary") : "bg-card"}`} />; })}</div>
+          <div className="flex justify-between text-xs font-medium text-muted-foreground"><span>{labels[0]}</span><span>{labels[4]}</span></div>
+          {answers[q.id] && <p className="text-center text-sm font-medium">{labels[answers[q.id] - 1]}</p>}
+        </div>
+      </div>}
+      <div className="flex gap-2"><Button variant="outline" disabled={section === 0} onClick={() => setSection(s => s - 1)}><ArrowLeft className="size-4" />Back</Button>{finalStep ? <Button className="ml-auto" disabled={busy} onClick={() => persist(true)}>See my profile</Button> : <Button className="ml-auto" onClick={() => setSection(s => s + 1)}>{answers[q.id] ? "Next" : "Skip"}<ArrowRight className="size-4" /></Button>}</div>
+    </div>;
+  }
   if (view === "results" && selected) {
     const results = scoreAssessment(parseAnswers(selected.responses));
     const previous = attempts.find(a => a.id !== selected.id && a.status === "submitted" && (a.submitted_at ?? "") < (selected.submitted_at ?? "") && compatibleAttempts(a, selected));
     const previousScores = previous ? scoreAssessment(parseAnswers(previous.responses)) : [];
+    const habits = results.filter(d => d.kind === "habit" && d.average !== null);
+    const top = (list: typeof results, n: number) => [...list].filter(d => d.average !== null).sort((a, b) => (b.average ?? 0) - (a.average ?? 0)).slice(0, n);
+    const strengths = top(habits.filter(d => (d.average ?? 0) >= 3.5), 3);
+    const grow = [...habits].sort((a, b) => (a.average ?? 0) - (b.average ?? 0)).filter(d => !strengths.includes(d)).slice(0, 2);
+    const learn = top(results.filter(d => d.category === "learning" && (d.average ?? 0) >= 3.5), 2);
+    const interests = top(results.filter(d => d.category === "interests" && (d.average ?? 0) >= 3), 2);
+    const social = top(results.filter(d => d.category === "social" || d.id === "energy"), 2);
+    const avg = (id: string) => results.find(d => d.id === id)?.average ?? 0;
+    const env = [avg("structure") >= 4 ? "clear steps and checklists" : avg("exploration") >= 4 ? "open questions to explore" : "a mix of guidance and freedom", avg("discussion") >= avg("independent") ? "time to discuss with classmates" : "quiet time to work on your own"].join(", with ");
+    const names = (l: typeof results) => l.map(d => d.label.toLowerCase()).join(" and ");
+    const Bar = ({ value }: { value: number }) => <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${value}%` }} /></div>;
     return <div className="space-y-5 py-3">
       <Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button>
-      <div><h2 className="text-xl font-bold">My reflection</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(parseAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
-      <p className="text-sm text-muted-foreground">Your responses describe how you see yourself today. They are not an ability score, diagnosis or fixed personality label. Mood and context can affect your answers.</p>
+      <div><h2 className="text-xl font-bold">My student profile</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(parseAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
+      <p className="rounded-lg bg-gold/20 p-3 text-sm">These are your current preferences and tendencies, not permanent traits, an ability score or a diagnosis. They can change as you grow.</p>
+      <section className="space-y-3 rounded-lg bg-card p-4 shadow-soft"><h3 className="font-bold">Overall profile</h3>{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = c.kind === "habit" ? equalCategoryAverage(dims.map(d => d.responseScore)) : null; const fav = top(dims, 1)[0];
+        return <div key={c.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{c.label}</span><span className="text-muted-foreground">{c.kind === "habit" ? (pct === null ? "Not enough answers" : `${Math.round(pct)}%`) : fav ? `Leans: ${fav.label}` : "—"}</span></div>{pct !== null && <Bar value={pct} />}</div>; })}
+        <p className="text-xs text-muted-foreground">Percentages show only self-reported habits. Interests and preferences show what you lean towards, not how good you are.</p></section>
+      <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
+        {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
+        {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}
+        {learn.length > 0 && <p><b>How you like to learn:</b> {names(learn)}.</p>}
+        {social.length > 0 && <p><b>With others:</b> you lean towards {names(social)}.</p>}
+        {interests.length > 0 && <p><b>Main interests today:</b> {names(interests)}.</p>}
+        <p><b>Suggested environment:</b> {env}.</p>
+        <div><b>Activities to try:</b><ul className="mt-1 list-disc pl-5 text-muted-foreground">{[...interests, ...grow].slice(0, 3).map(d => <li key={d.id}>{d.activity}</li>)}</ul></div></section>
       {CATEGORIES.map(c => <section key={c.id} className="space-y-3 border-t pt-4"><h3 className="font-bold">{c.label}</h3>{results.filter(d => d.category === c.id).map(d => {
         const prev = previousScores.find(p => p.id === d.id);
-        return <div key={d.id} className="rounded-lg bg-card p-4 shadow-soft"><h4 className="font-medium">{d.label}</h4><p className="mt-1 text-xs text-muted-foreground">{d.answered} of {d.available} answered{d.available === 1 ? " · Single-response indicator" : d.answered < d.available ? " · Provisional" : ""}</p>
-          <p className="mt-3 text-sm">{d.average === null ? "Not enough responses yet." : d.kind === "habit" ? `${d.average.toFixed(2)} / 5 · Self-reported average` : (d.kind === "interest" ? INTEREST : AGREEMENT)[Math.round(d.average) - 1]}</p>
-          {d.average !== null && <><p className="mt-2 text-sm text-muted-foreground">{d.kind === "habit" && d.average >= 4 ? `You often report habits related to ${d.label.toLowerCase()}. ` : ""}You could try: {d.activity}</p>{prev?.average !== null && prev?.average !== undefined && <p className="mt-2 text-xs text-muted-foreground">Previous: {prev.average.toFixed(2)} / 5 → Now: {d.average.toFixed(2)} / 5. This is a response change, not proof of improvement or decline.</p>}</>}
+        return <div key={d.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{d.label}</span><span className="text-muted-foreground">{d.average === null ? "Not enough answers" : d.kind === "habit" ? `${Math.round(d.responseScore ?? 0)}%` : (d.kind === "interest" ? INTEREST : AGREEMENT)[Math.round(d.average) - 1]}</span></div>
+          {d.average !== null && <Bar value={(d.average - 1) / 4 * 100} />}
+          <p className="text-xs text-muted-foreground">{d.answered} of {d.available} answered{d.answered < d.available ? " · Provisional" : ""}{prev?.average != null && d.average !== null ? ` · Previous ${prev.average.toFixed(1)} → now ${d.average.toFixed(1)} / 5 (a response change, not proof of progress)` : ""}</p>
         </div>;
       })}</section>)}
       {selected.goal && <section className="border-t pt-4"><h3 className="font-bold">My reflection goal</h3><p className="mt-2 whitespace-pre-wrap text-sm">{selected.goal}</p></section>}
