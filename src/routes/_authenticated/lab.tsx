@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThinkingChallenge } from "@/components/thinking/ThinkingChallenge";
 import { useMe } from "@/hooks/use-me";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CognitiveAssessment } from "@/components/thinking/CognitiveAssessment";
 
 export const Route = createFileRoute("/_authenticated/lab")({
-  head: () => ({ meta: [{ title: "Thinking Lab" }, { name: "description", content: "Your classes and Thinking Challenges." }] }),
+  head: () => ({ meta: [{ title: "Assessment · MySchoolStory" }, { name: "description", content: "Teacher assessments and your cognitive skills assessment." }] }),
   component: Lab,
 });
 
@@ -30,13 +32,18 @@ function Lab() {
   };
 
   return (
-    <main className="mx-auto max-w-5xl space-y-8 px-6 py-10">
+    <main className="space-y-4 px-3 py-4">
+      <h1 className="text-2xl font-bold">Assessment</h1>
+      <Tabs defaultValue="teacher">
+        <TabsList className="grid w-full grid-cols-2"><TabsTrigger value="teacher">Teacher assessment</TabsTrigger><TabsTrigger value="cognitive">Cognitive assessment</TabsTrigger></TabsList>
+        <TabsContent value="cognitive">{me && <CognitiveAssessment studentId={me.id} />}</TabsContent>
+        <TabsContent value="teacher" className="space-y-6">
       {studentView && me?.ssoTeacher && (
         <div className="flex items-center justify-between rounded-xl bg-gold/30 px-4 py-2 text-sm">Student view (read-only preview)
           <Button size="sm" variant="outline" onClick={() => { localStorage.removeItem("studentView"); location.href = "/orchestrator"; }}>Exit</Button></div>
       )}
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><h1 className="text-3xl font-bold">Thinking Lab</h1><p className="text-muted-foreground">Pick a challenge and show how you think.</p></div>
+        <div><p className="text-sm text-muted-foreground">Challenges from your teachers. Show how you think, step by step.</p></div>
         <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); join(); }}>
           <Input placeholder="Class code" value={code} onChange={(e) => setCode(e.target.value)} className="w-36 uppercase" />
           <Button type="submit" disabled={!code}>Join class</Button>
@@ -59,6 +66,8 @@ function Lab() {
           </div>
         </section>
       ))}
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }
