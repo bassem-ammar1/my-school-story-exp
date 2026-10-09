@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
 import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authenticated/orchestrator'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
 import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
+import { Route as AuthenticatedSynthesisJoinRouteImport } from './routes/_authenticated/synthesis.join'
 import { Route as AuthenticatedTraceClassIdRouteImport } from './routes/_authenticated/trace.$classId'
+import { Route as AuthenticatedSynthesisHostIdRouteImport } from './routes/_authenticated/synthesis.host.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -32,6 +35,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLabRoute = AuthenticatedLabRouteImport.update({
   id: '/lab',
@@ -61,77 +69,107 @@ const AuthenticatedFeedClassIdRoute =
     path: '/feed/$classId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSynthesisJoinRoute =
+  AuthenticatedSynthesisJoinRouteImport.update({
+    id: '/synthesis/join',
+    path: '/synthesis/join',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTraceClassIdRoute =
   AuthenticatedTraceClassIdRouteImport.update({
     id: '/trace/$classId',
     path: '/trace/$classId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSynthesisHostIdRoute =
+  AuthenticatedSynthesisHostIdRouteImport.update({
+    id: '/synthesis/host/$id',
+    path: '/synthesis/host/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/lab': typeof AuthenticatedLabRoute
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/lab': typeof AuthenticatedLabRoute
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/lab': typeof AuthenticatedLabRoute
   '/_authenticated/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/_authenticated/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/_authenticated/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/_authenticated/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
     | '/lab'
     | '/orchestrator'
     | '/profile'
     | '/challenge/$id'
     | '/feed/$classId'
+    | '/synthesis/join'
     | '/trace/$classId'
+    | '/synthesis/host/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/admin'
     | '/lab'
     | '/orchestrator'
     | '/profile'
     | '/challenge/$id'
     | '/feed/$classId'
+    | '/synthesis/join'
     | '/trace/$classId'
+    | '/synthesis/host/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/admin'
     | '/_authenticated/lab'
     | '/_authenticated/orchestrator'
     | '/_authenticated/profile'
     | '/_authenticated/challenge/$id'
     | '/_authenticated/feed/$classId'
+    | '/_authenticated/synthesis/join'
     | '/_authenticated/trace/$classId'
+    | '/_authenticated/synthesis/host/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -162,6 +200,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/lab': {
       id: '/_authenticated/lab'
@@ -198,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedClassIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/synthesis/join': {
+      id: '/_authenticated/synthesis/join'
+      path: '/synthesis/join'
+      fullPath: '/synthesis/join'
+      preLoaderRoute: typeof AuthenticatedSynthesisJoinRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/trace/$classId': {
       id: '/_authenticated/trace/$classId'
       path: '/trace/$classId'
@@ -205,25 +257,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTraceClassIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/synthesis/host/$id': {
+      id: '/_authenticated/synthesis/host/$id'
+      path: '/synthesis/host/$id'
+      fullPath: '/synthesis/host/$id'
+      preLoaderRoute: typeof AuthenticatedSynthesisHostIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedLabRoute: typeof AuthenticatedLabRoute
   AuthenticatedOrchestratorRoute: typeof AuthenticatedOrchestratorRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
   AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
+  AuthenticatedSynthesisJoinRoute: typeof AuthenticatedSynthesisJoinRoute
   AuthenticatedTraceClassIdRoute: typeof AuthenticatedTraceClassIdRoute
+  AuthenticatedSynthesisHostIdRoute: typeof AuthenticatedSynthesisHostIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedLabRoute: AuthenticatedLabRoute,
   AuthenticatedOrchestratorRoute: AuthenticatedOrchestratorRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,
   AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
+  AuthenticatedSynthesisJoinRoute: AuthenticatedSynthesisJoinRoute,
   AuthenticatedTraceClassIdRoute: AuthenticatedTraceClassIdRoute,
+  AuthenticatedSynthesisHostIdRoute: AuthenticatedSynthesisHostIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
