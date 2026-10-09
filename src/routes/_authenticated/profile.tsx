@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -46,8 +46,8 @@ function Profile() {
           <p className="text-sm text-muted-foreground">{me.email}</p>
           <p className="mt-1 text-sm font-semibold text-primary">{arts.length} published thinking posts</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button className="rounded-full" asChild><a href="/post">New post</a></Button>
-            <Button variant="outline" className="rounded-full" asChild><a href="/lab">Assessments</a></Button>
+            <Button className="rounded-full" asChild><Link to="/post">New post</Link></Button>
+            <Button variant="outline" className="rounded-full" asChild><Link to="/lab">Assessments</Link></Button>
           </div>
         </div>
       </section>
@@ -81,6 +81,7 @@ function Profile() {
           <Button onClick={saveProfile}>Save</Button>
         </TabsContent>
       </Tabs>
+      </div>
     </main>
   );
 }
