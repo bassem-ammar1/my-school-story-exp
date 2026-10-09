@@ -61,10 +61,10 @@ const TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty"
 
 export function numberToWords(n: number): string | null {
   if (!Number.isInteger(n) || n < 0 || n > 999) return null;
-  if (n < 20) return ONES[n];
-  if (n < 100) return TENS[Math.floor(n / 10)] + (n % 10 ? "-" + ONES[n % 10] : "");
+  if (n < 20) return ONES[n]!;
+  if (n < 100) return TENS[Math.floor(n / 10)]! + (n % 10 ? "-" + ONES[n % 10]! : "");
   const rest = n % 100;
-  return ONES[Math.floor(n / 100)] + " hundred" + (rest ? " " + numberToWords(rest) : "");
+  return ONES[Math.floor(n / 100)]! + " hundred" + (rest ? " " + numberToWords(rest) : "");
 }
 
 function norm(s: string) {
@@ -141,8 +141,8 @@ export function isAnswerBeg(text: string) {
 function shingles(s: string) {
   const w = norm(s).replace(/[^a-z0-9 ]/g, "").split(" ").filter(Boolean);
   const set = new Set<string>();
-  for (let i = 0; i < w.length - 1; i++) set.add(w[i] + " " + w[i + 1]);
-  if (w.length === 1) set.add(w[0]);
+  for (let i = 0; i < w.length - 1; i++) set.add(w[i]! + " " + w[i + 1]!);
+  if (w.length === 1) set.add(w[0]!);
   return set;
 }
 
@@ -195,18 +195,20 @@ export function teacherMinutesSaved(autoCurated: number, microTasks: number) {
 export function wordDiff(a: string, b: string): { text: string; type: "same" | "add" | "del" }[] {
   const x = a.split(/(\s+)/), y = b.split(/(\s+)/);
   const m = x.length, n = y.length;
-  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array<number>(n + 1).fill(0));
+  const X = (k: number) => x[k] as string, Y = (k: number) => y[k] as string;
+  const D = (a: number, b: number) => dp[a]![b]!;
   for (let i = m - 1; i >= 0; i--)
     for (let j = n - 1; j >= 0; j--)
-      dp[i][j] = x[i] === y[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+      dp[i]![j] = X(i) === Y(j) ? D(i + 1, j + 1) + 1 : Math.max(D(i + 1, j), D(i, j + 1));
   const out: { text: string; type: "same" | "add" | "del" }[] = [];
   let i = 0, j = 0;
   while (i < m && j < n) {
-    if (x[i] === y[j]) { out.push({ text: x[i], type: "same" }); i++; j++; }
-    else if (dp[i + 1][j] >= dp[i][j + 1]) out.push({ text: x[i++], type: "del" });
-    else out.push({ text: y[j++], type: "add" });
+    if (X(i) === Y(j)) { out.push({ text: X(i), type: "same" }); i++; j++; }
+    else if (D(i + 1, j) >= D(i, j + 1)) out.push({ text: X(i++), type: "del" });
+    else out.push({ text: Y(j++), type: "add" });
   }
-  while (i < m) out.push({ text: x[i++], type: "del" });
-  while (j < n) out.push({ text: y[j++], type: "add" });
+  while (i < m) out.push({ text: X(i++), type: "del" });
+  while (j < n) out.push({ text: Y(j++), type: "add" });
   return out;
 }

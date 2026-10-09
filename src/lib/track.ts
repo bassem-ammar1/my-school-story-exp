@@ -18,7 +18,7 @@ export async function signedUrl(path: string | null | undefined) {
 
 export async function uploadMedia(userId: string, file: Blob, ext: string) {
   const path = `${userId}/${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from("thinking-media").upload(path, file, { contentType: file.type || undefined });
+  const { error } = await supabase.storage.from("thinking-media").upload(path, file, file.type ? { contentType: file.type } : {});
   if (error) throw error;
   return path;
 }

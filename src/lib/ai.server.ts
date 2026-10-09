@@ -24,7 +24,7 @@ export class AiError extends Error {
 
 /** Streams a structured JSON answer from Lovable AI and returns the parsed object. */
 export async function generateJson<T>(schema: z.ZodType<T>, instructions: string, prompt: string): Promise<T> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new AiError("AI is not configured.");
   const provider = createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",

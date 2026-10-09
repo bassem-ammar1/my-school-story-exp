@@ -25,13 +25,13 @@ export function ArtifactDetail({ a, annotations, onClose, onAnnotate, big }: {
   );
 }
 
-export function ArtifactBody({ a, annotations, onAnnotate, big }: { a: ArtifactView; annotations: AnnotationView[]; onAnnotate?: (step: number, text: string, x: number | null, y: number | null) => Promise<void>; big?: boolean }) {
+export function ArtifactBody({ a, annotations, onAnnotate, big }: { a: ArtifactView; annotations: AnnotationView[]; onAnnotate?: ((step: number, text: string, x: number | null, y: number | null) => Promise<void>) | undefined; big?: boolean | undefined }) {
   const [draft, setDraft] = useState<Record<number, string>>({});
   const [pin, setPin] = useState<{ step: number; x: number; y: number } | null>(null);
 
   const submit = async (step: number) => {
     const text = (draft[step] ?? "").trim();
-    if (!isAnnotationAllowed(text)) return toast.error("Let's keep notes kind and helpful.");
+    if (!isAnnotationAllowed(text)) { toast.error("Let's keep notes kind and helpful."); return; }
     const pos = pin?.step === step ? pin : null;
     await onAnnotate?.(step, text, pos?.x ?? null, pos?.y ?? null);
     setDraft({ ...draft, [step]: "" });

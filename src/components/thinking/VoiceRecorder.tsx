@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export type VoiceValue = { url: string | null; blob?: Blob | null; duration: number; transcript: string };
 
-export function VoiceRecorder({ value, onChange, disabledReason }: { value: VoiceValue; onChange: (v: VoiceValue) => void; disabledReason?: string }) {
+export function VoiceRecorder({ value, onChange, disabledReason }: { value: VoiceValue; onChange: (v: VoiceValue) => void; disabledReason?: string | undefined }) {
   const [recording, setRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const rec = useRef<MediaRecorder | null>(null);

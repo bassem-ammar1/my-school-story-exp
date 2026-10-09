@@ -12,7 +12,7 @@ export function SiteNav() {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/auth", search: { redirect: undefined }, replace: true });
   };
   const link = "rounded-full px-3 py-1.5 text-sm font-medium text-foreground/80 hover:bg-secondary";
   const active = { className: "bg-secondary text-secondary-foreground" };

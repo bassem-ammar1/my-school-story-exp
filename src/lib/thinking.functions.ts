@@ -143,7 +143,8 @@ export const curateArtifacts = createServerFn({ method: "POST" })
     let mFound = false;
     picks = picks.map((p) => { if (p.misconception && !mFound) { mFound = true; return p; } return { ...p, misconception: false }; });
     for (const id of ids) { if (picks.length >= 4) break; if (!seen.has(id)) { picks.push({ artifact_id: id, why: "Adds another approach", misconception: false }); seen.add(id); } }
-    if (!mFound && picks.length) picks[picks.length - 1] = { ...picks[picks.length - 1], misconception: true, why: picks[picks.length - 1].why + " (check for a misconception)" };
+    const last = picks[picks.length - 1];
+    if (!mFound && last) picks[picks.length - 1] = { ...last, misconception: true, why: last.why + " (check for a misconception)" };
     if (!validateCuration(picks, ids)) throw new Error("Could not build a valid curation. Try again.");
     const prompts = res.prompts.slice(0, 5);
     await supabase.from("analytics_events").insert({ user_id: userId, event: "auto_curated", props: { challenge_id: ch.id, count: picks.length } });

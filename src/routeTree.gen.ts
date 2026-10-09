@@ -10,33 +10,185 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
+import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authenticated/orchestrator'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
+import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
+import { Route as AuthenticatedSynthesisJoinRouteImport } from './routes/_authenticated/synthesis.join'
+import { Route as AuthenticatedTraceClassIdRouteImport } from './routes/_authenticated/trace.$classId'
+import { Route as AuthenticatedSynthesisHostIdRouteImport } from './routes/_authenticated/synthesis.host.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLabRoute = AuthenticatedLabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrchestratorRoute =
+  AuthenticatedOrchestratorRouteImport.update({
+    id: '/orchestrator',
+    path: '/orchestrator',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedChallengeIdRoute =
+  AuthenticatedChallengeIdRouteImport.update({
+    id: '/challenge/$id',
+    path: '/challenge/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFeedClassIdRoute =
+  AuthenticatedFeedClassIdRouteImport.update({
+    id: '/feed/$classId',
+    path: '/feed/$classId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSynthesisJoinRoute =
+  AuthenticatedSynthesisJoinRouteImport.update({
+    id: '/synthesis/join',
+    path: '/synthesis/join',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTraceClassIdRoute =
+  AuthenticatedTraceClassIdRouteImport.update({
+    id: '/trace/$classId',
+    path: '/trace/$classId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSynthesisHostIdRoute =
+  AuthenticatedSynthesisHostIdRouteImport.update({
+    id: '/synthesis/host/$id',
+    path: '/synthesis/host/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/lab': typeof AuthenticatedLabRoute
+  '/orchestrator': typeof AuthenticatedOrchestratorRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/challenge/$id': typeof AuthenticatedChallengeIdRoute
+  '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
+  '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/lab': typeof AuthenticatedLabRoute
+  '/orchestrator': typeof AuthenticatedOrchestratorRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/challenge/$id': typeof AuthenticatedChallengeIdRoute
+  '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
+  '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/lab': typeof AuthenticatedLabRoute
+  '/_authenticated/orchestrator': typeof AuthenticatedOrchestratorRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
+  '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/_authenticated/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
+  '/_authenticated/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/_authenticated/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/demo'
+    | '/admin'
+    | '/lab'
+    | '/orchestrator'
+    | '/profile'
+    | '/challenge/$id'
+    | '/feed/$classId'
+    | '/synthesis/join'
+    | '/trace/$classId'
+    | '/synthesis/host/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/demo'
+    | '/admin'
+    | '/lab'
+    | '/orchestrator'
+    | '/profile'
+    | '/challenge/$id'
+    | '/feed/$classId'
+    | '/synthesis/join'
+    | '/trace/$classId'
+    | '/synthesis/host/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/demo'
+    | '/_authenticated/admin'
+    | '/_authenticated/lab'
+    | '/_authenticated/orchestrator'
+    | '/_authenticated/profile'
+    | '/_authenticated/challenge/$id'
+    | '/_authenticated/feed/$classId'
+    | '/_authenticated/synthesis/join'
+    | '/_authenticated/trace/$classId'
+    | '/_authenticated/synthesis/host/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  DemoRoute: typeof DemoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +200,125 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lab': {
+      id: '/_authenticated/lab'
+      path: '/lab'
+      fullPath: '/lab'
+      preLoaderRoute: typeof AuthenticatedLabRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orchestrator': {
+      id: '/_authenticated/orchestrator'
+      path: '/orchestrator'
+      fullPath: '/orchestrator'
+      preLoaderRoute: typeof AuthenticatedOrchestratorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/challenge/$id': {
+      id: '/_authenticated/challenge/$id'
+      path: '/challenge/$id'
+      fullPath: '/challenge/$id'
+      preLoaderRoute: typeof AuthenticatedChallengeIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feed/$classId': {
+      id: '/_authenticated/feed/$classId'
+      path: '/feed/$classId'
+      fullPath: '/feed/$classId'
+      preLoaderRoute: typeof AuthenticatedFeedClassIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/synthesis/join': {
+      id: '/_authenticated/synthesis/join'
+      path: '/synthesis/join'
+      fullPath: '/synthesis/join'
+      preLoaderRoute: typeof AuthenticatedSynthesisJoinRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/trace/$classId': {
+      id: '/_authenticated/trace/$classId'
+      path: '/trace/$classId'
+      fullPath: '/trace/$classId'
+      preLoaderRoute: typeof AuthenticatedTraceClassIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/synthesis/host/$id': {
+      id: '/_authenticated/synthesis/host/$id'
+      path: '/synthesis/host/$id'
+      fullPath: '/synthesis/host/$id'
+      preLoaderRoute: typeof AuthenticatedSynthesisHostIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedLabRoute: typeof AuthenticatedLabRoute
+  AuthenticatedOrchestratorRoute: typeof AuthenticatedOrchestratorRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
+  AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
+  AuthenticatedSynthesisJoinRoute: typeof AuthenticatedSynthesisJoinRoute
+  AuthenticatedTraceClassIdRoute: typeof AuthenticatedTraceClassIdRoute
+  AuthenticatedSynthesisHostIdRoute: typeof AuthenticatedSynthesisHostIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedLabRoute: AuthenticatedLabRoute,
+  AuthenticatedOrchestratorRoute: AuthenticatedOrchestratorRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,
+  AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
+  AuthenticatedSynthesisJoinRoute: AuthenticatedSynthesisJoinRoute,
+  AuthenticatedTraceClassIdRoute: AuthenticatedTraceClassIdRoute,
+  AuthenticatedSynthesisHostIdRoute: AuthenticatedSynthesisHostIdRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  DemoRoute: DemoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
