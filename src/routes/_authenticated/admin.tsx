@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     const { data } = await supabase.rpc("has_role", { _user_id: u.user!.id, _role: "school_admin" });
     if (!data) throw redirect({ to: "/lab" });
   },
-  head: () => ({ meta: [{ title: "School admin · Thinking Lab" }, { name: "description", content: "Assign teacher roles." }] }),
+  head: () => ({ meta: [{ title: "School admin · Thinking Lab" }, { name: "description", content: "Assign teacher roles." }, { property: "og:title", content: "School admin · Thinking Lab" }, { property: "og:description", content: "Assign teacher roles." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Admin,
 });
 

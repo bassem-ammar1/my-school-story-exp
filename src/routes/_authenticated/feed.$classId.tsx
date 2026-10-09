@@ -9,7 +9,7 @@ import { track } from "@/lib/track";
 import type { ArtifactView } from "@/components/thinking/types";
 
 export const Route = createFileRoute("/_authenticated/feed/$classId")({
-  head: () => ({ meta: [{ title: "Class thinking feed · Thinking Lab" }, { name: "description", content: "See how classmates approached each challenge." }] }),
+  head: () => ({ meta: [{ title: "Class thinking feed · Thinking Lab" }, { name: "description", content: "See how classmates approached each challenge." }, { property: "og:title", content: "Class thinking feed · Thinking Lab" }, { property: "og:description", content: "See how classmates approached each challenge." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Feed,
 });
 

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/trace/$classId")({
   ssr: false,
   beforeLoad: requireSsoTeacher,
-  head: () => ({ meta: [{ title: "Reasoning trace · Thinking Lab" }, { name: "description", content: "Every step of a student's reasoning." }] }),
+  head: () => ({ meta: [{ title: "Reasoning trace · Thinking Lab" }, { name: "description", content: "Every step of a student's reasoning." }, { property: "og:title", content: "Reasoning trace · Thinking Lab" }, { property: "og:description", content: "Every step of a student's reasoning." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: () => <ReasoningTrace />,
 });
 

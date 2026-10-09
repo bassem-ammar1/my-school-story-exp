@@ -11,7 +11,7 @@ import { track } from "@/lib/track";
 import type { ArtifactView } from "@/components/thinking/types";
 
 export const Route = createFileRoute("/_authenticated/synthesis/join")({
-  head: () => ({ meta: [{ title: "Join a Synthesis session · Thinking Lab" }, { name: "description", content: "Join your class discussion with a 6-digit code." }] }),
+  head: () => ({ meta: [{ title: "Join a Synthesis session · Thinking Lab" }, { name: "description", content: "Join your class discussion with a 6-digit code." }, { property: "og:title", content: "Join a Synthesis session · Thinking Lab" }, { property: "og:description", content: "Join your class discussion with a 6-digit code." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Join,
 });
 
