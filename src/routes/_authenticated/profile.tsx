@@ -34,9 +34,29 @@ function Profile() {
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-3xl font-bold">{me.profile?.display_name}</h1>
-      <Tabs defaultValue="thinking" className="mt-6">
+    <main className="bg-muted pb-4">
+      <section className="bg-card pb-4">
+        <div className="h-24 bg-gradient-to-r from-primary to-accent" />
+        <div className="px-4">
+          <div className="-mt-12 grid h-24 w-24 place-items-center rounded-full border-4 border-card bg-primary text-4xl font-bold text-primary-foreground">
+            {(me.profile?.display_name ?? "?").charAt(0).toUpperCase()}
+          </div>
+          <h1 className="mt-2 text-2xl font-bold">{me.profile?.display_name}</h1>
+          <p className="text-sm">{me.ssoTeacher ? "Teacher" : "Student"}{me.profile?.grade ? ` · Grade ${me.profile.grade}` : ""}</p>
+          <p className="text-sm text-muted-foreground">{me.email}</p>
+          <p className="mt-1 text-sm font-semibold text-primary">{arts.length} published thinking posts</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button className="rounded-full" asChild><a href="/post">New post</a></Button>
+            <Button variant="outline" className="rounded-full" asChild><a href="/lab">Assessments</a></Button>
+          </div>
+        </div>
+      </section>
+      <section className="mt-2 bg-card p-4">
+        <h2 className="text-lg font-semibold">About</h2>
+        <p className="mt-1 text-sm text-muted-foreground">A learner on MySchoolStory who shares how they think, step by step.</p>
+      </section>
+      <div className="mt-2 bg-card p-4">
+      <Tabs defaultValue="thinking">
         <TabsList><TabsTrigger value="thinking">Thinking</TabsTrigger><TabsTrigger value="badges">Badges</TabsTrigger><TabsTrigger value="tasks">Tasks ({tasks.filter((t) => t.status !== "done").length})</TabsTrigger><TabsTrigger value="settings">Settings</TabsTrigger></TabsList>
         <TabsContent value="thinking">
           {arts.length ? <div className="grid gap-4 md:grid-cols-3">{arts.map((a) => <ArtifactCard key={a.id} a={a} />)}</div> : <p className="p-8 text-center text-muted-foreground">{COPY.empty}</p>}
