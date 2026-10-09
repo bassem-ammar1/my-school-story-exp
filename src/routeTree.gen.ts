@@ -13,9 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
+import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authenticated/orchestrator'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
 import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
+import { Route as AuthenticatedTraceClassIdRouteImport } from './routes/_authenticated/trace.$classId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +38,12 @@ const AuthenticatedLabRoute = AuthenticatedLabRouteImport.update({
   path: '/lab',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrchestratorRoute =
+  AuthenticatedOrchestratorRouteImport.update({
+    id: '/orchestrator',
+    path: '/orchestrator',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -53,22 +61,32 @@ const AuthenticatedFeedClassIdRoute =
     path: '/feed/$classId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTraceClassIdRoute =
+  AuthenticatedTraceClassIdRouteImport.update({
+    id: '/trace/$classId',
+    path: '/trace/$classId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/lab': typeof AuthenticatedLabRoute
+  '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/lab': typeof AuthenticatedLabRoute
+  '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,25 +94,44 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/lab': typeof AuthenticatedLabRoute
+  '/_authenticated/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/_authenticated/trace/$classId': typeof AuthenticatedTraceClassIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/lab' | '/profile' | '/challenge/$id' | '/feed/$classId'
+    | '/'
+    | '/auth'
+    | '/lab'
+    | '/orchestrator'
+    | '/profile'
+    | '/challenge/$id'
+    | '/feed/$classId'
+    | '/trace/$classId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/lab' | '/profile' | '/challenge/$id' | '/feed/$classId'
+  to:
+    | '/'
+    | '/auth'
+    | '/lab'
+    | '/orchestrator'
+    | '/profile'
+    | '/challenge/$id'
+    | '/feed/$classId'
+    | '/trace/$classId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/lab'
+    | '/_authenticated/orchestrator'
     | '/_authenticated/profile'
     | '/_authenticated/challenge/$id'
     | '/_authenticated/feed/$classId'
+    | '/_authenticated/trace/$classId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -133,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLabRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/orchestrator': {
+      id: '/_authenticated/orchestrator'
+      path: '/orchestrator'
+      fullPath: '/orchestrator'
+      preLoaderRoute: typeof AuthenticatedOrchestratorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -154,21 +198,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedClassIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/trace/$classId': {
+      id: '/_authenticated/trace/$classId'
+      path: '/trace/$classId'
+      fullPath: '/trace/$classId'
+      preLoaderRoute: typeof AuthenticatedTraceClassIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedLabRoute: typeof AuthenticatedLabRoute
+  AuthenticatedOrchestratorRoute: typeof AuthenticatedOrchestratorRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
   AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
+  AuthenticatedTraceClassIdRoute: typeof AuthenticatedTraceClassIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLabRoute: AuthenticatedLabRoute,
+  AuthenticatedOrchestratorRoute: AuthenticatedOrchestratorRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,
   AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
+  AuthenticatedTraceClassIdRoute: AuthenticatedTraceClassIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

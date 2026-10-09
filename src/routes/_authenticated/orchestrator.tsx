@@ -81,9 +81,12 @@ export function Orchestrator() {
     const m = picks.find((p) => p.misconception);
     const { data, error } = await supabase.from("synthesis_sessions").insert({
       class_id: cls!.id, teacher_id: u.user!.id, artifact_ids: picks.filter((p) => !p.misconception).map((p) => p.artifact_id),
-      misconception_artifact_id: m?.artifact_id ?? null, prompts,
+      prompts,
     }).select().single();
     if (error) return toast.error(error.message);
+    // The misconception pick is stored as a teacher-only flag so students can't see it before the reveal.
+    const ma = m && byId(m.artifact_id);
+    if (ma) await supabase.from("flags").insert({ submission_id: ma.submissionId, type: "misconception", source: "teacher", note: `synthesis:${data.id}` });
     await track("synthesis_ritual_started", { artifact_count: picks.length });
     navigate({ to: "/synthesis/host/$id", params: { id: data.id } });
   };
