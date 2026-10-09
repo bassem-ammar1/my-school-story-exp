@@ -33,7 +33,7 @@ export function MicroTaskModal({ open, onClose, studentId, studentName, submissi
       assigned_by: u.user!.id, student_id: studentId, artifact_id: artifactId ?? null, title, instructions, duration_min: 5,
       due_at: new Date(Date.now() + 86400000).toISOString(),
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await track("micro_task_assigned", { student_id: studentId });
     toast.success(COPY.microSent(studentName));
     onClose();

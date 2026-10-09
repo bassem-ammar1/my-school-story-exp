@@ -21,7 +21,7 @@ export function BadgeIssuer({ open, onClose, studentId, studentName, artifactId 
   const issue = async () => {
     const { data: u } = await supabase.auth.getUser();
     const { error } = await supabase.from("badge_awards").insert({ badge_id: badge!, student_id: studentId, teacher_id: u.user!.id, artifact_id: artifactId ?? null, note: note || null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await track("badge_issued", { badge_id: badge });
     toast.success(`Badge issued to ${studentName}`);
     setBadge(null); setNote("");

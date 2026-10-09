@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const COLORS = ["#1B1640", "#3B2FC9", "#E5484D"];
+const COLORS: string[] = ["#1B1640", "#3B2FC9", "#E5484D"];
 
 export function SketchCanvas({ open, onClose, onSave }: { open: boolean; onClose: () => void; onSave: (b: Blob) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const [color, setColor] = useState(COLORS[0]);
+  const [color, setColor] = useState<string>("#1B1640");
   const [eraser, setEraser] = useState(false);
   const history = useRef<ImageData[]>([]);
   const drawing = useRef(false);

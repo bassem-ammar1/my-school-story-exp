@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { ConfidenceDots } from "./ConfidenceScale";
 import type { ArtifactView } from "./types";
 
-export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView; onOpen?: () => void; onReact?: (emoji: string) => void; tag?: string; why?: string }) {
+export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView; onOpen?: (() => void) | undefined; onReact?: ((emoji: string) => void) | undefined; tag?: string | undefined; why?: string | undefined }) {
   const [showT, setShowT] = useState(false);
   return (
     <article className="flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-soft">
@@ -22,7 +22,7 @@ export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView
           const img = a.images.find((x) => x.step === i + 1);
           return (
             <div key={i} className="aspect-square overflow-hidden rounded-lg bg-muted p-1.5 text-[10px] leading-tight text-muted-foreground">
-              {img ? <img src={img.url} alt={img.alt} className="h-full w-full rounded object-cover" /> : <><b className="text-foreground">Step {i + 1}</b><br />{a.steps[i].slice(0, 70)}</>}
+              {img ? <img src={img.url} alt={img.alt} className="h-full w-full rounded object-cover" /> : <><b className="text-foreground">Step {i + 1}</b><br />{(a.steps[i] ?? "").slice(0, 70)}</>}
             </div>
           );
         })}

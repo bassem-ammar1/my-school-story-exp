@@ -31,7 +31,7 @@ type Props = {
   initial: SubmissionState;
   initialStatus: string;
   uploadImage: (b: Blob, ext: string) => Promise<{ path: string; url: string }>;
-  voiceDisabledReason?: string;
+  voiceDisabledReason?: string | undefined;
   onSave: (s: SubmissionState) => Promise<void>;
   onRequestHint: (s: SubmissionState, message?: string) => Promise<HintResult>;
   onPublish: (s: SubmissionState) => Promise<void>;
@@ -60,7 +60,7 @@ export function StepwiseSubmission(p: Props) {
   };
 
   const addImage = async (step: number, blob: Blob, ext: string) => {
-    if (blob.size > MAX_IMAGE_BYTES) return toast.error("Images must be 5MB or smaller.");
+    if (blob.size > MAX_IMAGE_BYTES) { toast.error("Images must be 5MB or smaller."); return; }
     try {
       const { path, url } = await p.uploadImage(blob, ext);
       setS((cur) => ({ ...cur, images: [...cur.images.filter((x) => x.step !== step), { step, path, url, alt: `Student ${ext === "png" ? "sketch" : "photo"} for Step ${step}` }] }));
@@ -98,13 +98,13 @@ export function StepwiseSubmission(p: Props) {
         return (
           <section key={label} className="rounded-2xl bg-card p-5 shadow-soft">
             <label htmlFor={`step${i}`} className="font-semibold">{label}</label>
-            <Textarea id={`step${i}`} rows={4} className="mt-2" value={s.steps[i]} onChange={(e) => setStep(i, e.target.value)} maxLength={MAX_STEP_CHARS} />
+            <Textarea id={`step${i}`} rows={4} className="mt-2" value={s.steps[i] ?? ""} onChange={(e) => setStep(i, e.target.value)} maxLength={MAX_STEP_CHARS} />
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <input ref={(el) => { fileRefs.current[i] = el; }} type="file" accept="image/*" capture="environment" className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) addImage(i + 1, f, f.name.split(".").pop() || "jpg"); e.target.value = ""; }} />
               <Button type="button" size="sm" variant="outline" onClick={() => fileRefs.current[i]?.click()}><ImagePlus className="mr-1 h-4 w-4" />Add a photo or sketch</Button>
               <Button type="button" size="sm" variant="outline" onClick={() => setSketchFor(i + 1)}><PenLine className="mr-1 h-4 w-4" />Sketch</Button>
-              <span className="ml-auto text-xs text-muted-foreground" aria-live="polite">{s.steps[i].length}/{MAX_STEP_CHARS}</span>
+              <span className="ml-auto text-xs text-muted-foreground" aria-live="polite">{(s.steps[i] ?? "").length}/{MAX_STEP_CHARS}</span>
             </div>
             {img && (
               <div className="mt-3 flex items-start gap-3">
@@ -127,7 +127,7 @@ export function StepwiseSubmission(p: Props) {
 
       <section className="rounded-2xl bg-card p-5 shadow-soft">
         <p className="font-semibold">Concept</p>
-        <Select value={s.concept ?? undefined} onValueChange={(v) => setS({ ...s, concept: v })}>
+        <Select value={s.concept ?? ""} onValueChange={(v) => setS({ ...s, concept: v })}>
           <SelectTrigger className="mt-2"><SelectValue placeholder="Pick the concept you used" /></SelectTrigger>
           <SelectContent>{p.challenge.concept_tokens.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
         </Select>
