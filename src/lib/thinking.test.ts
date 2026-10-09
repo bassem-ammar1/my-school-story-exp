@@ -74,3 +74,14 @@ describe("analytics", () => {
   it("process compliance", () =>
     expect(processCompliance([{ step1: "a", step2: "b", step3: "c", hasVoice: true }, { step1: "a", step2: "", step3: "c", hasVoice: true }])).toBe(50));
 });
+
+import { cognitiveProfile } from "./thinking";
+describe("cognitiveProfile", () => {
+  it("averages reasoning+concept for problem solving, clarity for expressing, self-correction for feedback", () => {
+    const p = cognitiveProfile([{ clarity: 4, reasoning: 2, concept: 4, self_correction: 1 }, { clarity: 2, reasoning: 3, concept: 3, self_correction: 3 }]);
+    expect(p).toEqual({ problem_solving: 3, expressing_ideas: 3, using_feedback: 2 });
+  });
+  it("returns null with no scored work", () => {
+    expect(cognitiveProfile([]).problem_solving).toBeNull();
+  });
+});

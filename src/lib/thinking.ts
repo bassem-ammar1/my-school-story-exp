@@ -212,3 +212,19 @@ export function wordDiff(a: string, b: string): { text: string; type: "same" | "
   while (j < n) out.push({ text: Y(j++), type: "add" });
   return out;
 }
+
+/** Cognitive assessment: maps AI/teacher rubric scores (1–4) onto the Assessment skill subdimensions. */
+export type Rubric = { clarity: number; reasoning: number; concept: number; self_correction: number };
+export const COGNITIVE_SKILLS = [
+  { key: "problem_solving", label: "Problem solving", from: ["reasoning", "concept"] },
+  { key: "expressing_ideas", label: "Expressing ideas", from: ["clarity"] },
+  { key: "using_feedback", label: "Using feedback", from: ["self_correction"] },
+] as const;
+export function cognitiveProfile(rubrics: Rubric[]): Record<string, number | null> {
+  const out: Record<string, number | null> = {};
+  for (const s of COGNITIVE_SKILLS) {
+    const vals = rubrics.flatMap((r) => s.from.map((k) => r[k]));
+    out[s.key] = vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : null;
+  }
+  return out;
+}
