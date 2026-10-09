@@ -107,9 +107,12 @@ function Assessment({ studentId }: { studentId: string }) {
       <Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button>
       <div><h2 className="text-xl font-bold">My student profile</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(knownAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
       <p className="rounded-lg bg-gold/20 p-3 text-sm">These are your current preferences and tendencies, not permanent traits, an ability score or a diagnosis. They can change as you grow.</p>
-      <section className="space-y-3 rounded-lg bg-card p-4 shadow-soft"><h3 className="font-bold">Overall profile</h3>{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = scoreCategory(c.id, knownAnswers(selected.responses)).responseScore; const fav = top(dims, 1)[0];
-        return <div key={c.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{c.label}</span><span className="text-muted-foreground">{c.kind === "habit" ? (pct === null ? "Not enough answers" : `${Math.round(pct)}%`) : fav ? `Leans: ${fav.label}` : "—"}</span></div>{pct !== null && <Bar value={pct} />}</div>; })}
-        <p className="text-xs text-muted-foreground">Skill percentages combine the 5 answers in each skill category (at least 4 needed). Interests and preferences show what you lean towards, not how good you are.</p></section>
+      <section className="rounded-2xl bg-foreground p-5 text-background shadow-soft">
+        <div className="flex justify-between border-b border-background/15 pb-3 font-mono text-xs uppercase tracking-widest text-background/70"><span>Skills / Preferences</span><span>Profile</span></div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 pt-5">{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = scoreCategory(c.id, knownAnswers(selected.responses)).responseScore; const fav = top(dims, 1)[0];
+          const fill = c.kind === "habit" ? pct : fav?.average != null ? (fav.average - 1) / 4 * 100 : null;
+          return <div key={c.id} className="flex flex-col items-center gap-2 text-center"><Ring value={fill ?? 0} tone={c.kind === "habit" ? "skill" : "pref"} label={c.kind === "habit" ? (pct === null ? "—" : `${Math.round(pct)}%`) : fav?.label ?? "—"} small={c.kind !== "habit"} /><span className="text-sm">{c.label}</span>{c.kind !== "habit" && fav && <span className="-mt-1 text-[10px] uppercase tracking-wide text-background/60">Top leaning</span>}</div>; })}</div>
+        <p className="mt-5 text-xs text-background/60">Skill percentages combine the 5 answers in each skill category (at least 4 needed). Interests and preferences show your top leaning, not how good you are.</p></section>
       <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
         {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
         {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}
@@ -147,4 +150,11 @@ function TeacherEvidence({ studentId }: { studentId: string }) {
     if (error) throw error; return data ?? [];
   } });
   return <section className="space-y-2 border-t pt-4"><h3 className="font-bold">Teacher-assessed evidence</h3><p className="text-xs text-muted-foreground">Teacher-awarded badges are separate from your self-report. Challenge rubric scores are not included here because they can be AI-generated.</p>{awards.length ? awards.map(a => <div key={a.id} className="py-2 text-sm"><p className="font-medium">{a.competency_badges?.name} · Teacher badge</p>{a.note && <p className="text-muted-foreground">{a.note}</p>}</div>) : <p className="text-sm text-muted-foreground">No teacher-awarded evidence yet.</p>}</section>;
+}
+function Ring({ value, tone, label, small }: { value: number; tone: "skill" | "pref"; label: string; small?: boolean }) {
+  const ticks = 72, on = Math.round((value / 100) * ticks);
+  return <div className="relative size-32" role="img" aria-label={label}>
+    <svg viewBox="0 0 120 120" className="size-full">{Array.from({ length: ticks }, (_, i) => { const a = (i / ticks) * 2 * Math.PI - Math.PI / 2; const r1 = 48, r2 = 58; return <line key={i} x1={60 + r1 * Math.cos(a)} y1={60 + r1 * Math.sin(a)} x2={60 + r2 * Math.cos(a)} y2={60 + r2 * Math.sin(a)} strokeWidth={2.2} strokeLinecap="round" className={i < on ? (tone === "skill" ? "stroke-ring-skill" : "stroke-ring-pref") : "stroke-background/15"} />; })}</svg>
+    <span className={`absolute inset-0 flex items-center justify-center px-6 font-bold leading-tight ${small ? "text-sm" : "text-3xl"}`}>{label}</span>
+  </div>;
 }

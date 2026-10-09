@@ -69,6 +69,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gold: var(--gold);
+  --color-ring-skill: var(--ring-skill);
+  --color-ring-pref: var(--ring-pref);
   --color-gold-foreground: var(--gold-foreground);
   --shadow-soft: var(--soft-shadow);
 }
@@ -76,6 +78,8 @@
 :root {
   --radius: 1rem;
   --gold: oklch(0.86 0.16 85);
+  --ring-skill: oklch(0.82 0.15 160);
+  --ring-pref: oklch(0.75 0.13 240);
   --gold-foreground: oklch(0.22 0.08 285);
   --soft-shadow: 0 8px 24px -12px oklch(0.44 0.23 275 / 0.25);
   --background: oklch(0.975 0.006 270);
@@ -146,6 +150,8 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
   --gold: oklch(0.86 0.16 85);
+  --ring-skill: oklch(0.82 0.15 160);
+  --ring-pref: oklch(0.75 0.13 240);
   --gold-foreground: oklch(0.22 0.08 285);
   --soft-shadow: 0 8px 24px -12px oklch(0 0 0 / 0.5);
 }
