@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, scoreCategory, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, parseAnswers, scoreCategory, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -91,8 +91,6 @@ function Assessment({ studentId }: { studentId: string }) {
   if (view === "results" && selected && (selected.questionnaire_version !== QUESTIONNAIRE_VERSION || selected.scoring_version !== SCORING_VERSION)) return <div className="space-y-4 py-3"><Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button><p className="rounded-lg bg-card p-4 text-sm shadow-soft">This reflection used an older set of questions, so its results can't be calculated with the new scoring. Take a new reflection to see your profile.</p><Button onClick={() => start()}><Plus className="size-4" />Start a new reflection</Button></div>;
   if (view === "results" && selected) {
     const results = scoreAssessment(knownAnswers(selected.responses));
-    const previous = attempts.find(a => a.id !== selected.id && a.status === "submitted" && (a.submitted_at ?? "") < (selected.submitted_at ?? "") && compatibleAttempts(a, selected));
-    const previousScores = previous ? scoreAssessment(knownAnswers(previous.responses)) : [];
     const habits = results.filter(d => d.kind === "habit" && d.average !== null && d.answered === d.available);
     const top = (list: typeof results, n: number) => [...list].filter(d => d.average !== null).sort((a, b) => (b.average ?? 0) - (a.average ?? 0)).slice(0, n);
     const strengths = top(habits.filter(d => (d.average ?? 0) >= 3.5), 3);
@@ -103,7 +101,6 @@ function Assessment({ studentId }: { studentId: string }) {
     const avg = (id: string) => results.find(d => d.id === id)?.average ?? 0;
     const env = [avg("structure") >= 4 ? "clear steps and checklists" : avg("exploration") >= 4 ? "open questions to explore" : "a mix of guidance and freedom", avg("discussion") >= avg("independent") ? "time to discuss with classmates" : "quiet time to work on your own"].join(", with ");
     const names = (l: typeof results) => l.map(d => d.label.toLowerCase()).join(" and ");
-    const Bar = ({ value }: { value: number }) => <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${value}%` }} /></div>;
     return <div className="space-y-5 py-3">
       <Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button>
       <div><h2 className="text-xl font-bold">My student profile</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(knownAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
