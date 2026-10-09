@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { Brain, ArrowLeft, ArrowRight, LockKeyhole, History, Plus, Trash2, Download, Save } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,7 +67,7 @@ function Assessment({ studentId }: { studentId: string }) {
   if (view === "questions") {
     const total = QUESTIONS.length;
     const finalStep = section >= total;
-    const q = QUESTIONS[Math.min(section, total - 1)];
+    const q = QUESTIONS[Math.min(section, total - 1)]!;
     const cat = CATEGORIES.find(c => c.id === q.category) ?? CATEGORIES[0];
     const labels = q.format === "interest" ? INTEREST : AGREEMENT;
     const sizes = ["size-12", "size-10", "size-8", "size-10", "size-12"];
@@ -83,7 +82,7 @@ function Assessment({ studentId }: { studentId: string }) {
         <div role="radiogroup" aria-label={q.text} className="space-y-3">
           <div className="flex items-center justify-between gap-1">{labels.map((label, i) => { const v = i + 1; const on = answers[q.id] === v; const tone = i < 2 ? "border-destructive/60" : i === 2 ? "border-muted-foreground/40" : "border-primary"; return <button key={label} type="button" role="radio" aria-checked={on} aria-label={label} title={label} onClick={() => pick(v)} className={`${sizes[i]} shrink-0 rounded-full border-2 transition hover:scale-110 ${tone} ${on ? (i < 2 ? "bg-destructive/70" : i === 2 ? "bg-muted-foreground/50" : "bg-primary") : "bg-card"}`} />; })}</div>
           <div className="flex justify-between text-xs font-medium text-muted-foreground"><span>{labels[0]}</span><span>{labels[4]}</span></div>
-          {answers[q.id] && <p className="text-center text-sm font-medium">{labels[answers[q.id] - 1]}</p>}
+          {answers[q.id] && <p className="text-center text-sm font-medium">{labels[(answers[q.id] ?? 1) - 1]}</p>}
         </div>
       </div>}
       <div className="flex gap-2"><Button variant="outline" disabled={section === 0} onClick={() => setSection(s => s - 1)}><ArrowLeft className="size-4" />Back</Button>{finalStep ? <Button className="ml-auto" disabled={busy} onClick={() => persist(true)}>See my profile</Button> : <Button className="ml-auto" onClick={() => setSection(s => s + 1)}>{answers[q.id] ? "Next" : "Skip"}<ArrowRight className="size-4" /></Button>}</div>
