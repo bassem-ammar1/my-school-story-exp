@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/orchestrator")({
   ssr: false,
   beforeLoad: requireSsoTeacher,
-  head: () => ({ meta: [{ title: "Orchestrator · Thinking Lab" }, { name: "description", content: "Curate diverse approaches and run a Synthesis Ritual." }] }),
+  head: () => ({ meta: [{ title: "Orchestrator · Thinking Lab" }, { name: "description", content: "Curate diverse approaches and run a Synthesis Ritual." }, { property: "og:title", content: "Orchestrator · Thinking Lab" }, { property: "og:description", content: "Curate diverse approaches and run a Synthesis Ritual." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: () => <Orchestrator />,
 });
 

@@ -9,7 +9,7 @@ import { useMe } from "@/hooks/use-me";
 import type { StepImage } from "@/components/thinking/types";
 
 export const Route = createFileRoute("/_authenticated/challenge/$id")({
-  head: () => ({ meta: [{ title: "Thinking Challenge · Thinking Lab" }, { name: "description", content: "Show your thinking step by step." }] }),
+  head: () => ({ meta: [{ title: "Thinking Challenge · Thinking Lab" }, { name: "description", content: "Show your thinking step by step." }, { property: "og:title", content: "Thinking Challenge · Thinking Lab" }, { property: "og:description", content: "Show your thinking step by step." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ChallengePage,
 });
 

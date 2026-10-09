@@ -6,7 +6,7 @@ import { useMe } from "@/hooks/use-me";
 import { addMyPost } from "@/lib/social-data";
 
 export const Route = createFileRoute("/_authenticated/post")({
-  head: () => ({ meta: [{ title: "New post · MySchoolStory" }, { name: "description", content: "Share an update with your school." }] }),
+  head: () => ({ meta: [{ title: "New post · MySchoolStory" }, { name: "description", content: "Share an update with your school." }, { property: "og:title", content: "New post · MySchoolStory" }, { property: "og:description", content: "Share an update with your school." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: NewPost,
 });
 

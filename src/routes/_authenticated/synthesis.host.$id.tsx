@@ -17,7 +17,7 @@ import type { AnnotationView, ArtifactView } from "@/components/thinking/types";
 export const Route = createFileRoute("/_authenticated/synthesis/host/$id")({
   ssr: false,
   beforeLoad: requireSsoTeacher,
-  head: () => ({ meta: [{ title: "Synthesis Ritual · Thinking Lab" }, { name: "description", content: "Projector mode for class synthesis." }] }),
+  head: () => ({ meta: [{ title: "Synthesis Ritual · Thinking Lab" }, { name: "description", content: "Projector mode for class synthesis." }, { property: "og:title", content: "Synthesis Ritual · Thinking Lab" }, { property: "og:description", content: "Projector mode for class synthesis." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: () => <SynthesisOverlay />,
 });
 

@@ -15,7 +15,7 @@ import { COPY } from "@/lib/thinking";
 import { useMe } from "@/hooks/use-me";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "My thinking · Thinking Lab" }, { name: "description", content: "Your published thinking, badges and tasks." }] }),
+  head: () => ({ meta: [{ title: "My thinking · Thinking Lab" }, { name: "description", content: "Your published thinking, badges and tasks." }, { property: "og:title", content: "My thinking · Thinking Lab" }, { property: "og:description", content: "Your published thinking, badges and tasks." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Profile,
 });
 

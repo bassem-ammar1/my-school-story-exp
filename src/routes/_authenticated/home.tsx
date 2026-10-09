@@ -12,7 +12,7 @@ import { SAMPLE_POSTS, PEOPLE, loadMyPosts, type Post } from "@/lib/social-data"
 import type { ArtifactView } from "@/components/thinking/types";
 
 export const Route = createFileRoute("/_authenticated/home")({
-  head: () => ({ meta: [{ title: "Feed · MySchoolStory" }, { name: "description", content: "See the latest posts from schools and students." }] }),
+  head: () => ({ meta: [{ title: "Feed · MySchoolStory" }, { name: "description", content: "See the latest posts from schools and students." }, { property: "og:title", content: "Feed · MySchoolStory" }, { property: "og:description", content: "See the latest posts from schools and students." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Home,
 });
 

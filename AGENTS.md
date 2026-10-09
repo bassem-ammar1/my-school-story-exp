@@ -18,3 +18,6 @@
 - The synthesis misconception pick is stored as a teacher-only `flags` row until reveal — session rows are readable by students.
 - Writes students must not forge (AI interactions, AI flags) are done with the admin client inside server functions after verifying ownership.
 - Demo mode uses static data in `src/lib/demo-data.ts` with no database writes except analytics — so it needs no login and resets each visit.
+- Cognitive question mapping and scoring live in a versioned pure `src/lib/cognitive.ts` module with adjacent tests — client and server must derive identical self-report results, separate from teacher evidence.
+- Cognitive attempts are account-owned and owner-only in database policies; a trigger freezes submitted responses while permitting coach-consent revocation and owner deletion — school roles never imply access.
+- Cognitive persistence uses authenticated server functions in `src/lib/cognitive.functions.ts`; optional minimal context reaches the existing coach through `thinking.functions.ts` only — raw responses and identities are excluded from prompts.

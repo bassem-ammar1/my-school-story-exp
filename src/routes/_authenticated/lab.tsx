@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CognitiveAssessment } from "@/components/thinking/CognitiveAssessment";
 
 export const Route = createFileRoute("/_authenticated/lab")({
-  head: () => ({ meta: [{ title: "Assessment · MySchoolStory" }, { name: "description", content: "Teacher assessments and your cognitive skills assessment." }] }),
+  head: () => ({ meta: [{ title: "Assessment · MySchoolStory" }, { name: "description", content: "Teacher challenges and private six-category self-reflection in MySchoolStory." }, { property: "og:title", content: "Assessment · MySchoolStory" }, { property: "og:description", content: "Explore your habits, learning preferences and current interests privately." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Lab,
 });
 
