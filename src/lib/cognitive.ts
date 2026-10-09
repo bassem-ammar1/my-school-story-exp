@@ -105,11 +105,9 @@ export function assessmentProgress(value: unknown, index: number) {
 }
 // Missing evidence is a numeric answer count, never a fabricated zero score.
 export function categoryRing(categoryId: string, value: unknown) {
-  const category = CATEGORIES.find(c => c.id === categoryId);
   const score = scoreCategory(categoryId, knownAnswers(value));
-  if (score.average === null) return { label: `${score.answered}/${score.available}`, fill: 0, detail: category?.kind === "habit" ? "Answers · 4 needed for a score" : "Answers · not scored yet" };
-  if (category?.kind === "habit" && score.responseScore !== null) return { label: `${Math.round(score.responseScore)}%`, fill: score.responseScore, detail: `${score.answered}/${score.available} answered` };
-  return { label: `${Number(score.average.toFixed(1))}/5`, fill: (score.average - 1) / 4 * 100, detail: "Average response · not ability" };
+  if (score.average === null) return { label: `${score.answered}/${score.available}`, fill: 0 };
+  return { label: `${Number(score.average.toFixed(1))}/5`, fill: (score.average - 1) / 4 * 100 };
 }
 export function compatibleAttempts(a: { questionnaire_version: string; scoring_version: string }, b: { questionnaire_version: string; scoring_version: string }) { return a.questionnaire_version === b.questionnaire_version && a.scoring_version === b.scoring_version && a.questionnaire_version === QUESTIONNAIRE_VERSION && a.scoring_version === SCORING_VERSION; }
 export function reflectionContext(attempt: { questionnaire_version: string; scoring_version: string; responses: unknown; goal: string; submitted_at: string | null }) {

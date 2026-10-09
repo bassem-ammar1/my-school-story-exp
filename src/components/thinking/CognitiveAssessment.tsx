@@ -105,8 +105,8 @@ function Assessment({ studentId }: { studentId: string }) {
       <section className="rounded-2xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex justify-between border-b border-background/15 pb-3 font-mono text-xs uppercase tracking-widest text-background/70"><span>Skills / Preferences</span><span>Profile</span></div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 pt-5">{CATEGORIES.map(c => { const ring = categoryRing(c.id, selected.responses);
-          return <div key={c.id} className="flex min-w-0 flex-col items-center gap-2 text-center"><Ring value={ring.fill} tone={c.kind === "habit" ? "skill" : "pref"} label={ring.label} /><span className="text-sm">{c.label}</span><span className="text-xs text-background/60">{ring.detail}</span></div>; })}</div>
-        <p className="mt-5 text-xs text-background/60">Skill percentages combine your answers, with at least 4 of 5 needed. Preferences and interests show your average response out of 5, not ability. Incomplete categories show an answer count instead of a score.</p></section>
+          return <div key={c.id} className="flex min-w-0 flex-col items-center gap-2 text-center"><Ring value={ring.fill} tone={c.kind === "habit" ? "skill" : "pref"} label={ring.label} /><span className="text-sm">{c.label}</span></div>; })}</div>
+        <p className="mt-5 text-xs text-background/60">Each circle shows your average answer out of 5, not ability. At least 4 of 5 answers are needed; a category with fewer shows how many you answered.</p></section>
       <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
         {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
         {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}
