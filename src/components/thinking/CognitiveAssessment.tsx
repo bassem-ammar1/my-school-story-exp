@@ -110,7 +110,7 @@ function Assessment({ studentId }: { studentId: string }) {
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 pt-5">{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = scoreCategory(c.id, knownAnswers(selected.responses)).responseScore; const fav = top(dims, 1)[0];
           const fill = c.kind === "habit" ? pct : fav?.average != null ? (fav.average - 1) / 4 * 100 : null;
           return <div key={c.id} className="flex flex-col items-center gap-2 text-center"><Ring value={fill ?? 0} tone={c.kind === "habit" ? "skill" : "pref"} label={pct === null ? "—" : `${Math.round(pct)}%`} /><span className="text-sm">{c.label}</span>{c.kind !== "habit" && fav && <span className="-mt-1 text-[10px] uppercase tracking-wide text-background/60">Top leaning: {fav.label}</span>}</div>; })}</div>
-        <p className="mt-5 text-xs text-background/60">Skill percentages combine the 5 answers in each skill category (at least 4 needed). Interests and preferences show your top leaning, not how good you are.</p></section>
+        <p className="mt-5 text-xs text-background/60">Percentages combine the 5 answers in each category (at least 4 needed). Preference circles show how strong your answers lean, not how good you are — your top leaning is written under each one.</p></section>
       <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
         {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
         {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}
@@ -142,10 +142,10 @@ function TeacherEvidence({ studentId }: { studentId: string }) {
   } });
   return <section className="space-y-2 border-t pt-4"><h3 className="font-bold">Teacher-assessed evidence</h3><p className="text-xs text-muted-foreground">Teacher-awarded badges are separate from your self-report. Challenge rubric scores are not included here because they can be AI-generated.</p>{awards.length ? awards.map(a => <div key={a.id} className="py-2 text-sm"><p className="font-medium">{a.competency_badges?.name} · Teacher badge</p>{a.note && <p className="text-muted-foreground">{a.note}</p>}</div>) : <p className="text-sm text-muted-foreground">No teacher-awarded evidence yet.</p>}</section>;
 }
-function Ring({ value, tone, label, small }: { value: number; tone: "skill" | "pref"; label: string; small?: boolean }) {
+function Ring({ value, tone, label }: { value: number; tone: "skill" | "pref"; label: string }) {
   const ticks = 72, on = Math.round((value / 100) * ticks);
   return <div className="relative size-32" role="img" aria-label={label}>
     <svg viewBox="0 0 120 120" className="size-full">{Array.from({ length: ticks }, (_, i) => { const a = (i / ticks) * 2 * Math.PI - Math.PI / 2; const r1 = 48, r2 = 58; return <line key={i} x1={60 + r1 * Math.cos(a)} y1={60 + r1 * Math.sin(a)} x2={60 + r2 * Math.cos(a)} y2={60 + r2 * Math.sin(a)} strokeWidth={2.2} strokeLinecap="round" className={i < on ? (tone === "skill" ? "stroke-ring-skill" : "stroke-ring-pref") : "stroke-background/15"} />; })}</svg>
-    <span className={`absolute inset-0 flex items-center justify-center px-6 font-bold leading-tight ${small ? "text-sm" : "text-3xl"}`}>{label}</span>
+    <span className="absolute inset-0 flex items-center justify-center px-6 text-3xl font-bold leading-tight">{label}</span>
   </div>;
 }
