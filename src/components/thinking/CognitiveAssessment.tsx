@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, equalCategoryAverage, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, scoreCategory, knownAnswers, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -33,7 +33,7 @@ function Assessment({ studentId }: { studentId: string }) {
   const current = QUESTIONS.filter(q => q.category === category.id);
   const answered = Object.keys(answers).length;
   const start = (attempt?: Attempt) => {
-    setSelected(attempt ?? null); setAnswers(attempt ? parseAnswers(attempt.responses) : {});
+    setSelected(attempt ?? null); setAnswers(attempt ? knownAnswers(attempt.responses) : {});
     setGoal(attempt?.goal ?? ""); setCoach(attempt?.use_for_coach ?? false); setSection(0); setView("questions");
   };
   const persist = async (submit: boolean) => {
@@ -61,7 +61,7 @@ function Assessment({ studentId }: { studentId: string }) {
     finally { setBusy(false); }
   };
   const exportAttempt = (attempt: Attempt) => {
-    const url = URL.createObjectURL(new Blob([JSON.stringify({ ...attempt, student_id: undefined, results: scoreAssessment(parseAnswers(attempt.responses)) }, null, 2)], { type: "application/json" }));
+    const url = URL.createObjectURL(new Blob([JSON.stringify({ ...attempt, student_id: undefined, results: scoreAssessment(knownAnswers(attempt.responses)) }, null, 2)], { type: "application/json" }));
     const link = document.createElement("a"); link.href = url; link.download = "my-private-reflection.json"; link.click(); URL.revokeObjectURL(url);
   };
   if (view === "questions") {
@@ -89,10 +89,10 @@ function Assessment({ studentId }: { studentId: string }) {
     </div>;
   }
   if (view === "results" && selected) {
-    const results = scoreAssessment(parseAnswers(selected.responses));
+    const results = scoreAssessment(knownAnswers(selected.responses));
     const previous = attempts.find(a => a.id !== selected.id && a.status === "submitted" && (a.submitted_at ?? "") < (selected.submitted_at ?? "") && compatibleAttempts(a, selected));
-    const previousScores = previous ? scoreAssessment(parseAnswers(previous.responses)) : [];
-    const habits = results.filter(d => d.kind === "habit" && d.average !== null);
+    const previousScores = previous ? scoreAssessment(knownAnswers(previous.responses)) : [];
+    const habits = results.filter(d => d.kind === "habit" && d.average !== null && d.answered === d.available);
     const top = (list: typeof results, n: number) => [...list].filter(d => d.average !== null).sort((a, b) => (b.average ?? 0) - (a.average ?? 0)).slice(0, n);
     const strengths = top(habits.filter(d => (d.average ?? 0) >= 3.5), 3);
     const grow = [...habits].sort((a, b) => (a.average ?? 0) - (b.average ?? 0)).filter(d => !strengths.includes(d)).slice(0, 2);
@@ -105,11 +105,11 @@ function Assessment({ studentId }: { studentId: string }) {
     const Bar = ({ value }: { value: number }) => <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${value}%` }} /></div>;
     return <div className="space-y-5 py-3">
       <Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button>
-      <div><h2 className="text-xl font-bold">My student profile</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(parseAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
+      <div><h2 className="text-xl font-bold">My student profile</h2><p className="mt-1 text-sm text-muted-foreground">{new Date(selected.submitted_at ?? selected.created_at).toLocaleDateString()} · {Object.keys(knownAnswers(selected.responses)).length} of {QUESTIONS.length} answered</p></div>
       <p className="rounded-lg bg-gold/20 p-3 text-sm">These are your current preferences and tendencies, not permanent traits, an ability score or a diagnosis. They can change as you grow.</p>
-      <section className="space-y-3 rounded-lg bg-card p-4 shadow-soft"><h3 className="font-bold">Overall profile</h3>{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = c.kind === "habit" ? equalCategoryAverage(dims.map(d => d.responseScore)) : null; const fav = top(dims, 1)[0];
+      <section className="space-y-3 rounded-lg bg-card p-4 shadow-soft"><h3 className="font-bold">Overall profile</h3>{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = scoreCategory(c.id, knownAnswers(selected.responses)).responseScore; const fav = top(dims, 1)[0];
         return <div key={c.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{c.label}</span><span className="text-muted-foreground">{c.kind === "habit" ? (pct === null ? "Not enough answers" : `${Math.round(pct)}%`) : fav ? `Leans: ${fav.label}` : "—"}</span></div>{pct !== null && <Bar value={pct} />}</div>; })}
-        <p className="text-xs text-muted-foreground">Percentages show only self-reported habits. Interests and preferences show what you lean towards, not how good you are.</p></section>
+        <p className="text-xs text-muted-foreground">Skill percentages combine the 5 answers in each skill category (at least 4 needed). Interests and preferences show what you lean towards, not how good you are.</p></section>
       <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
         {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
         {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}
@@ -120,7 +120,7 @@ function Assessment({ studentId }: { studentId: string }) {
         <div><b>Activities to try:</b><ul className="mt-1 list-disc pl-5 text-muted-foreground">{[...interests, ...grow].slice(0, 3).map(d => <li key={d.id}>{d.activity}</li>)}</ul></div></section>
       {CATEGORIES.map(c => <section key={c.id} className="space-y-3 border-t pt-4"><h3 className="font-bold">{c.label}</h3>{results.filter(d => d.category === c.id).map(d => {
         const prev = previousScores.find(p => p.id === d.id);
-        return <div key={d.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{d.label}</span><span className="text-muted-foreground">{d.average === null ? "Not enough answers" : d.kind === "habit" ? `${Math.round(d.responseScore ?? 0)}%` : (d.kind === "interest" ? INTEREST : AGREEMENT)[Math.round(d.average) - 1]}</span></div>
+        return <div key={d.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{d.label}</span><span className="text-muted-foreground">{d.average === null ? "Not enough answers" : (d.kind === "interest" ? INTEREST : AGREEMENT)[Math.round(d.average) - 1]}</span></div>
           {d.average !== null && <Bar value={(d.average - 1) / 4 * 100} />}
           <p className="text-xs text-muted-foreground">{d.answered} of {d.available} answered{d.answered < d.available ? " · Provisional" : ""}{prev?.average != null && d.average !== null ? ` · Previous ${prev.average.toFixed(1)} → now ${d.average.toFixed(1)} / 5 (a response change, not proof of progress)` : ""}</p>
         </div>;
@@ -138,7 +138,7 @@ function Assessment({ studentId }: { studentId: string }) {
     <div className="flex items-start gap-3 border-y py-4"><LockKeyhole className="size-5 shrink-0 text-primary" /><p className="text-sm">Private to you. Schools and teachers cannot see your answers. Skip any question and save a draft whenever you need.</p></div>
     <div className="divide-y">{CATEGORIES.map((c, i) => <div key={c.id} className="flex items-center justify-between py-3"><span className="font-medium">{i + 1}. {c.label}</span><span className="text-xs text-muted-foreground">{QUESTIONS.filter(q => q.category === c.id).length} questions</span></div>)}</div>
     <Button className="w-full" onClick={() => start()}><Plus className="size-4" />Start a reflection</Button>
-    {attempts.length > 0 && <section className="space-y-3 border-t pt-4"><h3 className="flex items-center gap-2 font-bold"><History className="size-4" />My reflection history</h3>{attempts.map(a => <div key={a.id} className="flex items-center gap-2 rounded-lg bg-card p-3 shadow-soft"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{a.status === "draft" ? "Saved draft" : "Reflection"} · {new Date(a.created_at).toLocaleDateString()}</p><p className="text-xs text-muted-foreground">{Object.keys(parseAnswers(a.responses)).length} of {QUESTIONS.length} answered</p></div><Button size="sm" variant="outline" onClick={() => { if (a.status === "draft") start(a); else { setSelected(a); setView("results"); } }}>{a.status === "draft" ? "Resume" : "View"}</Button><Button size="icon" variant="ghost" aria-label="Delete saved reflection" disabled={busy} onClick={() => deleteAttempt(a)}><Trash2 className="size-4" /></Button></div>)}</section>}
+    {attempts.length > 0 && <section className="space-y-3 border-t pt-4"><h3 className="flex items-center gap-2 font-bold"><History className="size-4" />My reflection history</h3>{attempts.map(a => <div key={a.id} className="flex items-center gap-2 rounded-lg bg-card p-3 shadow-soft"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{a.status === "draft" ? "Saved draft" : "Reflection"} · {new Date(a.created_at).toLocaleDateString()}</p><p className="text-xs text-muted-foreground">{Object.keys(knownAnswers(a.responses)).length} of {QUESTIONS.length} answered</p></div><Button size="sm" variant="outline" onClick={() => { if (a.status === "draft") start(a); else { setSelected(a); setView("results"); } }}>{a.status === "draft" ? "Resume" : "View"}</Button><Button size="icon" variant="ghost" aria-label="Delete saved reflection" disabled={busy} onClick={() => deleteAttempt(a)}><Trash2 className="size-4" /></Button></div>)}</section>}
   </div>;
 }
 function TeacherEvidence({ studentId }: { studentId: string }) {
