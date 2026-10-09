@@ -1,3 +1,4 @@
+import { BottomNav } from "@/components/thinking/BottomNav";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -135,9 +136,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="min-h-screen bg-muted">
-        <div className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-background shadow-soft">
+        <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-soft">
           <SiteNav />
-          <Outlet />
+          <div className="flex-1"><Outlet /></div>
+          <BottomNav />
         </div>
       </div>
       <Toaster richColors position="top-center" />
