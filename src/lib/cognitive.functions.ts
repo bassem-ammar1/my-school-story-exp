@@ -22,7 +22,7 @@ export const saveCognitiveAttempt = createServerFn({ method: "POST" })
       if (error || !created) throw new Error("Your reflection could not be started.");
       id = created.id;
     }
-    const { data: saved, error } = await context.supabase.from("cognitive_attempts").update({ responses, goal: data.goal, use_for_coach: data.useForCoach, status: data.submit ? "submitted" : "draft" }).eq("id", id).eq("student_id", context.userId).eq("status", "draft").select("*").single();
+    const { data: saved, error } = await context.supabase.from("cognitive_attempts").update({ responses, goal: data.goal, questionnaire_version: QUESTIONNAIRE_VERSION, scoring_version: SCORING_VERSION, use_for_coach: data.useForCoach, status: data.submit ? "submitted" : "draft" }).eq("id", id).eq("student_id", context.userId).eq("status", "draft").select("*").single();
     if (error || !saved) throw new Error("This reflection could not be saved. Submitted reflections cannot be changed.");
     return saved;
   });
