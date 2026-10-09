@@ -40,7 +40,7 @@ export function ArtifactFeed({ artifacts, onOpen, onReact }: { artifacts: Artifa
       {list.length === 0 ? (
         <p className="rounded-2xl bg-card p-10 text-center text-muted-foreground shadow-soft">{COPY.empty}</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
           {list.map((a) => <ArtifactCard key={a.id} a={a} onOpen={() => onOpen(a)} onReact={onReact ? (e) => onReact(a, e) : undefined} />)}
         </div>
       )}

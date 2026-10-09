@@ -38,14 +38,14 @@ function Home() {
   ] as const;
 
   return (
-    <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+    <main className="mx-auto w-full max-w-6xl space-y-6 px-3 py-4 sm:space-y-8 sm:px-6 sm:py-8">
       <div>
-        <h1 className="text-3xl font-bold">Hi {me?.profile?.display_name ?? "there"} 👋</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Hi {me?.profile?.display_name ?? "there"} 👋</h1>
         <p className="text-muted-foreground">Here's the latest thinking from your classes.</p>
       </div>
-      <section aria-label="Modes" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Modes" className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
         {modes.map((m) => (
-          <Link key={m.to} to={m.to} className="rounded-2xl bg-card p-4 shadow-soft transition hover:-translate-y-0.5">
+          <Link key={m.to} to={m.to} className="w-40 shrink-0 rounded-2xl bg-card p-4 shadow-soft transition hover:-translate-y-0.5 sm:w-auto">
             <span className="text-2xl">{m.icon}</span>
             <p className="mt-1 font-semibold">{m.title}</p>
             <p className="text-sm text-muted-foreground">{m.desc}</p>
