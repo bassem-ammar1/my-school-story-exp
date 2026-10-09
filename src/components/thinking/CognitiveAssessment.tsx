@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, parseAnswers, scoreCategory, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, assessmentProgress, categoryRing, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -29,9 +29,6 @@ function Assessment({ studentId }: { studentId: string }) {
   const [coach, setCoach] = useState(false);
   const [section, setSection] = useState(0);
   const [busy, setBusy] = useState(false);
-  const category = CATEGORIES[section] ?? CATEGORIES[0];
-  const current = QUESTIONS.filter(q => q.category === category.id);
-  const answered = Object.keys(answers).length;
   const start = (attempt?: Attempt) => {
     setSelected(attempt ?? null); setAnswers(attempt ? knownAnswers(attempt.responses) : {});
     setGoal(attempt?.goal ?? ""); setCoach(attempt?.use_for_coach ?? false); setSection(0); setView("questions");
@@ -65,22 +62,22 @@ function Assessment({ studentId }: { studentId: string }) {
     const link = document.createElement("a"); link.href = url; link.download = "my-private-reflection.json"; link.click(); URL.revokeObjectURL(url);
   };
   if (view === "questions") {
-    const total = QUESTIONS.length;
-    const finalStep = section >= total;
-    const q = QUESTIONS[Math.min(section, total - 1)]!;
+    const { total, answered, questionNumber, finalStep, percent } = assessmentProgress(answers, section);
+    const q = QUESTIONS[Math.min(section, total - 1)];
+    if (!q) return null;
     const cat = CATEGORIES.find(c => c.id === q.category) ?? CATEGORIES[0];
     const labels = q.format === "interest" ? INTEREST : AGREEMENT;
     const sizes = ["size-12", "size-10", "size-8", "size-10", "size-12"];
-    const pick = (v: number) => { setAnswers(prev => ({ ...prev, [q.id]: v })); setTimeout(() => setSection(s => Math.min(s + 1, total)), 250); };
+    const pick = (v: number) => { setAnswers(prev => ({ ...prev, [q.id]: v })); setSection(s => Math.min(s + 1, total)); };
     return <div className="flex min-h-[70vh] flex-col gap-6 py-3">
       <div className="flex items-center justify-between"><Button variant="ghost" size="sm" onClick={() => { if (window.confirm("Leave this page? Save your draft first to keep unsaved answers.")) setView("overview"); }}><ArrowLeft className="size-4" />Exit</Button><Button variant="ghost" size="sm" disabled={busy} onClick={() => persist(false)}><Save className="size-4" />Save draft</Button></div>
-      <div className="space-y-2"><div className="flex justify-between text-xs text-muted-foreground"><span>{finalStep ? "Almost done" : `Question ${section + 1} of ${total}`}</span><span>{answered} answered</span></div>
-        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${(Math.min(section, total) / total) * 100}%` }} /></div></div>
+      <div className="space-y-2"><div className="flex justify-between text-xs text-muted-foreground"><span>{finalStep ? "Review and submit" : `Question ${questionNumber} of ${total}`}</span><span>{answered} of {total} answered</span></div>
+        <div role="progressbar" aria-label="Questions answered" aria-valuenow={answered} aria-valuemin={0} aria-valuemax={total} className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${percent}%` }} /></div></div>
       {finalStep ? <div className="flex-1 space-y-4"><h2 className="text-2xl font-bold">One last thing</h2><label htmlFor="reflection-goal" className="block font-medium">A goal I would like to explore (optional)</label><Textarea id="reflection-goal" value={goal} maxLength={300} onChange={e => setGoal(e.target.value)} placeholder="For example: try a new way of planning my homework" /><label className="flex items-start gap-3 text-sm"><Checkbox checked={coach} onCheckedChange={value => setCoach(value === true)} /><span>Use a summary of this reflection for my thinking coach. I can turn this off later.</span></label><p className="text-xs text-muted-foreground">Skipped questions stay unanswered. Partial results will show their coverage.</p></div>
       : <div key={q.id} className="flex flex-1 flex-col justify-center gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
         <div className="text-center"><p className="text-xs font-semibold uppercase tracking-wide text-primary">{cat.label}</p><h2 className="mt-3 text-2xl font-bold leading-snug">{q.text}</h2></div>
         <div role="radiogroup" aria-label={q.text} className="space-y-3">
-          <div className="flex items-center justify-between gap-1">{labels.map((label, i) => { const v = i + 1; const on = answers[q.id] === v; const tone = i < 2 ? "border-destructive/60" : i === 2 ? "border-muted-foreground/40" : "border-primary"; return <button key={label} type="button" role="radio" aria-checked={on} aria-label={label} title={label} onClick={() => pick(v)} className={`${sizes[i]} shrink-0 rounded-full border-2 transition hover:scale-110 ${tone} ${on ? (i < 2 ? "bg-destructive/70" : i === 2 ? "bg-muted-foreground/50" : "bg-primary") : "bg-card"}`} />; })}</div>
+          <div className="flex items-center justify-between gap-1">{labels.map((label, i) => { const v = i + 1; const on = answers[q.id] === v; const tone = i < 2 ? "border-destructive/60" : i === 2 ? "border-muted-foreground/40" : "border-primary"; return <Button variant="outline" size="icon" key={label} type="button" role="radio" aria-checked={on} aria-label={label} title={label} onClick={() => pick(v)} className={`${sizes[i]} shrink-0 rounded-full border-2 transition hover:scale-110 ${tone} ${on ? (i < 2 ? "bg-destructive/70" : i === 2 ? "bg-muted-foreground/50" : "bg-primary") : "bg-card"}`} />; })}</div>
           <div className="flex justify-between text-xs font-medium text-muted-foreground"><span>{labels[0]}</span><span>{labels[4]}</span></div>
           {answers[q.id] && <p className="text-center text-sm font-medium">{labels[(answers[q.id] ?? 1) - 1]}</p>}
         </div>
@@ -107,10 +104,9 @@ function Assessment({ studentId }: { studentId: string }) {
       <p className="rounded-lg bg-gold/20 p-3 text-sm">These are your current preferences and tendencies, not permanent traits, an ability score or a diagnosis. They can change as you grow.</p>
       <section className="rounded-2xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex justify-between border-b border-background/15 pb-3 font-mono text-xs uppercase tracking-widest text-background/70"><span>Skills / Preferences</span><span>Profile</span></div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 pt-5">{CATEGORIES.map(c => { const dims = results.filter(d => d.category === c.id); const pct = scoreCategory(c.id, knownAnswers(selected.responses)).responseScore; const fav = top(dims, 1)[0];
-          const fill = c.kind === "habit" ? pct : fav?.average != null ? (fav.average - 1) / 4 * 100 : null;
-          return <div key={c.id} className="flex flex-col items-center gap-2 text-center"><Ring value={fill ?? 0} tone={c.kind === "habit" ? "skill" : "pref"} label={pct === null ? "—" : `${Math.round(pct)}%`} /><span className="text-sm">{c.label}</span>{c.kind !== "habit" && fav && <span className="-mt-1 text-[10px] uppercase tracking-wide text-background/60">Top leaning: {fav.label}</span>}</div>; })}</div>
-        <p className="mt-5 text-xs text-background/60">Percentages combine the 5 answers in each category (at least 4 needed). Preference circles show how strong your answers lean, not how good you are — your top leaning is written under each one.</p></section>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 pt-5">{CATEGORIES.map(c => { const ring = categoryRing(c.id, selected.responses);
+          return <div key={c.id} className="flex min-w-0 flex-col items-center gap-2 text-center"><Ring value={ring.fill} tone={c.kind === "habit" ? "skill" : "pref"} label={ring.label} /><span className="text-sm">{c.label}</span><span className="text-xs text-background/60">{ring.detail}</span></div>; })}</div>
+        <p className="mt-5 text-xs text-background/60">Skill percentages combine your answers, with at least 4 of 5 needed. Preferences and interests show your average response out of 5, not ability. Incomplete categories show an answer count instead of a score.</p></section>
       <section className="space-y-2 rounded-lg bg-card p-4 text-sm shadow-soft"><h3 className="font-bold">About you right now</h3>
         {strengths.length > 0 && <p><b>Strongest areas:</b> you often report {names(strengths)}.</p>}
         {grow.length > 0 && <p><b>Areas to develop:</b> {names(grow)} could be fun to practise.</p>}

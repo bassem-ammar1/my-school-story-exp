@@ -1,5 +1,6 @@
 # Roadmap
 
+- [x] Correct cognitive result-circle numbers and validate question/answered counts — 15 tests passed; signed-in 30-answer submission and saved results verified
 - [x] Thinking Lab: stepwise submission, voice, sketch, Socratic coach with answer guard
 - [x] Feed, annotations, reactions, profile Thinking tab, badge wall, micro-tasks
 - [x] Orchestrator, curation, prompts, Synthesis Ritual (live), reasoning trace, analytics
