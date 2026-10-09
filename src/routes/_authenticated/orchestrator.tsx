@@ -62,7 +62,7 @@ export function Orchestrator() {
   const createChallenge = async (f: { title: string; prompt: string; concepts: string; answer: string }) => {
     const { data: u } = await supabase.auth.getUser();
     const { data, error } = await supabase.from("challenges").insert({ class_id: cls!.id, teacher_id: u.user!.id, title: f.title, prompt_text: f.prompt, concept_tokens: f.concepts.split(",").map((s) => s.trim()).filter(Boolean) }).select().single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (f.answer) await supabase.from("challenge_answers").insert({ challenge_id: data.id, final_answer: f.answer });
     qc.invalidateQueries({ queryKey: ["t-challenges"] });
     toast.success("Challenge posted");
@@ -83,7 +83,7 @@ export function Orchestrator() {
       class_id: cls!.id, teacher_id: u.user!.id, artifact_ids: picks.filter((p) => !p.misconception).map((p) => p.artifact_id),
       prompts,
     }).select().single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     // The misconception pick is stored as a teacher-only flag so students can't see it before the reveal.
     const ma = m && byId(m.artifact_id);
     if (ma) await supabase.from("flags").insert({ submission_id: ma.submissionId, type: "misconception", source: "teacher", note: `synthesis:${data.id}` });

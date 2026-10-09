@@ -76,7 +76,7 @@ function ChallengePage() {
           sub.status = "queued";
           await supabase.from("submissions").update({ status: "queued" }).eq("id", sub.id);
         }
-        const r = await hint({ data: { submissionId: sub.id, message } });
+        const r = await hint({ data: message ? { submissionId: sub.id, message } : { submissionId: sub.id } });
         sub.status = "hinted";
         return r;
       }}

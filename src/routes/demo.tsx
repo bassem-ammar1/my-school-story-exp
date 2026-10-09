@@ -53,7 +53,7 @@ function Demo() {
             {step === 2 && "Revise a step, then press “Share my thinking”."}
           </p>
           <StepwiseSubmission
-            challenge={demoChallenges[0]}
+            challenge={demoChallenges[0]!}
             initialStatus="draft"
             initial={{ steps: ["Maya has 36 cookies and 3 boxes. She gives 1 box away.", "", ""], images: [], voice: { url: null, duration: 0, transcript: "" }, concept: null, confidence: null }}
             uploadImage={async (b) => ({ path: "demo", url: URL.createObjectURL(b) })}
@@ -96,7 +96,7 @@ function Demo() {
           <div className="rounded-3xl bg-card p-8 text-2xl shadow-soft">
             <p className="text-sm text-muted-foreground">Projector mode preview</p>
             <p className="mt-2 text-3xl font-bold">Artifact E · What would you tell this student?</p>
-            <p className="mt-4">{demoArtifacts[2].steps[1]}</p>
+            <p className="mt-4">{demoArtifacts[2]?.steps[1]}</p>
             <p className="mt-2 rounded-lg bg-gold/20 p-3 text-xl">📝 “I wonder why you took away 3 — is 3 the number of cookies or boxes?”</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">

@@ -62,7 +62,7 @@ export function ReasoningTrace() {
     <main className="mx-auto max-w-4xl space-y-6 px-6 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold">Reasoning trace</h1>
-        <Select value={sid} onValueChange={setStudentId}>
+        <Select value={sid ?? ""} onValueChange={setStudentId}>
           <SelectTrigger className="w-56"><SelectValue placeholder="Choose a student" /></SelectTrigger>
           <SelectContent>{students.map((s) => <SelectItem key={s.id} value={s.id}>{s.display_name}</SelectItem>)}</SelectContent>
         </Select>

@@ -26,7 +26,7 @@ function Join() {
 
   const join = async () => {
     const { data, error } = await supabase.rpc("find_session_by_code", { _code: code });
-    if (error || !data) return toast.error("No live session with that code in your class.");
+    if (error || !data) { toast.error("No live session with that code in your class."); return; }
     const { data: row } = await supabase.from("synthesis_sessions").select("*").eq("id", data).single();
     setS(row as Session);
   };

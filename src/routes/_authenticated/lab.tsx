@@ -25,7 +25,7 @@ function Lab() {
 
   const join = async () => {
     const { error } = await supabase.rpc("join_class", { _code: code });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Joined!"); setCode(""); qc.invalidateQueries({ queryKey: ["my-classes"] });
   };
 

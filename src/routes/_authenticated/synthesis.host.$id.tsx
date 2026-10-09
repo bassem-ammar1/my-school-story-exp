@@ -92,7 +92,7 @@ export function SynthesisOverlay() {
 
   if (s.ended_at) return <Summary data={data} annotations={annotations} responses={responses} onBadge={setBadgeFor} badgeFor={badgeFor} />;
 
-  const shown = compare ? slides.slice(idx, idx + 2) : [slides[idx]].filter(Boolean);
+  const shown: ArtifactView[] = compare ? slides.slice(idx, idx + 2) : slides.slice(idx, idx + 1);
   const isMis = (a: ArtifactView) => data.mis?.id === a.id;
 
   return (
@@ -112,7 +112,7 @@ export function SynthesisOverlay() {
           {shown.map((a, k) => (
             <div key={a.id} className="rounded-3xl bg-card p-6 shadow-soft">
               <p className="mb-3 text-3xl font-bold">Artifact {String.fromCharCode(65 + idx + k)}{isMis(a) && <span className="ml-3 text-2xl text-primary">What would you tell this student?</span>}</p>
-              <ArtifactBody a={a} annotations={annotations.filter((n) => n.artifact_id === a.id) as AnnotationView[]} big />
+              <ArtifactBody a={a} annotations={annotations.filter((n) => (n as AnnotationView & { artifact_id?: string }).artifact_id === a.id)} big />
             </div>
           ))}
           {!shown.length && <p>No artifacts in this session.</p>}
