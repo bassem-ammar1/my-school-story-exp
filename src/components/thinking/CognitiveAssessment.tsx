@@ -151,3 +151,10 @@ function TeacherEvidence({ studentId }: { studentId: string }) {
   } });
   return <section className="space-y-2 border-t pt-4"><h3 className="font-bold">Teacher-assessed evidence</h3><p className="text-xs text-muted-foreground">Teacher-awarded badges are separate from your self-report. Challenge rubric scores are not included here because they can be AI-generated.</p>{awards.length ? awards.map(a => <div key={a.id} className="py-2 text-sm"><p className="font-medium">{a.competency_badges?.name} · Teacher badge</p>{a.note && <p className="text-muted-foreground">{a.note}</p>}</div>) : <p className="text-sm text-muted-foreground">No teacher-awarded evidence yet.</p>}</section>;
 }
+function Ring({ value, tone, label, small }: { value: number; tone: "skill" | "pref"; label: string; small?: boolean }) {
+  const ticks = 72, on = Math.round((value / 100) * ticks);
+  return <div className="relative size-32" role="img" aria-label={label}>
+    <svg viewBox="0 0 120 120" className="size-full">{Array.from({ length: ticks }, (_, i) => { const a = (i / ticks) * 2 * Math.PI - Math.PI / 2; const r1 = 48, r2 = 58; return <line key={i} x1={60 + r1 * Math.cos(a)} y1={60 + r1 * Math.sin(a)} x2={60 + r2 * Math.cos(a)} y2={60 + r2 * Math.sin(a)} strokeWidth={2.2} strokeLinecap="round" className={i < on ? (tone === "skill" ? "stroke-ring-skill" : "stroke-ring-pref") : "stroke-background/15"} />; })}</svg>
+    <span className={`absolute inset-0 flex items-center justify-center px-6 font-bold leading-tight ${small ? "text-sm" : "text-3xl"}`}>{label}</span>
+  </div>;
+}
