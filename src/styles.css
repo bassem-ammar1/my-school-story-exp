@@ -61,14 +61,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
-  --shadow-soft: var(--shadow-soft);
+  --shadow-soft: var(--soft-shadow);
 }
 
 :root {
   --radius: 1rem;
   --gold: oklch(0.86 0.16 85);
   --gold-foreground: oklch(0.22 0.08 285);
-  --shadow-soft: 0 8px 24px -12px oklch(0.44 0.23 275 / 0.25);
+  --soft-shadow: 0 8px 24px -12px oklch(0.44 0.23 275 / 0.25);
   --background: oklch(0.975 0.006 270);
   --foreground: oklch(0.22 0.08 285);
   --card: oklch(1 0 0);
@@ -138,7 +138,7 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
   --gold: oklch(0.86 0.16 85);
   --gold-foreground: oklch(0.22 0.08 285);
-  --shadow-soft: 0 8px 24px -12px oklch(0 0 0 / 0.5);
+  --soft-shadow: 0 8px 24px -12px oklch(0 0 0 / 0.5);
 }
 
 @layer base {
