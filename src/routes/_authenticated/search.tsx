@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PEOPLE } from "@/lib/social-data";
 
 export const Route = createFileRoute("/_authenticated/search")({
-  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s.q === "string" ? s.q : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s["q"] === "string" ? s["q"] : "" }),
   head: () => ({ meta: [{ title: "Search · MySchoolStory" }, { name: "description", content: "Find schools and students on MySchoolStory." }] }),
   component: SearchPage,
 });
