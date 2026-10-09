@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, scoreCategory, knownAnswers, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, compatibleAttempts, parseAnswers, scoreCategory, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -88,6 +88,7 @@ function Assessment({ studentId }: { studentId: string }) {
       <div className="flex gap-2"><Button variant="outline" disabled={section === 0} onClick={() => setSection(s => s - 1)}><ArrowLeft className="size-4" />Back</Button>{finalStep ? <Button className="ml-auto" disabled={busy} onClick={() => persist(true)}>See my profile</Button> : <Button className="ml-auto" onClick={() => setSection(s => s + 1)}>{answers[q.id] ? "Next" : "Skip"}<ArrowRight className="size-4" /></Button>}</div>
     </div>;
   }
+  if (view === "results" && selected && (selected.questionnaire_version !== QUESTIONNAIRE_VERSION || selected.scoring_version !== SCORING_VERSION)) return <div className="space-y-4 py-3"><Button variant="ghost" size="sm" onClick={() => setView("overview")}><ArrowLeft className="size-4" />My reflections</Button><p className="rounded-lg bg-card p-4 text-sm shadow-soft">This reflection used an older set of questions, so its results can't be calculated with the new scoring. Take a new reflection to see your profile.</p><Button onClick={() => start()}><Plus className="size-4" />Start a new reflection</Button></div>;
   if (view === "results" && selected) {
     const results = scoreAssessment(knownAnswers(selected.responses));
     const previous = attempts.find(a => a.id !== selected.id && a.status === "submitted" && (a.submitted_at ?? "") < (selected.submitted_at ?? "") && compatibleAttempts(a, selected));
