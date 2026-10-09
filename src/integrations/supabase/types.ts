@@ -320,6 +320,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cognitive_attempts: {
+        Row: {
+          created_at: string
+          goal: string
+          id: string
+          questionnaire_version: string
+          responses: Json
+          scoring_version: string
+          status: string
+          student_id: string
+          submitted_at: string | null
+          updated_at: string
+          use_for_coach: boolean
+        }
+        Insert: {
+          created_at?: string
+          goal?: string
+          id?: string
+          questionnaire_version?: string
+          responses?: Json
+          scoring_version?: string
+          status?: string
+          student_id: string
+          submitted_at?: string | null
+          updated_at?: string
+          use_for_coach?: boolean
+        }
+        Update: {
+          created_at?: string
+          goal?: string
+          id?: string
+          questionnaire_version?: string
+          responses?: Json
+          scoring_version?: string
+          status?: string
+          student_id?: string
+          submitted_at?: string | null
+          updated_at?: string
+          use_for_coach?: boolean
+        }
+        Relationships: []
+      }
       competency_badges: {
         Row: {
           description: string
