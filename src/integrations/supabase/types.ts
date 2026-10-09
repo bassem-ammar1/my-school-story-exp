@@ -14,16 +14,742 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_interactions: {
+        Row: {
+          blocked_answer_attempt: boolean
+          created_at: string
+          hints: string[]
+          id: string
+          next_step: string | null
+          praise: string | null
+          request_text: string | null
+          submission_id: string
+        }
+        Insert: {
+          blocked_answer_attempt?: boolean
+          created_at?: string
+          hints?: string[]
+          id?: string
+          next_step?: string | null
+          praise?: string | null
+          request_text?: string | null
+          submission_id: string
+        }
+        Update: {
+          blocked_answer_attempt?: boolean
+          created_at?: string
+          hints?: string[]
+          id?: string
+          next_step?: string | null
+          praise?: string | null
+          request_text?: string | null
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_interactions_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          props: Json
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          props?: Json
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          props?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      annotations: {
+        Row: {
+          artifact_id: string
+          author_id: string
+          created_at: string
+          id: string
+          session_id: string | null
+          step_ref: number | null
+          text: string
+          x: number | null
+          y: number | null
+        }
+        Insert: {
+          artifact_id: string
+          author_id: string
+          created_at?: string
+          id?: string
+          session_id?: string | null
+          step_ref?: number | null
+          text: string
+          x?: number | null
+          y?: number | null
+        }
+        Update: {
+          artifact_id?: string
+          author_id?: string
+          created_at?: string
+          id?: string
+          session_id?: string | null
+          step_ref?: number | null
+          text?: string
+          x?: number | null
+          y?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "annotations_artifact_id_fkey"
+            columns: ["artifact_id"]
+            isOneToOne: false
+            referencedRelation: "artifacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artifacts: {
+        Row: {
+          id: string
+          public_approved: boolean
+          published_at: string
+          submission_id: string
+          visibility: string
+        }
+        Insert: {
+          id?: string
+          public_approved?: boolean
+          published_at?: string
+          submission_id: string
+          visibility?: string
+        }
+        Update: {
+          id?: string
+          public_approved?: boolean
+          published_at?: string
+          submission_id?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artifacts_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: true
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      badge_awards: {
+        Row: {
+          artifact_id: string | null
+          badge_id: string
+          created_at: string
+          id: string
+          note: string | null
+          student_id: string
+          teacher_id: string
+        }
+        Insert: {
+          artifact_id?: string | null
+          badge_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          student_id: string
+          teacher_id: string
+        }
+        Update: {
+          artifact_id?: string | null
+          badge_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          student_id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badge_awards_artifact_id_fkey"
+            columns: ["artifact_id"]
+            isOneToOne: false
+            referencedRelation: "artifacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "badge_awards_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "competency_badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_answers: {
+        Row: {
+          challenge_id: string
+          final_answer: string
+        }
+        Insert: {
+          challenge_id: string
+          final_answer: string
+        }
+        Update: {
+          challenge_id?: string
+          final_answer?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_answers_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: true
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          class_id: string
+          concept_tokens: string[]
+          created_at: string
+          id: string
+          prompt_image: string | null
+          prompt_text: string
+          teacher_id: string
+          title: string
+        }
+        Insert: {
+          class_id: string
+          concept_tokens?: string[]
+          created_at?: string
+          id?: string
+          prompt_image?: string | null
+          prompt_text: string
+          teacher_id: string
+          title: string
+        }
+        Update: {
+          class_id?: string
+          concept_tokens?: string[]
+          created_at?: string
+          id?: string
+          prompt_image?: string | null
+          prompt_text?: string
+          teacher_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_members: {
+        Row: {
+          class_id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_members_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          allow_school: boolean
+          anonymous_mode: boolean
+          created_at: string
+          id: string
+          join_code: string
+          name: string
+          teacher_id: string
+        }
+        Insert: {
+          allow_school?: boolean
+          anonymous_mode?: boolean
+          created_at?: string
+          id?: string
+          join_code?: string
+          name: string
+          teacher_id: string
+        }
+        Update: {
+          allow_school?: boolean
+          anonymous_mode?: boolean
+          created_at?: string
+          id?: string
+          join_code?: string
+          name?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
+      competency_badges: {
+        Row: {
+          description: string
+          icon: string
+          id: string
+          linked_skill: string
+          name: string
+        }
+        Insert: {
+          description: string
+          icon: string
+          id?: string
+          linked_skill: string
+          name: string
+        }
+        Update: {
+          description?: string
+          icon?: string
+          id?: string
+          linked_skill?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      flags: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          source: string
+          submission_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          source?: string
+          submission_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          source?: string
+          submission_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flags_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      micro_tasks: {
+        Row: {
+          artifact_id: string | null
+          assigned_by: string
+          created_at: string
+          due_at: string | null
+          duration_min: number
+          id: string
+          instructions: string
+          status: string
+          student_id: string
+          title: string
+        }
+        Insert: {
+          artifact_id?: string | null
+          assigned_by: string
+          created_at?: string
+          due_at?: string | null
+          duration_min?: number
+          id?: string
+          instructions: string
+          status?: string
+          student_id: string
+          title: string
+        }
+        Update: {
+          artifact_id?: string | null
+          assigned_by?: string
+          created_at?: string
+          due_at?: string | null
+          duration_min?: number
+          id?: string
+          instructions?: string
+          status?: string
+          student_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "micro_tasks_artifact_id_fkey"
+            columns: ["artifact_id"]
+            isOneToOne: false
+            referencedRelation: "artifacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age_13_plus: boolean
+          avatar_url: string | null
+          created_at: string
+          display_name: string
+          grade: number | null
+          id: string
+          voice_consent: boolean
+        }
+        Insert: {
+          age_13_plus?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          grade?: number | null
+          id: string
+          voice_consent?: boolean
+        }
+        Update: {
+          age_13_plus?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          grade?: number | null
+          id?: string
+          voice_consent?: boolean
+        }
+        Relationships: []
+      }
+      reactions: {
+        Row: {
+          artifact_id: string
+          emoji: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          artifact_id: string
+          emoji: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artifact_id?: string
+          emoji?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_artifact_id_fkey"
+            columns: ["artifact_id"]
+            isOneToOne: false
+            referencedRelation: "artifacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submission_versions: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          id: string
+          step1_text: string | null
+          step2_text: string | null
+          step3_text: string | null
+          submission_id: string
+          version: number
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          step1_text?: string | null
+          step2_text?: string | null
+          step3_text?: string | null
+          submission_id: string
+          version: number
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          step1_text?: string | null
+          step2_text?: string | null
+          step3_text?: string | null
+          submission_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_versions_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          challenge_id: string
+          concept_token: string | null
+          confidence: number | null
+          confidence_initial: number | null
+          created_at: string
+          id: string
+          rubric: Json | null
+          started_at: string
+          status: string
+          step_images: Json
+          step1_text: string
+          step2_text: string
+          step3_text: string
+          student_id: string
+          updated_at: string
+          version: number
+          voice_duration_s: number | null
+          voice_transcript: string | null
+          voice_url: string | null
+        }
+        Insert: {
+          challenge_id: string
+          concept_token?: string | null
+          confidence?: number | null
+          confidence_initial?: number | null
+          created_at?: string
+          id?: string
+          rubric?: Json | null
+          started_at?: string
+          status?: string
+          step_images?: Json
+          step1_text?: string
+          step2_text?: string
+          step3_text?: string
+          student_id: string
+          updated_at?: string
+          version?: number
+          voice_duration_s?: number | null
+          voice_transcript?: string | null
+          voice_url?: string | null
+        }
+        Update: {
+          challenge_id?: string
+          concept_token?: string | null
+          confidence?: number | null
+          confidence_initial?: number | null
+          created_at?: string
+          id?: string
+          rubric?: Json | null
+          started_at?: string
+          status?: string
+          step_images?: Json
+          step1_text?: string
+          step2_text?: string
+          step3_text?: string
+          student_id?: string
+          updated_at?: string
+          version?: number
+          voice_duration_s?: number | null
+          voice_transcript?: string | null
+          voice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      synthesis_sessions: {
+        Row: {
+          artifact_ids: string[]
+          class_id: string
+          code: string
+          current_index: number
+          ended_at: string | null
+          id: string
+          misconception_artifact_id: string | null
+          prompts: string[]
+          revealed_misconception: boolean
+          started_at: string
+          teacher_id: string
+          transfer_minutes: number | null
+          transfer_started_at: string | null
+          transfer_task: string | null
+        }
+        Insert: {
+          artifact_ids?: string[]
+          class_id: string
+          code?: string
+          current_index?: number
+          ended_at?: string | null
+          id?: string
+          misconception_artifact_id?: string | null
+          prompts?: string[]
+          revealed_misconception?: boolean
+          started_at?: string
+          teacher_id: string
+          transfer_minutes?: number | null
+          transfer_started_at?: string | null
+          transfer_task?: string | null
+        }
+        Update: {
+          artifact_ids?: string[]
+          class_id?: string
+          code?: string
+          current_index?: number
+          ended_at?: string | null
+          id?: string
+          misconception_artifact_id?: string | null
+          prompts?: string[]
+          revealed_misconception?: boolean
+          started_at?: string
+          teacher_id?: string
+          transfer_minutes?: number | null
+          transfer_started_at?: string | null
+          transfer_task?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "synthesis_sessions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transfer_responses: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          response: string
+          session_id: string
+          student_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          response?: string
+          session_id: string
+          student_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          response?: string
+          session_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfer_responses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "synthesis_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      artifact_class: { Args: { _artifact_id: string }; Returns: string }
+      can_view_artifact: {
+        Args: { _artifact_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_view_class: {
+        Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
+      challenge_class: { Args: { _challenge_id: string }; Returns: string }
+      find_session_by_code: { Args: { _code: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_school_sso: { Args: { _user_id: string }; Returns: boolean }
+      is_class_member: {
+        Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_class_teacher: {
+        Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_sso_teacher: { Args: { _user_id: string }; Returns: boolean }
+      join_class: { Args: { _code: string }; Returns: string }
+      submission_class: { Args: { _submission_id: string }; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "student" | "teacher" | "school_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +876,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["student", "teacher", "school_admin"],
+    },
   },
 } as const
