@@ -50,7 +50,7 @@ export function AuthForm() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center gap-6 p-6">
+    <main className="mx-auto flex max-w-md flex-col gap-6 px-6 py-12">
       <div className="text-center">
         <img src={logo} alt="MySchoolStory logo" width={96} height={96} className="mx-auto h-24 w-24 object-contain" />
         <p className="mt-2 text-2xl font-extrabold tracking-tight text-primary">MySchoolStory</p>
