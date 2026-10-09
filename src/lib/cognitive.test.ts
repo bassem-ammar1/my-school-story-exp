@@ -12,13 +12,13 @@ describe("private cognitive reflection scoring", () => {
   it("ends at question 30 and 100 percent for 30 valid answers", () => expect(assessmentProgress(Object.fromEntries(QUESTIONS.map(q => [q.id, 3])), 30)).toEqual({ answered: 30, total: 30, questionNumber: 30, finalStep: true, percent: 100 }));
   it("derives numeric preference results from all five answers, not the strongest alone", () => {
     const a = Object.fromEntries(QUESTIONS.filter(q => q.category === "learning").map((q, i) => [q.id, i + 1]));
-    expect(categoryRing("learning", a)).toMatchObject({ label: "3/5", fill: 50 });
+    expect(categoryRing("learning", a)).toEqual({ label: "3/5", fill: 50 });
   });
-  it("derives numeric skill results from answers including reverse items", () => expect(categoryRing("personal", { "planning-1": 5, "planning-2": 4, "adaptability-1": 3, "adaptability-2": 2, "creativity-1": 4 })).toMatchObject({ label: "75%", fill: 75 }));
+  it("shows skill circles as a grade out of 5 from answers including reverse items", () => expect(categoryRing("personal", { "planning-1": 5, "planning-2": 4, "adaptability-1": 3, "adaptability-2": 2, "creativity-1": 4 })).toEqual({ label: "4/5", fill: 75 }));
   it("keeps missing answers distinct from a zero skill score", () => {
     expect(categoryRing("personal", {})).toMatchObject({ label: "0/5", fill: 0 });
     expect(categoryRing("personal", { "planning-1": 5 })).toMatchObject({ label: "1/5", fill: 0 });
-    expect(categoryRing("personal", { "planning-1": 1, "planning-2": 1, "adaptability-1": 1, "adaptability-2": 5, "creativity-1": 1 }).label).toBe("0%");
+    expect(categoryRing("personal", { "planning-1": 1, "planning-2": 1, "adaptability-1": 1, "adaptability-2": 5, "creativity-1": 1 })).toEqual({ label: "1/5", fill: 0 });
   });
   it("reverses 2 to 4 and yields 4.33 and 83.3 for the worked example", () => { const r = scoreDimension(fx(3, [2]), { q0: 4, q1: 5, q2: 2 }, true); expect(r.average).toBeCloseTo(4.33333); expect(r.responseScore).toBeCloseTo(83.33333); });
   it("needs 4 of 5 answers for a habit category %", () => { expect(scoreCategory("personal", { "planning-1": 5, "planning-2": 5, "creativity-1": 5 }).responseScore).toBeNull(); expect(scoreCategory("personal", { "planning-1": 5, "planning-2": 5, "creativity-1": 5, "adaptability-1": 1 }).responseScore).toBe(75); });
