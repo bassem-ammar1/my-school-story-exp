@@ -82,6 +82,6 @@ describe("cognitiveProfile", () => {
     expect(p).toEqual({ problem_solving: 3, expressing_ideas: 3, using_feedback: 2 });
   });
   it("returns null with no scored work", () => {
-    expect(cognitiveProfile([]).problem_solving).toBeNull();
+    expect(cognitiveProfile([])["problem_solving"]).toBeNull();
   });
 });
