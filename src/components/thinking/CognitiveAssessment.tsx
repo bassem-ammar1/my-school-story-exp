@@ -119,13 +119,6 @@ function Assessment({ studentId }: { studentId: string }) {
         {interests.length > 0 && <p><b>Main interests today:</b> {names(interests)}.</p>}
         <p><b>Suggested environment:</b> {env}.</p>
         <div><b>Activities to try:</b><ul className="mt-1 list-disc pl-5 text-muted-foreground">{[...interests, ...grow].slice(0, 3).map(d => <li key={d.id}>{d.activity}</li>)}</ul></div></section>
-      {CATEGORIES.map(c => <section key={c.id} className="space-y-3 border-t pt-4"><h3 className="font-bold">{c.label}</h3>{results.filter(d => d.category === c.id).map(d => {
-        const prev = previousScores.find(p => p.id === d.id);
-        return <div key={d.id} className="space-y-1"><div className="flex justify-between text-sm"><span className="font-medium">{d.label}</span><span className="text-muted-foreground">{d.average === null ? "Not enough answers" : (d.kind === "interest" ? INTEREST : AGREEMENT)[Math.round(d.average) - 1]}</span></div>
-          {d.average !== null && <Bar value={(d.average - 1) / 4 * 100} />}
-          <p className="text-xs text-muted-foreground">{d.answered} of {d.available} answered{d.answered < d.available ? " · Provisional" : ""}{prev?.average != null && d.average !== null ? ` · Previous ${prev.average.toFixed(1)} → now ${d.average.toFixed(1)} / 5 (a response change, not proof of progress)` : ""}</p>
-        </div>;
-      })}</section>)}
       {selected.goal && <section className="border-t pt-4"><h3 className="font-bold">My reflection goal</h3><p className="mt-2 whitespace-pre-wrap text-sm">{selected.goal}</p></section>}
       <TeacherEvidence studentId={studentId} />
       <label className="flex items-start gap-3 border-t pt-4 text-sm"><Checkbox disabled={busy} checked={selected.use_for_coach} onCheckedChange={value => updatePermission(value === true)} /><span>Let my thinking coach use a summary of this reflection. Only the latest reflection can supply context.</span></label>
