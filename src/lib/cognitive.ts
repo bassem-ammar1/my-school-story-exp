@@ -1,6 +1,6 @@
 // Versioned, client-safe reflection definitions. No clinical or ability scores.
-export const QUESTIONNAIRE_VERSION = "self-reflection-v1";
-export const SCORING_VERSION = "habits-v1";
+export const QUESTIONNAIRE_VERSION = "self-reflection-v2";
+export const SCORING_VERSION = "habits-v2";
 export type Answers = Record<string, number>;
 export type Question = { id: string; category: string; dimension: string; text: string; reverse: boolean; format: "agreement" | "interest" };
 export const AGREEMENT = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"];
@@ -43,15 +43,15 @@ function items(category: string, dimension: string, texts: (string | [string, bo
   return texts.map((item, i) => ({ id: `${dimension}-${i + 1}`, category, dimension, text: typeof item === "string" ? item : item[0], reverse: typeof item === "string" ? false : item[1], format: category === "interests" ? "interest" : "agreement" }));
 }
 export const QUESTIONS: Question[] = [
-  ...items("personal", "planning", ["I plan my tasks before starting them.", "I complete my responsibilities on time.", "I finish what I start."]),
-  ...items("personal", "adaptability", ["I adapt easily when plans change.", "I try new ways of doing things when my usual way does not work.", ["I find it hard to adjust when a plan changes.", true]]),
-  ...items("personal", "creativity", ["I enjoy finding creative solutions to problems.", "I try different solutions when facing difficulties.", "I think of new ways to use everyday objects."]),
-  ...items("social", "collaboration", ["I enjoy working with other students.", "I willingly help my teammates.", "I include classmates who feel left out."]),
-  ...items("social", "empathy", ["I try to understand how others feel.", "I notice when a friend is upset.", "I imagine how other people feel."]),
-  ...items("social", "conflict", ["I try to resolve disagreements peacefully.", "I wait to calm down before talking about a problem.", "I try to find a solution that works for everyone."]),
-  ...items("communication", "expression", ["I can express my ideas clearly.", "I feel comfortable sharing my opinions.", "I explain my thoughts with an example when someone is unsure."]),
-  ...items("communication", "listening", ["I listen carefully when others speak.", "I check that I understood what someone meant.", ["I interrupt when others are talking.", true]]),
-  ...items("communication", "feedback", ["I can give helpful feedback.", "I learn from feedback provided by others.", "I ask for suggestions to make my work better."]),
+  ...items("personal", "planning", ["I plan my tasks before starting them.", "I complete my responsibilities on time."]),
+  ...items("personal", "adaptability", ["I adapt easily when plans change.", ["I find it hard to adjust when a plan changes.", true]]),
+  ...items("personal", "creativity", ["I enjoy finding creative solutions to problems."]),
+  ...items("social", "collaboration", ["I enjoy working with other students.", "I include classmates who feel left out."]),
+  ...items("social", "empathy", ["I try to understand how others feel."]),
+  ...items("social", "conflict", ["I try to resolve disagreements peacefully.", "I try to find a solution that works for everyone."]),
+  ...items("communication", "expression", ["I can express my ideas clearly.", "I feel comfortable sharing my opinions."]),
+  ...items("communication", "listening", ["I listen carefully when others speak.", ["I interrupt when others are talking.", true]]),
+  ...items("communication", "feedback", ["I learn from feedback provided by others."]),
   ...items("learning", "independent", ["I enjoy solving problems independently."]),
   ...items("learning", "discussion", ["I learn well by discussing ideas with others."]),
   ...items("learning", "practical", ["I enjoy learning through practical activities."]),
@@ -86,10 +86,19 @@ export function scoreDimension(questions: Question[], answers: Answers, habit: b
 }
 export function equalCategoryAverage(values: (number | null)[]) { return values.length && values.every(v => v !== null) ? values.reduce<number>((sum, v) => sum + (v ?? 0), 0) / values.length : null; }
 export function scoreAssessment(answers: Answers) {
-  return DIMENSIONS.map(d => ({ ...d, kind: CATEGORIES.find(c => c.id === d.category)?.kind ?? "habit", ...scoreDimension(QUESTIONS.filter(q => q.dimension === d.id), answers, ["personal", "social", "communication"].includes(d.category)) }));
+  return DIMENSIONS.map(d => ({ ...d, kind: CATEGORIES.find(c => c.id === d.category)?.kind ?? "habit", ...scoreDimension(QUESTIONS.filter(q => q.dimension === d.id), answers, false) }));
+}
+// Habit percentages are scored per category (5 questions, needs 4 answers); sub-skills show answers only.
+export function scoreCategory(categoryId: string, answers: Answers) {
+  const kind = CATEGORIES.find(c => c.id === categoryId)?.kind;
+  return scoreDimension(QUESTIONS.filter(q => q.category === categoryId), answers, kind === "habit");
+}
+export function knownAnswers(value: unknown): Answers {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(Object.entries(value).filter(([id, v]) => QUESTIONS.some(q => q.id === id) && validAnswer(v))) as Answers;
 }
 export function compatibleAttempts(a: { questionnaire_version: string; scoring_version: string }, b: { questionnaire_version: string; scoring_version: string }) { return a.questionnaire_version === b.questionnaire_version && a.scoring_version === b.scoring_version && a.questionnaire_version === QUESTIONNAIRE_VERSION && a.scoring_version === SCORING_VERSION; }
 export function reflectionContext(attempt: { questionnaire_version: string; scoring_version: string; responses: unknown; goal: string; submitted_at: string | null }) {
   if (attempt.questionnaire_version !== QUESTIONNAIRE_VERSION || attempt.scoring_version !== SCORING_VERSION) return null;
-  return { source: "self_report", questionnaireVersion: attempt.questionnaire_version, scoringVersion: attempt.scoring_version, date: attempt.submitted_at, goal: attempt.goal, dimensions: scoreAssessment(parseAnswers(attempt.responses)).map(d => ({ dimension: d.id, kind: d.kind, average: d.average, answered: d.answered, available: d.available })), uncertainty: "Unvalidated self-report; mood and context affect answers. Not evidence of ability, diagnosis or fixed traits. Never rank or make placement decisions." };
+  return { source: "self_report", questionnaireVersion: attempt.questionnaire_version, scoringVersion: attempt.scoring_version, date: attempt.submitted_at, goal: attempt.goal, categories: CATEGORIES.map(c => ({ category: c.id, kind: c.kind, ...scoreCategory(c.id, parseAnswers(attempt.responses)) })).map(({ responseScore: _r, ...c }) => c), dimensions: scoreAssessment(parseAnswers(attempt.responses)).map(d => ({ dimension: d.id, kind: d.kind, average: d.average, answered: d.answered, available: d.available })), uncertainty: "Unvalidated self-report; mood and context affect answers. Not evidence of ability, diagnosis or fixed traits. Never rank or make placement decisions." };
 }
