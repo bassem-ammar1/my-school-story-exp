@@ -58,9 +58,12 @@ export function AuthForm() {
         <p className="mt-1 text-muted-foreground">Teachers: use school sign-in to unlock the Orchestrator.</p>
       </div>
       <div className="grid gap-2 rounded-2xl bg-card p-5 shadow-soft">
-        <p className="text-sm font-semibold">School sign-in</p>
-        <Button variant="outline" onClick={() => sso("google")}>Google Workspace for Education</Button>
+        <p className="text-sm font-semibold">Quick sign-in</p>
+        <Button variant="outline" onClick={() => sso("google")}>
+          {mode === "in" ? "Sign in with Google" : "Sign up with Google"}
+        </Button>
         <Button variant="outline" onClick={() => sso("microsoft")}>Microsoft Entra ID</Button>
+        <p className="text-xs text-muted-foreground">Teachers: use school sign-in to unlock the Orchestrator.</p>
       </div>
       <form onSubmit={submit} className="grid gap-3 rounded-2xl bg-card p-5 shadow-soft">
         {mode === "up" && (
