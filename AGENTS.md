@@ -40,3 +40,6 @@
 - Feed posts, likes, comments/replies live in `posts`/`post_likes`/`post_comments` via `src/lib/posts.ts`; reports in `reports` are moderated only by school admins — database policies enforce who can write what.
 - The bottom-nav Assessment tab (/lab) is only the private cognitive assessment; class joining and teacher challenges live on the Thinking Lab page (/challenges) — keeps self-reflection separate from teacher work.
 - The shared header derives its actions from reactive router state using `header-actions.ts`; sign-out cancels queries and clears cached private data before auth teardown and a history-replacing redirect — prevents stale actions and protected-state restoration.
+- Teacher endorsements live on `artifacts` (endorsed_by/at/note) guarded by a trigger allowing only the class teacher — students cannot self-endorse.
+- Published thinking also creates a `posts` row with `challenge_id`; non-members see challenges only via the `challenge_preview` RPC (view-only, answer in comments) — class membership stays the solve boundary.
+- The general AI Coach chat uses `coachChat` in `thinking.functions.ts` via `generateChat` in `ai.server.ts` — same server-only AI boundary as hints.
