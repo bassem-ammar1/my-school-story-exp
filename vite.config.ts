@@ -14,6 +14,8 @@ export default defineConfig({
     optimizeDeps: {
       include: [
         'recharts', 'react', 'react-dom/client', 'react/jsx-runtime',
+        '@tanstack/history', '@tanstack/router-core', '@tanstack/router-core/isServer',
+        '@tanstack/router-core/ssr/client', '@tanstack/router-core/ssr/server', 'h3-v2', 'seroval',
         ...Object.keys(packageJson.dependencies).filter(name => name.startsWith('@radix-ui/')),
       ],
     },

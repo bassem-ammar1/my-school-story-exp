@@ -11,7 +11,7 @@
 
 # Project rules
 
-- Pre-optimize Recharts and every installed Radix package with React in Vite because route-split controls otherwise trigger late dependency optimization and invalidate the active React graph during navigation.
+- Pre-optimize Recharts, every installed Radix package and discovered TanStack runtime dependencies with React in Vite because route-split controls otherwise trigger late dependency optimization and invalidate the active React graph during navigation.
 
 - Birth dates live in owner-only student_safety, not publicly readable profiles; age is derived and consent fields cannot be self-edited.
 - School owners are scoped through schools and school_enrollments, never a global school_admin grant; test schools have no assessment or post-management access.
