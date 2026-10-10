@@ -79,7 +79,7 @@ function SearchPage() {
       </section>
 
       <p className="px-1 text-center text-xs text-muted-foreground">
-        Looking for a school? <Link to="/profile" className="text-primary underline">Ask a teacher to invite you</Link>
+        Have a class code from your teacher? <Link to="/challenges" className="text-primary underline">Join your class in the Thinking Lab</Link>
       </p>
     </main>
   );

@@ -38,7 +38,7 @@ function Home() {
           </Link>
         ))}
       </section>
-      {posts.map((p) => <PostCard key={`${p.id}-${p.liked}`} p={p} meId={me?.id} />)}
+      {posts.map((p) => <PostCard key={`${p.id}-${p.mine}`} p={p} meId={me?.id} />)}
       {data.length > 0 && (
         <section className="bg-card p-3">
           <h2 className="mb-2 font-semibold">Thinking from your classes</h2>

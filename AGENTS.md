@@ -22,3 +22,4 @@
 - Cognitive attempts are account-owned and owner-only in database policies; a trigger freezes submitted responses while permitting coach-consent revocation and owner deletion — school roles never imply access.
 - Cognitive persistence uses authenticated server functions in `src/lib/cognitive.functions.ts`; optional minimal context reaches the existing coach through `thinking.functions.ts` only — raw responses and identities are excluded from prompts.
 - Feed posts, likes, comments/replies live in `posts`/`post_likes`/`post_comments` via `src/lib/posts.ts`; reports in `reports` are moderated only by school admins — database policies enforce who can write what.
+- The bottom-nav Assessment tab (/lab) is only the private cognitive assessment; class joining and teacher challenges live on the Thinking Lab page (/challenges) — keeps self-reflection separate from teacher work.

@@ -48,7 +48,7 @@ function Profile() {
           <p className="mt-1 text-sm font-semibold text-primary">{arts.length} published thinking posts</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
             <Button className="rounded-full" asChild><Link to="/post">New post</Link></Button>
-            <Button variant="outline" className="rounded-full" asChild><Link to="/lab">Assessments</Link></Button>
+            <Button variant="outline" className="rounded-full" asChild><Link to="/lab">Assessment</Link></Button>
           </div>
         </div>
       </section>
@@ -70,7 +70,7 @@ function Profile() {
           {tasks.map((t) => (
             <div key={t.id} className="rounded-2xl bg-card p-4 shadow-soft">
               <div className="flex items-center justify-between"><h3 className="font-semibold">{t.title} · {t.duration_min} min</h3>
-                {t.status !== "done" ? <Button size="sm" onClick={async () => { await supabase.from("micro_tasks").update({ status: "done" }).eq("id", t.id); qc.invalidateQueries({ queryKey: ["my-tasks"] }); }}>Mark done</Button> : <span className="text-sm text-muted-foreground">Done ✓</span>}
+                {t.status !== "done" ? <Button size="sm" onClick={async () => { const { error } = await supabase.from("micro_tasks").update({ status: "done" }).eq("id", t.id); if (error) toast.error("Couldn't update this task."); else { toast.success("Task done"); qc.invalidateQueries({ queryKey: ["my-tasks"] }); } }}>Mark done</Button> : <span className="text-sm text-muted-foreground">Done ✓</span>}
               </div>
               <p className="mt-1 text-sm">{t.instructions}</p>
             </div>

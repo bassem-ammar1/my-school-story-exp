@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ThumbsUp, MessageSquare, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ReportButton } from "@/components/thinking/ReportButton";
-import { addComment, deleteComment, loadComments, setLike, timeAgo, type CommentNode, type FeedPost } from "@/lib/posts";
+import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
 
 function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?: string | undefined; onReply: (c: CommentNode) => void; onDelete: (id: string) => void; reply?: boolean }) {
   return (
@@ -26,13 +26,17 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [replyTo, setReplyTo] = useState<CommentNode | null>(null);
-  const [liked, setLiked] = useState(p.liked);
-  const likes = p.likes - (p.liked ? 1 : 0) + (liked ? 1 : 0);
+  const [mine, setMine] = useState<ReactionId | null>(p.mine);
+  const [picker, setPicker] = useState(false);
+  const counts = applyReaction(p.reactions, p.mine, mine);
+  const total = totalReactions(counts);
+  const top = REACTIONS.filter((r) => (counts[r.id] ?? 0) > 0).sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 3);
+  const current = REACTIONS.find((r) => r.id === mine);
   const { data: thread = [] } = useQuery({ queryKey: ["comments", p.id], enabled: open, queryFn: () => loadComments(p.id) });
   const refresh = () => { qc.invalidateQueries({ queryKey: ["comments", p.id] }); qc.invalidateQueries({ queryKey: ["posts"] }); };
-  const like = async () => {
-    const next = !liked; setLiked(next);
-    try { await setLike(p.id, next); qc.invalidateQueries({ queryKey: ["posts"] }); } catch { setLiked(!next); toast.error("Couldn't save your like."); }
+  const react = async (next: ReactionId | null) => {
+    const prev = mine; setMine(next); setPicker(false);
+    try { await setReaction(p.id, next); qc.invalidateQueries({ queryKey: ["posts"] }); } catch { setMine(prev); toast.error("Couldn't save your reaction."); }
   };
   const send = async () => {
     if (!text.trim()) return;
@@ -57,10 +61,19 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
       </div>
       <p className="whitespace-pre-wrap px-3 py-3 text-sm">{p.body}</p>
       <div className="flex justify-between px-3 pb-2 text-xs text-muted-foreground">
-        <span>👍 {likes}</span><button onClick={() => setOpen(!open)}>{p.comments} comments</button>
+        <span aria-label={`${total} reactions`}>{top.length ? top.map((r) => r.emoji).join("") : "👍"} {total}</span><button onClick={() => setOpen(!open)}>{p.comments} comments</button>
       </div>
-      <div className="grid grid-cols-3 border-t text-sm font-medium text-muted-foreground">
-        <button onClick={like} aria-pressed={liked} className={`flex items-center justify-center gap-1.5 py-2.5 ${liked ? "text-primary" : ""}`}><ThumbsUp className="h-4 w-4" />Like</button>
+      <div className="relative grid grid-cols-3 border-t text-sm font-medium text-muted-foreground">
+        {picker && (
+          <div role="menu" aria-label="Choose a reaction" className="absolute bottom-full left-2 z-20 mb-1 flex gap-1 rounded-full border bg-card p-1.5 shadow-soft animate-in fade-in zoom-in-95">
+            {REACTIONS.map((r) => (
+              <button key={r.id} role="menuitemradio" aria-checked={mine === r.id} aria-label={r.label} title={r.label} onClick={() => react(mine === r.id ? null : r.id)}
+                className={`grid h-10 w-10 place-items-center rounded-full text-2xl transition hover:scale-125 ${mine === r.id ? "bg-secondary" : ""}`}>{r.emoji}</button>
+            ))}
+          </div>
+        )}
+        <button onClick={() => setPicker(!picker)} aria-expanded={picker} aria-label={current ? `Your reaction: ${current.label}. Change reaction` : "React"} className={`flex items-center justify-center gap-1.5 py-2.5 ${current ? "text-primary" : ""}`}>
+          {current ? <span className="text-base leading-none">{current.emoji}</span> : <ThumbsUp className="h-4 w-4" />}{current?.label ?? "Like"}</button>
         <button onClick={() => setOpen(!open)} className="flex items-center justify-center gap-1.5 py-2.5"><MessageSquare className="h-4 w-4" />Comment</button>
         <button onClick={share} className="flex items-center justify-center gap-1.5 py-2.5"><Share2 className="h-4 w-4" />Share</button>
       </div>
