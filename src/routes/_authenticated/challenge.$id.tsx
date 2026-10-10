@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ThinkingChallenge } from "@/components/thinking/ThinkingChallenge";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +23,9 @@ function ChallengePage() {
     queryKey: ["challenge", id],
     enabled: !!me,
     queryFn: async () => {
-      const { data: ch } = await supabase.from("challenges").select("id,title,prompt_text,prompt_image,concept_tokens").eq("id", id).single();
+      const { data: preview } = await supabase.rpc("challenge_preview", { _id: id });
+      const ch = preview?.[0] ?? null;
+      if (!ch || !ch.eligible) return { ch, sub: null, initial: null, viewOnly: true as const };
       let { data: sub } = await supabase.from("submissions").select("*").eq("challenge_id", id).eq("student_id", me!.id).maybeSingle();
       if (!sub) sub = (await supabase.from("submissions").insert({ challenge_id: id, student_id: me!.id }).select().single()).data;
       const imgs = ((sub?.step_images ?? []) as StepImage[]);
@@ -31,12 +35,22 @@ function ChallengePage() {
         voice: { url: await signedUrl(sub?.voice_url), duration: sub?.voice_duration_s ?? 0, transcript: sub?.voice_transcript ?? "" },
         concept: sub?.concept_token ?? null, confidence: sub?.confidence ?? null,
       };
-      return { ch, sub, initial };
+      return { ch, sub, initial, viewOnly: false as const };
     },
   });
 
   if (isLoading || !data || !me) return <p className="p-10 text-center text-muted-foreground">Loading…</p>;
-  if (!data.ch || !data.sub) return <p className="p-10 text-center">This challenge isn't available. Join the class first.</p>;
+  if (data.viewOnly) {
+    if (!data.ch) return <p className="p-10 text-center">This challenge isn't available.</p>;
+    return (
+      <div className="mx-auto flex max-w-[720px] flex-col gap-4 p-6">
+        <ThinkingChallenge challenge={data.ch} />
+        <p className="rounded-2xl bg-secondary p-4 text-sm">👀 View only — this challenge is for its own class. Try answering it in the comments of the post in the feed!</p>
+        <Button variant="outline" asChild><Link to="/home">Back to feed</Link></Button>
+      </div>
+    );
+  }
+  if (!data.ch || !data.sub || !data.initial) return <p className="p-10 text-center">This challenge isn't available. Join the class first.</p>;
   const sub = data.sub;
   let voicePath = sub.voice_url;
   let lastSaved = { s1: sub.step1_text, s2: sub.step2_text, s3: sub.step3_text };
@@ -93,6 +107,13 @@ function ChallengePage() {
         if (error && !error.message.includes("duplicate")) throw error;
         sub.status = "published";
         await track("artifact_published", { visibility: "class" });
+        const { count } = await supabase.from("posts").select("id", { count: "exact", head: true }).eq("author_id", me.id).eq("challenge_id", id);
+        if (!count) {
+          const plan = (s.steps[1] || s.steps[0]).trim().slice(0, 300);
+          const body = `🧪 I solved a Thinking Lab challenge: “${data.ch!.title}”\n\nConcept I used: ${s.concept ?? "-"}\nMy plan: ${plan}\n\nTap “View challenge” to try it — or share your answer in the comments!`;
+          const { error: pe } = await supabase.from("posts").insert({ author_id: me.id, body: body.slice(0, 1000), challenge_id: id });
+          if (pe) throw pe;
+        }
       }}
     />
   );
