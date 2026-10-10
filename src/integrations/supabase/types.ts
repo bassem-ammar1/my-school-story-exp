@@ -971,6 +971,7 @@ export type Database = {
         Args: { _class_id: string; _user_id: string }
         Returns: boolean
       }
+      is_hurtful_text: { Args: { _t: string }; Returns: boolean }
       is_sso_teacher: { Args: { _user_id: string }; Returns: boolean }
       join_class: { Args: { _code: string }; Returns: string }
       review_teacher_request: {
