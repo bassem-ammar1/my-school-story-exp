@@ -134,6 +134,13 @@
       "when": 1791615528207,
       "tag": "0018_school_profiles_and_follows",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791616018367,
+      "tag": "0019_restrict_school_posts_to_owner",
+      "breakpoints": true
     }
   ]
 }
