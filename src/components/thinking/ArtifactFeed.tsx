@@ -7,7 +7,7 @@ import type { ArtifactView } from "./types";
 
 type Sort = "newest" | "annotated" | "strategies";
 
-export function ArtifactFeed({ artifacts, onOpen, onReact }: { artifacts: ArtifactView[]; onOpen: (a: ArtifactView) => void; onReact?: (a: ArtifactView, emoji: string) => void }) {
+export function ArtifactFeed({ artifacts, onOpen, onReact, onEndorse }: { artifacts: ArtifactView[]; onOpen: (a: ArtifactView) => void; onReact?: (a: ArtifactView, emoji: string) => void; onEndorse?: ((a: ArtifactView) => void) | undefined }) {
   const [concept, setConcept] = useState("all");
   const [sort, setSort] = useState<Sort>("newest");
   const concepts = [...new Set(artifacts.map((a) => a.concept))];
@@ -41,7 +41,7 @@ export function ArtifactFeed({ artifacts, onOpen, onReact }: { artifacts: Artifa
         <p className="rounded-2xl bg-card p-10 text-center text-muted-foreground shadow-soft">{COPY.empty}</p>
       ) : (
         <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {list.map((a) => <ArtifactCard key={a.id} a={a} onOpen={() => onOpen(a)} onReact={onReact ? (e) => onReact(a, e) : undefined} />)}
+          {list.map((a) => <ArtifactCard key={a.id} a={a} onOpen={() => onOpen(a)} onReact={onReact ? (e) => onReact(a, e) : undefined} onEndorse={onEndorse ? () => onEndorse(a) : undefined} />)}
         </div>
       )}
     </div>
