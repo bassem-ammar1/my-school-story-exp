@@ -5,11 +5,20 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import packageJson from './package.json';
 
 export default defineConfig({
   vite: {
-    // Optimize charts alongside React at startup, not during a signed-in navigation.
-    optimizeDeps: { include: ['recharts', 'react', 'react-dom/client', 'react/jsx-runtime'] },
+    // Route-split controls are not all discovered on startup. Prepare the entire
+    // installed Radix family together so opening a new control cannot rebundle React.
+    optimizeDeps: {
+      include: [
+        'recharts', 'react', 'react-dom/client', 'react/jsx-runtime',
+        '@tanstack/history', '@tanstack/router-core', '@tanstack/router-core/isServer',
+        '@tanstack/router-core/ssr/client', '@tanstack/router-core/ssr/server', 'h3-v2', 'seroval',
+        ...Object.keys(packageJson.dependencies).filter(name => name.startsWith('@radix-ui/')),
+      ],
+    },
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

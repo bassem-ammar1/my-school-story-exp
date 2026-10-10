@@ -1,16 +1,18 @@
 import { Suspense, useState } from "react";
 import { useSuspenseQuery, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Brain, ArrowLeft, ArrowRight, LockKeyhole, History, Plus, Trash2, Download, Save } from "lucide-react";
+import { Brain, ArrowLeft, ArrowRight, LockKeyhole, History, Plus, Trash2, Download, Save, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, assessmentProgress, categoryRing, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
+import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, assessmentProgress, categoryRing, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, scoreCategory, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 import { QUESTION_EMOJIS } from '@/lib/question-emojis';
 import { ReflectionHistoryCharts } from './ReflectionHistoryCharts';
+import { ReflectionShare } from './ReflectionShare';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { useMe } from '@/hooks/use-me';
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
@@ -120,9 +122,10 @@ function Assessment({ studentId }: { studentId: string }) {
         <p><b>Suggested environment:</b> {env}.</p>
         <div><b>Activities to try:</b><ul className="mt-1 list-disc pl-5 text-muted-foreground">{[...interests, ...grow].slice(0, 3).map(d => <li key={d.id}>{d.activity}</li>)}</ul></div></section>
       {selected.goal && <section className="border-t pt-4"><h3 className="font-bold">My reflection goal</h3><p className="mt-2 whitespace-pre-wrap text-sm">{selected.goal}</p></section>}
-      <TeacherEvidence studentId={studentId} />
+      <ReflectionShare series={CATEGORIES.map(c=>({label:c.label,points:[{date:selected.submitted_at??selected.created_at,value:scoreCategory(c.id,knownAnswers(selected.responses)).average}]}))} label="Share my result to feed" />
+       <TeacherEvidence studentId={studentId} />
       <label className="flex items-start gap-3 border-t pt-4 text-sm"><Checkbox disabled={busy} checked={selected.use_for_coach} onCheckedChange={value => updatePermission(value === true)} /><span>Let my thinking coach use a summary of this reflection. Only the latest reflection can supply context.</span></label>
-      <p className="text-xs text-muted-foreground">Private to your account. Not shared with schools or teachers. You can delete it or download a copy.</p>
+      <p className="text-xs text-muted-foreground">Private unless you choose to publish a chart or summary to your feed. Your answers stay private. You can delete or download this reflection.</p>
       <div className="flex flex-wrap gap-2"><Button onClick={() => start()}><Plus className="size-4" />Retake</Button><Button variant="outline" size="icon" aria-label="Download reflection" title="Download reflection" onClick={() => exportAttempt(selected)}><Download className="size-4" /></Button><Button variant="outline" size="icon" disabled={busy} aria-label="Delete reflection" title="Delete reflection" onClick={() => deleteAttempt(selected)}><Trash2 className="size-4" /></Button></div>
     </div>;
   }
@@ -130,7 +133,7 @@ function Assessment({ studentId }: { studentId: string }) {
     <h2 className="text-xl font-bold">Get to know yourself</h2>
     <Button className="w-full" onClick={() => start()}><Plus className="size-4" />Start reflection</Button>
     <ReflectionHistoryCharts attempts={attempts} examples={me?.profile?.sample_portfolio??false}/>
-    {attempts.length > 0 && <section className="space-y-3 border-t pt-4"><h3 className="flex items-center gap-2 font-bold"><History className="size-4" />My reflection history</h3>{attempts.map(a => <div key={a.id} className="flex items-center gap-2 rounded-lg bg-card p-3 shadow-soft"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{a.status === "draft" ? "Saved draft" : "Reflection"} · {new Date(a.created_at).toLocaleDateString()}</p><p className="text-xs text-muted-foreground">{Object.keys(knownAnswers(a.responses)).length} of {QUESTIONS.length} answered</p></div><Button size="sm" variant="outline" onClick={() => { if (a.status === "draft") start(a); else { setSelected(a); setView("results"); } }}>{a.status === "draft" ? "Resume" : "View"}</Button><Button size="icon" variant="ghost" aria-label="Delete saved reflection" disabled={busy} onClick={() => deleteAttempt(a)}><Trash2 className="size-4" /></Button></div>)}</section>}
+    {attempts.length > 0 && <Collapsible className="space-y-3 border-t pt-4"><CollapsibleTrigger asChild><Button variant="ghost" className="w-full justify-between px-0 font-bold"><span className="flex items-center gap-2"><History className="size-4" />My reflection history</span><ChevronDown className="size-4" /></Button></CollapsibleTrigger><CollapsibleContent className="space-y-3">{attempts.map(a => <div key={a.id} className="flex items-center gap-2 rounded-lg bg-card p-3 shadow-soft"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{a.status === "draft" ? "Saved draft" : "Reflection"} · {new Date(a.created_at).toLocaleDateString()}</p><p className="text-xs text-muted-foreground">{Object.keys(knownAnswers(a.responses)).length} of {QUESTIONS.length} answered</p></div><Button size="sm" variant="outline" onClick={() => { if (a.status === "draft") start(a); else { setSelected(a); setView("results"); } }}>{a.status === "draft" ? "Resume" : "View"}</Button><Button size="icon" variant="ghost" aria-label="Delete saved reflection" disabled={busy} onClick={() => deleteAttempt(a)}><Trash2 className="size-4" /></Button></div>)}</CollapsibleContent></Collapsible>}
   </div>;
 }
 function TeacherEvidence({ studentId }: { studentId: string }) {
