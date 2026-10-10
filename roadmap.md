@@ -2,6 +2,7 @@
 
 - [ ] Add image posts, profile/cover pictures, signup role preferences, and enroll Mariam in a Thinking Lab with materials
 - [ ] Add a Themes tab in Settings with existing school themes and SpongeBob, Minecraft, and Powerpuff kids themes affecting backgrounds and button shapes
+- [ ] Add editable dated education tree grouping previous/current grades by school and planned next-school moves
 
 - [x] Three account color themes; editable profile details; sample portfolio and fully functional profile tabs
 
