@@ -84,6 +84,7 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
         {p.authorId !== meId && <ReportButton targetType="post" targetId={p.id} label={`${p.author}: ${p.body}`} />}
       </div>
       <p className="whitespace-pre-wrap px-3 py-3 text-sm">{p.body}</p>
+      {p.imageUrl && <img src={p.imageUrl} alt={p.imageAlt || 'Learning project'} loading="lazy" width={1024} height={768} className="mb-3 aspect-[4/3] w-full object-cover" />}
       <div className="flex justify-between px-3 pb-2 text-xs text-muted-foreground">
         <span aria-label={`${total} reactions`}>{top.length ? top.map((r) => r.emoji).join("") : "👍"} {total}</span><button onClick={() => setOpen(!open)}>{p.comments} comments</button>
       </div>
