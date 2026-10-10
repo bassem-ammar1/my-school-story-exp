@@ -26,6 +26,8 @@ export type ArtifactView = {
   annotationCount: number;
   publishedAt: string;
   visibility?: string;
+  endorsed?: boolean;
+  endorsementNote?: string | null;
 };
 
 export type AnnotationView = { id: string; step_ref: number | null; text: string; x: number | null; y: number | null; author?: string };

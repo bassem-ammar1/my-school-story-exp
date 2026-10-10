@@ -21,6 +21,8 @@ export const COPY = {
   voiceRecording: "Talk it through. There are no wrong ideas here.",
   voiceDone: "Nice! Listen back or re-record.",
   submit: "Get a hint",
+  submitChallenge: "Submit challenge",
+  submitted: "Challenge submitted! You can still share it with your class for teacher endorsement.",
   publish: "Share my thinking",
   published: "Your thinking is live! Classmates can learn from your approach.",
   hintLimit: "You've used your hints. Try revising a step, then ask again.",
