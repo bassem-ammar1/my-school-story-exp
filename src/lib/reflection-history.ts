@@ -24,3 +24,6 @@ export function historyChartData(attempts: HistoryAttempt[], category: string, e
  const sample = examples ? EXAMPLE_HISTORY.map(r=>({date:r.date,value:null as number|null,sampleValue:r.grades[category]??null})) : [];
  return [...real,...sample].sort((a,b)=>a.date.localeCompare(b.date));
 }
+export function combinedHistoryPoints(attempts: HistoryAttempt[], category: string, examples: boolean) {
+ return historyChartData(attempts,category,examples).map(p=>({date:p.date,value:p.value??p.sampleValue,illustrative:p.sampleValue!==null}));
+}
