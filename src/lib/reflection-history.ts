@@ -6,4 +6,4 @@ export function historyPoints(attempts: HistoryAttempt[], category: string) {
  for(const row of rows){const last=result.at(-1);if(last){const next=new Date(`${last.date}T00:00:00Z`);next.setUTCMonth(next.getUTCMonth()+3);if(row.date<next.toISOString().slice(0,10))continue;}result.push(row);}
  return result;
 }
-export const EXAMPLE_HISTORY = ['2024-10-10','2025-01-10','2025-07-10','2026-01-10','2026-07-10','2026-10-10'].map((date,i)=>({date,...Object.fromEntries(CATEGORIES.map((c,k)=>[c.id,Number((2.6+i*0.22+((i+k)%3)*0.15).toFixed(1))]))}));
+export const EXAMPLE_HISTORY = ['2024-10-10','2025-01-10','2025-07-10','2026-01-10','2026-07-10','2026-10-10'].map((date,i)=>({date,grades:Object.fromEntries(CATEGORIES.map((c,k)=>[c.id,Number((2.6+i*0.22+((i+k)%3)*0.15).toFixed(1))]))}));
