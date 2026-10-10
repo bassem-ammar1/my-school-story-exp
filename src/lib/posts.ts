@@ -99,10 +99,38 @@ export async function loadComments(postId: string): Promise<CommentNode[]> {
   return buildThread(data ?? [], Object.fromEntries(Object.entries(people).map(([k, v]) => [k, v.display_name])));
 }
 
+/** Mirrors the database `is_hurtful_text` rule so users get instant feedback. The database is the real gate. */
+const HURTFUL_EN = /\b(stupid|idiots?|dumb|ugly|losers?|fat|worthless|useless|pathetic|moron|retard(ed)?|freak|weirdo|trash|failure|disgusting|hate you|shut up|you suck|nobody likes you|kill yourself|kys)\b/i;
+const HURTFUL_AR = /(غبي|غبية|حمار|فاشل|فاشلة|تافه|تافهة|قبيح|قبيحة|اخرس|أخرس|حقير|حقيرة)/;
+export const isHurtful = (t: string) => HURTFUL_EN.test(t) || HURTFUL_AR.test(t);
+export const HURTFUL_MESSAGE = "This comment can't be posted — please keep it kind and respectful to others.";
+
 export async function addComment(postId: string, body: string, parentId?: string) {
+  if (isHurtful(body)) throw new Error(HURTFUL_MESSAGE);
   const { data: u } = await supabase.auth.getUser();
   const { error } = await supabase.from("post_comments").insert({ post_id: postId, author_id: u.user!.id, body: body.trim().slice(0, 500), parent_id: parentId ?? null });
-  if (error) throw error;
+  if (error) throw error.message.includes("HURTFUL_LANGUAGE") ? new Error(HURTFUL_MESSAGE) : error;
+}
+
+export async function loadProfile(id: string) {
+  const { data } = await supabase.from("profiles").select("id,display_name,avatar_url,grade").eq("id", id).maybeSingle();
+  return data;
+}
+
+export async function loadPostsBy(authorId: string): Promise<FeedPost[]> {
+  return (await loadPosts()).filter((p) => p.authorId === authorId);
+}
+
+export function shareTargets(text: string, url: string) {
+  const t = encodeURIComponent(text), u = encodeURIComponent(url), both = encodeURIComponent(`${text}\n${url}`);
+  return [
+    { name: "WhatsApp", href: `https://wa.me/?text=${both}` },
+    { name: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${u}&quote=${t}` },
+    { name: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+    { name: "X", href: `https://twitter.com/intent/tweet?text=${t}&url=${u}` },
+    { name: "Telegram", href: `https://t.me/share/url?url=${u}&text=${t}` },
+    { name: "Email", href: `mailto:?subject=${encodeURIComponent("A post on MySchoolStory")}&body=${both}` },
+  ];
 }
 
 export async function deleteComment(id: string) {
