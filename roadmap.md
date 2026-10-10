@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Fix route-aware header actions and verify Home search/share and secure logout on desktop/mobile
+- [x] Fix route-aware header actions and verify Home search/share and secure logout on desktop/mobile
 
 - [x] Correct cognitive result-circle numbers and validate question/answered counts
 - [x] Thinking Lab, feed, orchestrator, synthesis, demo, cognitive assessment
