@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles DROP CONSTRAINT profiles_theme_valid;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_theme_valid CHECK (theme IN ('classic','garden','coral','spongebob','minecraft','powerpuff'));
