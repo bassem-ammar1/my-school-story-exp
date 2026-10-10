@@ -268,3 +268,16 @@
 .theme-spongebob { --swatch-primary: oklch(0.84 0.17 95); --swatch-accent: oklch(0.73 0.12 210); }
 .theme-minecraft { --swatch-primary: oklch(0.43 0.11 145); --swatch-accent: oklch(0.78 0.1 230); }
 .theme-powerpuff { --swatch-primary: oklch(0.49 0.18 350); --swatch-accent: oklch(0.86 0.095 170); }
+
+/* Sign-up date of birth: the native picker glyph is hidden and its click target spans
+   the whole field, so the visible calendar icon rendered on the right is the affordance. */
+#signup-dob { position: relative; }
+#signup-dob::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
