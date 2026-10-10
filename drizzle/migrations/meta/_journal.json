@@ -113,6 +113,13 @@
       "when": 1791612386815,
       "tag": "0015_voice_age_guard_on_new_submissions",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791613936754,
+      "tag": "0016_artifact_teacher_endorsements",
+      "breakpoints": true
     }
   ]
 }

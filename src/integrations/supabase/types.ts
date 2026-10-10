@@ -148,6 +148,9 @@ export type Database = {
       }
       artifacts: {
         Row: {
+          endorsed_at: string | null
+          endorsed_by: string | null
+          endorsement_note: string | null
           id: string
           public_approved: boolean
           published_at: string
@@ -155,6 +158,9 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          endorsed_at?: string | null
+          endorsed_by?: string | null
+          endorsement_note?: string | null
           id?: string
           public_approved?: boolean
           published_at?: string
@@ -162,6 +168,9 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          endorsed_at?: string | null
+          endorsed_by?: string | null
+          endorsement_note?: string | null
           id?: string
           public_approved?: boolean
           published_at?: string
