@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Add image posts, profile/cover pictures, signup role preferences, and enroll Mariam in a Thinking Lab with materials
+
 - [x] Three account color themes; editable profile details; sample portfolio and fully functional profile tabs
 
 - [x] Fix route-aware header actions and verify Home search/share and secure logout on desktop/mobile
