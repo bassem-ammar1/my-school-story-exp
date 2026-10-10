@@ -701,6 +701,39 @@ export type Database = {
           },
         ]
       }
+      teacher_requests: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          school_name: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_name: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_name?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transfer_responses: {
         Row: {
           completed: boolean
@@ -788,6 +821,10 @@ export type Database = {
       }
       is_sso_teacher: { Args: { _user_id: string }; Returns: boolean }
       join_class: { Args: { _code: string }; Returns: string }
+      review_teacher_request: {
+        Args: { _approve: boolean; _request_id: string }
+        Returns: undefined
+      }
       submission_class: { Args: { _submission_id: string }; Returns: string }
     }
     Enums: {
