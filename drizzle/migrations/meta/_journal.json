@@ -120,6 +120,13 @@
       "when": 1791613936754,
       "tag": "0016_artifact_teacher_endorsements",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791614224743,
+      "tag": "0017_thinking_posts_challenge_link",
+      "breakpoints": true
     }
   ]
 }
