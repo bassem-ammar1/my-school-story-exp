@@ -488,6 +488,44 @@ export type Database = {
           },
         ]
       }
+      guardian_connections: {
+        Row: {
+          accepted_at: string | null
+          email: string
+          guardian_approved: boolean
+          guardian_id: string | null
+          id: string
+          student_approved: boolean
+          student_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          email: string
+          guardian_approved?: boolean
+          guardian_id?: string | null
+          id?: string
+          student_approved?: boolean
+          student_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          email?: string
+          guardian_approved?: boolean
+          guardian_id?: string | null
+          id?: string
+          student_approved?: boolean
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guardian_connections_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       micro_tasks: {
         Row: {
           artifact_id: string | null
@@ -767,6 +805,116 @@ export type Database = {
         }
         Relationships: []
       }
+      school_enrollments: {
+        Row: {
+          education_id: string
+          id: string
+          reviewed_at: string | null
+          school_id: string
+          status: string
+          student_approved: boolean
+          student_id: string
+        }
+        Insert: {
+          education_id: string
+          id?: string
+          reviewed_at?: string | null
+          school_id: string
+          status?: string
+          student_approved?: boolean
+          student_id: string
+        }
+        Update: {
+          education_id?: string
+          id?: string
+          reviewed_at?: string | null
+          school_id?: string
+          status?: string
+          student_approved?: boolean
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_enrollments_education_id_fkey"
+            columns: ["education_id"]
+            isOneToOne: true
+            referencedRelation: "education_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "school_enrollments_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "school_enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schools: {
+        Row: {
+          id: string
+          name: string
+          owner_id: string
+          test_only: boolean
+          verified: boolean
+        }
+        Insert: {
+          id?: string
+          name: string
+          owner_id: string
+          test_only?: boolean
+          verified?: boolean
+        }
+        Update: {
+          id?: string
+          name?: string
+          owner_id?: string
+          test_only?: boolean
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schools_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_safety: {
+        Row: {
+          created_at: string
+          date_of_birth: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_safety_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       submission_versions: {
         Row: {
           confidence: number | null
@@ -1035,6 +1183,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_guardian_connection: { Args: { _id: string }; Returns: undefined }
       artifact_class: { Args: { _artifact_id: string }; Returns: string }
       can_view_artifact: {
         Args: { _artifact_id: string; _user_id: string }
@@ -1065,6 +1214,14 @@ export type Database = {
       is_hurtful_text: { Args: { _t: string }; Returns: boolean }
       is_sso_teacher: { Args: { _user_id: string }; Returns: boolean }
       join_class: { Args: { _code: string }; Returns: string }
+      request_school_enrollment: {
+        Args: { _education: string; _school: string }
+        Returns: undefined
+      }
+      review_school_enrollment: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
       review_teacher_request: {
         Args: { _approve: boolean; _request_id: string }
         Returns: undefined
@@ -1079,8 +1236,16 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+      set_guardian_approval: {
+        Args: { _approved: boolean; _id: string }
+        Returns: undefined
+      }
       set_signup_role: {
         Args: { _role: string; _school_name?: string }
+        Returns: undefined
+      }
+      set_student_safety: {
+        Args: { _dob: string; _emails: string[] }
         Returns: undefined
       }
       submission_class: { Args: { _submission_id: string }; Returns: string }
