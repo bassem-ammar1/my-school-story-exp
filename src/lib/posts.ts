@@ -1,6 +1,25 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; likes: number; liked: boolean; comments: number };
+export const REACTIONS = [
+  { id: "like", emoji: "👍", label: "Like" },
+  { id: "love", emoji: "❤️", label: "Love" },
+  { id: "celebrate", emoji: "🎉", label: "Celebrate" },
+  { id: "support", emoji: "🤝", label: "Support" },
+  { id: "inspiring", emoji: "💡", label: "Inspiring" },
+] as const;
+export type ReactionId = (typeof REACTIONS)[number]["id"];
+export type ReactionCounts = Partial<Record<ReactionId, number>>;
+
+/** Recomputes counts after the current user changes reaction from `from` to `to` (null = none). */
+export function applyReaction(counts: ReactionCounts, from: ReactionId | null, to: ReactionId | null): ReactionCounts {
+  const next = { ...counts };
+  if (from) next[from] = Math.max(0, (next[from] ?? 0) - 1);
+  if (to) next[to] = (next[to] ?? 0) + 1;
+  return next;
+}
+export const totalReactions = (c: ReactionCounts) => Object.values(c).reduce((a, b) => a + (b ?? 0), 0);
+
+export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
 export type CommentRow = { id: string; post_id: string; parent_id: string | null; author_id: string; body: string; created_at: string };
 export type CommentNode = CommentRow & { author: string; replies: CommentNode[] };
 
@@ -42,7 +61,7 @@ export async function loadPosts(): Promise<FeedPost[]> {
   const ids = (posts ?? []).map((p) => p.id);
   if (!ids.length) return [];
   const [{ data: likes }, { data: comments }, people] = await Promise.all([
-    supabase.from("post_likes").select("post_id,user_id").in("post_id", ids),
+    supabase.from("post_likes").select("post_id,user_id,reaction").in("post_id", ids),
     supabase.from("post_comments").select("post_id").in("post_id", ids).eq("hidden", false),
     names((posts ?? []).map((p) => p.author_id).filter(Boolean) as string[]),
   ]);
@@ -53,8 +72,8 @@ export async function loadPosts(): Promise<FeedPost[]> {
       author: p.author_name ?? prof?.display_name ?? "Someone",
       avatar: p.author_avatar ?? "🙂", avatarUrl: prof?.avatar_url ?? null,
       subtitle: p.author_subtitle ?? "MySchoolStory member",
-      likes: likes?.filter((l) => l.post_id === p.id).length ?? 0,
-      liked: !!likes?.some((l) => l.post_id === p.id && l.user_id === u.user?.id),
+      reactions: (likes ?? []).filter((l) => l.post_id === p.id).reduce<ReactionCounts>((c, l) => applyReaction(c, null, l.reaction as ReactionId), {}),
+      mine: ((likes ?? []).find((l) => l.post_id === p.id && l.user_id === u.user?.id)?.reaction as ReactionId | undefined) ?? null,
       comments: comments?.filter((c) => c.post_id === p.id).length ?? 0,
     };
   });
@@ -66,10 +85,10 @@ export async function createPost(body: string) {
   if (error) throw error;
 }
 
-export async function setLike(postId: string, like: boolean) {
+export async function setReaction(postId: string, reaction: ReactionId | null) {
   const { data: u } = await supabase.auth.getUser();
-  const { error } = like
-    ? await supabase.from("post_likes").insert({ post_id: postId, user_id: u.user!.id })
+  const { error } = reaction
+    ? await supabase.from("post_likes").upsert({ post_id: postId, user_id: u.user!.id, reaction }, { onConflict: "post_id,user_id" })
     : await supabase.from("post_likes").delete().match({ post_id: postId, user_id: u.user!.id });
   if (error) throw error;
 }

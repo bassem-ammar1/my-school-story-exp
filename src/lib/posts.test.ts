@@ -23,3 +23,16 @@ describe("timeAgo", () => {
     expect(timeAgo("2025-12-31T00:00:00Z", now)).toBe("2d");
   });
 });
+
+import { applyReaction, totalReactions } from "./posts";
+describe("reactions", () => {
+  it("changing a reaction moves the user's one vote", () => {
+    const c = applyReaction({ like: 3, love: 1 }, "like", "love");
+    expect(c).toEqual({ like: 2, love: 2 });
+    expect(totalReactions(c)).toBe(4);
+  });
+  it("removing a reaction lowers the total by one and never below zero", () => {
+    expect(applyReaction({ like: 1 }, "like", null)).toEqual({ like: 0 });
+    expect(applyReaction({}, "celebrate", null)).toEqual({ celebrate: 0 });
+  });
+});
