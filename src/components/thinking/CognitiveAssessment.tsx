@@ -10,12 +10,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, assessmentProgress, categoryRing, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
 import { QUESTION_EMOJIS } from '@/lib/question-emojis';
+import { ReflectionHistoryCharts } from './ReflectionHistoryCharts';
+import { useMe } from '@/hooks/use-me';
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
 export function CognitiveAssessment({ studentId }: { studentId: string }) {
   return <Suspense fallback={<p className="py-8 text-center text-muted-foreground">Loading your reflections…</p>}><Assessment studentId={studentId} /></Suspense>;
 }
 function Assessment({ studentId }: { studentId: string }) {
+  const {data:me}=useMe();
   const load = useServerFn(getCognitiveAttempts);
   const save = useServerFn(saveCognitiveAttempt);
   const remove = useServerFn(deleteCognitiveAttempt);
@@ -124,11 +127,9 @@ function Assessment({ studentId }: { studentId: string }) {
     </div>;
   }
   return <div className="space-y-5 py-4">
-    <div className="flex items-center gap-3"><Brain className="size-8 text-primary" /><div><h2 className="text-xl font-bold">Get to know yourself</h2><p className="text-sm text-muted-foreground">Six areas. Your own perspective.</p></div></div>
-    <p className="text-sm text-muted-foreground">Reflect on your habits, learning preferences and current interests. There are no right or wrong answers. This is not a clinical test or a measure of intelligence.</p>
-    <div className="flex items-start gap-3 border-y py-4"><LockKeyhole className="size-5 shrink-0 text-primary" /><p className="text-sm">Private to you. Schools and teachers cannot see your answers. Skip any question and save a draft whenever you need.</p></div>
-    <div className="divide-y">{CATEGORIES.map((c, i) => <div key={c.id} className="flex items-center justify-between py-3"><span className="font-medium">{i + 1}. {c.label}</span><span className="text-xs text-muted-foreground">{QUESTIONS.filter(q => q.category === c.id).length} questions</span></div>)}</div>
-    <Button className="w-full" onClick={() => start()}><Plus className="size-4" />Start a reflection</Button>
+    <h2 className="text-xl font-bold">Get to know yourself</h2>
+    <Button className="w-full" onClick={() => start()}><Plus className="size-4" />Start reflection</Button>
+    <ReflectionHistoryCharts attempts={attempts} examples={me?.profile?.sample_portfolio??false}/>
     {attempts.length > 0 && <section className="space-y-3 border-t pt-4"><h3 className="flex items-center gap-2 font-bold"><History className="size-4" />My reflection history</h3>{attempts.map(a => <div key={a.id} className="flex items-center gap-2 rounded-lg bg-card p-3 shadow-soft"><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{a.status === "draft" ? "Saved draft" : "Reflection"} · {new Date(a.created_at).toLocaleDateString()}</p><p className="text-xs text-muted-foreground">{Object.keys(knownAnswers(a.responses)).length} of {QUESTIONS.length} answered</p></div><Button size="sm" variant="outline" onClick={() => { if (a.status === "draft") start(a); else { setSelected(a); setView("results"); } }}>{a.status === "draft" ? "Resume" : "View"}</Button><Button size="icon" variant="ghost" aria-label="Delete saved reflection" disabled={busy} onClick={() => deleteAttempt(a)}><Trash2 className="size-4" /></Button></div>)}</section>}
   </div>;
 }

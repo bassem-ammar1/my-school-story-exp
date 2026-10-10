@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Simplify assessment overview and add six history charts with six clearly labeled example dates across two years, at least three months apart
 
 - [ ] Add question-specific assessment emojis and current school/grade beneath feed author names
 
