@@ -70,7 +70,7 @@ function Profile() {
           {tasks.map((t) => (
             <div key={t.id} className="rounded-2xl bg-card p-4 shadow-soft">
               <div className="flex items-center justify-between"><h3 className="font-semibold">{t.title} · {t.duration_min} min</h3>
-                {t.status !== "done" ? <Button size="sm" onClick={async () => { await supabase.from("micro_tasks").update({ status: "done" }).eq("id", t.id); qc.invalidateQueries({ queryKey: ["my-tasks"] }); }}>Mark done</Button> : <span className="text-sm text-muted-foreground">Done ✓</span>}
+                {t.status !== "done" ? <Button size="sm" onClick={async () => { const { error } = await supabase.from("micro_tasks").update({ status: "done" }).eq("id", t.id); if (error) toast.error("Couldn't update this task."); else { toast.success("Task done"); qc.invalidateQueries({ queryKey: ["my-tasks"] }); } }}>Mark done</Button> : <span className="text-sm text-muted-foreground">Done ✓</span>}
               </div>
               <p className="mt-1 text-sm">{t.instructions}</p>
             </div>
