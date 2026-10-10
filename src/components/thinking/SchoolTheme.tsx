@@ -5,8 +5,8 @@ export function SchoolTheme() {
   const { data: me } = useMe();
   const theme = validTheme(me?.profile?.theme);
   useEffect(() => {
-    document.documentElement.dataset.schoolTheme = theme;
-    return () => { delete document.documentElement.dataset.schoolTheme; };
+    document.documentElement.dataset['schoolTheme'] = theme;
+    return () => { delete document.documentElement.dataset['schoolTheme']; };
   }, [theme]);
   return null;
 }
