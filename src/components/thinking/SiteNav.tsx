@@ -27,7 +27,10 @@ export function SiteNav() {
         cancelQueries: () => qc.cancelQueries(),
         clear: () => qc.clear(),
         signOut: () => supabase.auth.signOut(),
-        redirect: () => navigate({ to: "/", replace: true }),
+        redirect: async () => {
+          qc.setQueryData(["me"], null);
+          await navigate({ to: "/", replace: true });
+        },
       });
     } catch {
       toast.error("Couldn't sign out. Please try again.");
