@@ -8,8 +8,8 @@ describe("comment threads", () => {
   it("nests replies under their top-level comment, including replies to replies", () => {
     const t = buildThread([c("r2", "r1", "3"), c("top", null, "1"), c("r1", "top", "2")], { a: "Lina" });
     expect(t).toHaveLength(1);
-    expect(t[0].replies.map((r) => r.id)).toEqual(["r1", "r2"]);
-    expect(t[0].author).toBe("Lina");
+    expect(t[0]!.replies.map((r) => r.id)).toEqual(["r1", "r2"]);
+    expect(t[0]!.author).toBe("Lina");
   });
   it("keeps a reply whose parent was removed as a top-level comment", () => {
     expect(buildThread([c("orphan", "gone", "1")], {}).map((x) => x.id)).toEqual(["orphan"]);
