@@ -79,7 +79,7 @@ export function AuthForm() {
         <Button variant="outline" onClick={() => sso("google")}>
           {mode === "in" ? "Sign in with Google" : "Sign up with Google"}
         </Button>
-        <Button variant="outline" onClick={() => sso("microsoft")}>Microsoft Entra ID</Button>
+        <Button variant="secondary" onClick={() => sso("microsoft")}>Microsoft Entra ID</Button>
         {mode === 'up' && role === 'teacher' && <p className="text-xs text-muted-foreground">Approved teachers also use their school Google or Microsoft account.</p>}
       </div>
       <form onSubmit={submit} className="grid gap-3 rounded-2xl bg-card p-5 shadow-soft">
