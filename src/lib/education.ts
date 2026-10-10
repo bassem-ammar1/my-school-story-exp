@@ -1,6 +1,6 @@
 export type EducationEntry = { id: string; school_name: string; grade: number; start_year: number; end_year: number; status: string; shared: boolean; is_example: boolean };
 export function educationGroups(entries: EducationEntry[]) {
-  const ordered = [...entries].sort((a,b) => a.start_year - b.start_year || a.end_year - b.end_year);
+  const ordered = [...entries].sort((a,b) => b.start_year - a.start_year || b.end_year - a.end_year);
   const groups: { school: string; entries: EducationEntry[] }[] = [];
   for (const entry of ordered) {
     const last = groups.at(-1);
