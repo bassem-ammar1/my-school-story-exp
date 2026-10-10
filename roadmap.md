@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Three account color themes; editable profile details; sample portfolio and fully functional profile tabs
+
 - [x] Fix route-aware header actions and verify Home search/share and secure logout on desktop/mobile
 
 - [x] Correct cognitive result-circle numbers and validate question/answered counts
