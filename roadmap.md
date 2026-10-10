@@ -1,11 +1,10 @@
 # Roadmap
 
-- [x] Correct cognitive result-circle numbers and validate question/answered counts — 15 tests passed; signed-in 30-answer submission and saved results verified
-- [x] Thinking Lab: stepwise submission, voice, sketch, Socratic coach with answer guard
-- [x] Feed, annotations, reactions, profile Thinking tab, badge wall, micro-tasks
-- [x] Orchestrator, curation, prompts, Synthesis Ritual (live), reasoning trace, analytics
-- [x] Demo mode with guided tour
-- [x] Cognitive self-reflection assessment — six-category questionnaire, private drafts/results, immutable retakes, optional coach context; scoring tests and signed-in save/resume/result flow verified
+- [x] Correct cognitive result-circle numbers and validate question/answered counts
+- [x] Thinking Lab, feed, orchestrator, synthesis, demo, cognitive assessment
+- [x] Audit stage 1: teacher access requests with school-admin approval; first admin set (dinaalzareef0@gmail.com)
+- [ ] Audit stage 2: one shared search from Home, querying real students/teachers/posts
+- [ ] Audit stage 3: reporting + moderation dashboard (Pending/Under review/Resolved/Escalated)
+- [ ] Audit stage 4: real saved posts, comments, replies, likes; Lab & Assessment re-check
 - [ ] Assessment school sharing and minors' production rollout — waiting on age range, jurisdiction and guardian-consent policy
-- [ ] First School Admin account — waiting on the user to sign up and say which account
 - [ ] SAML sign-in — waiting on the school's identity provider details
