@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { ThinkingChallenge } from "@/components/thinking/ThinkingChallenge";
 import { useMe } from "@/hooks/use-me";
 
@@ -62,5 +63,34 @@ function ThinkingLab() {
         </section>
       ))}
     </main>
+  );
+}
+
+function MySubmissions({ userId }: { userId: string }) {
+  const { data = [] } = useQuery({
+    queryKey: ["my-submissions", userId],
+    queryFn: async () => (await supabase.from("submissions")
+      .select("id,status,updated_at,challenge_id, challenges(title), artifacts(id,endorsed_by,endorsement_note)")
+      .eq("student_id", userId).in("status", ["submitted", "published"]).order("updated_at", { ascending: false })).data ?? [],
+  });
+  return (
+    <section className="space-y-3">
+      <h2 className="text-xl font-bold">My submitted challenges</h2>
+      {data.length === 0 && <p className="rounded-2xl bg-card p-6 text-center text-sm text-muted-foreground shadow-soft">Finish a challenge and tap “Submit challenge” to see it here.</p>}
+      {data.map((s: any) => {
+        const art = Array.isArray(s.artifacts) ? s.artifacts[0] : s.artifacts;
+        return (
+          <Link key={s.id} to="/challenge/$id" params={{ id: s.challenge_id }} className="flex items-center gap-3 rounded-2xl bg-card p-4 shadow-soft">
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-semibold">{s.challenges?.title ?? "Challenge"}</p>
+              <p className="text-xs text-muted-foreground">{new Date(s.updated_at).toLocaleDateString()}{art?.endorsement_note ? ` · “${art.endorsement_note}”` : ""}</p>
+            </div>
+            {art?.endorsed_by ? <Badge className="bg-gold text-gold-foreground">🏅 Endorsed</Badge>
+              : s.status === "published" ? <Badge>Published · awaiting endorsement</Badge>
+              : <Badge variant="secondary">Submitted · not published</Badge>}
+          </Link>
+        );
+      })}
+    </section>
   );
 }
