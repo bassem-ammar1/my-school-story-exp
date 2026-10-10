@@ -43,7 +43,7 @@ function NewPost() {
         <div className="space-y-2 rounded-xl border bg-card p-3 text-sm">
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={asSchool} onChange={(e) => setAsSchool(e.target.checked)} className="h-4 w-4 accent-[hsl(var(--primary))]" />
-            Post as {mySchools.length > 1 ? "a school" : mySchools[0].name} <span className="text-muted-foreground">(shown publicly as the school, not you)</span>
+            Post as {mySchools.length > 1 ? "a school" : mySchools[0]!.name} <span className="text-muted-foreground">(shown publicly as the school, not you)</span>
           </label>
           {asSchool && mySchools.length > 1 && (
             <select value={schoolId ?? ""} onChange={(e) => setChosen(e.target.value)}
