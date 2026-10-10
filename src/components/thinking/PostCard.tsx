@@ -7,7 +7,7 @@ import { ReportButton } from "@/components/thinking/ReportButton";
 import { MemberAvatar } from "@/components/thinking/MemberAvatar";
 import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, isHurtful, HURTFUL_MESSAGE, shareTargets, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
 
-function Who({ id, name, children, className, label, school }: { id: string | null; school?: string | null; name?: string; children: React.ReactNode; className?: string; label?: string }) {
+function Who({ id, name, children, className, label, school }: { id: string | null; school?: string | null | undefined; name?: string; children: React.ReactNode; className?: string; label?: string }) {
   const cls = `${className ?? ""} cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded`;
   if (school) return <Link to="/schools/$id" params={{ id: school }} aria-label={label} className={cls}>{children}</Link>;
   if (id) return <Link to="/u/$id" params={{ id }} aria-label={label} className={cls}>{children}</Link>;
