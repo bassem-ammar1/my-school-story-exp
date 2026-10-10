@@ -7,8 +7,9 @@ import { ReportButton } from "@/components/thinking/ReportButton";
 import { MemberAvatar } from "@/components/thinking/MemberAvatar";
 import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, isHurtful, HURTFUL_MESSAGE, shareTargets, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
 
-function Who({ id, name, children, className, label }: { id: string | null; name?: string; children: React.ReactNode; className?: string; label?: string }) {
+function Who({ id, name, children, className, label, school }: { id: string | null; school?: string | null | undefined; name?: string; children: React.ReactNode; className?: string; label?: string }) {
   const cls = `${className ?? ""} cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded`;
+  if (school) return <Link to="/schools/$id" params={{ id: school }} aria-label={label} className={cls}>{children}</Link>;
   if (id) return <Link to="/u/$id" params={{ id }} aria-label={label} className={cls}>{children}</Link>;
   if (name) return <Link to="/author/$name" params={{ name }} aria-label={label} className={cls}>{children}</Link>;
   return <span className={className}>{children}</span>;
@@ -72,12 +73,12 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
   return (
     <article className="bg-card">
       <div className="flex items-start gap-3 px-3 pt-3">
-        <Who id={p.authorId} name={p.author} label={`Open ${p.author} profile`} className="shrink-0">
+        <Who id={p.authorId} school={p.schoolId} name={p.author} label={`Open ${p.author} profile`} className="shrink-0">
           {p.avatarUrl ? <MemberAvatar url={p.avatarUrl} name={p.author} className="h-12 w-12 text-xl" /> :
             <span className="grid h-12 w-12 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>}
         </Who>
         <div className="min-w-0 flex-1">
-          <Who id={p.authorId} name={p.author} className="block truncate font-semibold leading-tight">{p.author}</Who>
+          <Who id={p.authorId} school={p.schoolId} name={p.author} className="block truncate font-semibold leading-tight">{p.author}</Who>
           <p className="truncate text-xs text-muted-foreground">{p.subtitle}</p>
           <p className="text-xs text-muted-foreground">{p.when}</p>
         </div>

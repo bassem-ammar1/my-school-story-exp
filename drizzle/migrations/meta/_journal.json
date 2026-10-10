@@ -127,6 +127,13 @@
       "when": 1791614224743,
       "tag": "0017_thinking_posts_challenge_link",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791615528207,
+      "tag": "0018_school_profiles_and_follows",
+      "breakpoints": true
     }
   ]
 }
