@@ -189,3 +189,79 @@
 .theme-garden { --swatch-primary: oklch(0.43 0.10 160); --swatch-accent: oklch(0.84 0.09 15); }
 .theme-coral { --swatch-primary: oklch(0.49 0.17 25); --swatch-accent: oklch(0.80 0.10 190); }
 .theme-swatch { background: linear-gradient(90deg, var(--swatch-primary) 65%, var(--swatch-accent) 65%); }
+
+:root[data-school-theme="spongebob"] {
+  --background: oklch(0.95 0.05 210);
+  --foreground: oklch(0.28 0.06 235);
+  --card: oklch(0.99 0.025 95);
+  --card-foreground: var(--foreground);
+  --primary: oklch(0.84 0.17 95);
+  --primary-foreground: oklch(0.28 0.06 235);
+  --secondary: oklch(0.92 0.065 210);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.73 0.12 210);
+  --accent-foreground: var(--foreground);
+  --muted: oklch(0.94 0.04 210 / 0.92);
+  --muted-foreground: oklch(0.42 0.055 235);
+  --border: oklch(0.78 0.08 210);
+  --input: var(--border);
+  --ring: oklch(0.55 0.11 210);
+  --kids-button-radius: 14px 14px 7px 7px;
+  --kids-wallpaper: url('./assets/theme-spongebob.jpg');
+}
+:root[data-school-theme="minecraft"] {
+  --background: oklch(0.94 0.04 145);
+  --foreground: oklch(0.27 0.035 150);
+  --card: oklch(0.99 0.014 140);
+  --card-foreground: var(--foreground);
+  --primary: oklch(0.43 0.11 145);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.9 0.06 145);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.78 0.1 230);
+  --accent-foreground: var(--foreground);
+  --muted: oklch(0.93 0.035 145 / 0.92);
+  --muted-foreground: oklch(0.4 0.04 150);
+  --border: oklch(0.74 0.08 145);
+  --input: var(--border);
+  --ring: var(--primary);
+  --radius: 0.3rem;
+  --kids-button-radius: 2px;
+  --kids-wallpaper: url('./assets/theme-minecraft.jpg');
+}
+:root[data-school-theme="powerpuff"] {
+  --background: oklch(0.95 0.04 350);
+  --foreground: oklch(0.29 0.055 340);
+  --card: oklch(0.995 0.01 350);
+  --card-foreground: var(--foreground);
+  --primary: oklch(0.49 0.18 350);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.92 0.05 350);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.86 0.095 170);
+  --accent-foreground: var(--foreground);
+  --muted: oklch(0.95 0.035 350 / 0.92);
+  --muted-foreground: oklch(0.44 0.065 340);
+  --border: oklch(0.8 0.075 350);
+  --input: var(--border);
+  --ring: var(--primary);
+  --kids-button-radius: 999px;
+  --kids-wallpaper: url('./assets/theme-powerpuff.jpg');
+}
+:root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) body {
+  background-image: var(--kids-wallpaper);
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+:root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) main {
+  background-image: linear-gradient(var(--muted), var(--muted)), var(--kids-wallpaper);
+  background-size: cover;
+  background-position: center;
+}
+:root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) .app-button {
+  border-radius: var(--kids-button-radius);
+}
+.theme-spongebob { --swatch-primary: oklch(0.84 0.17 95); --swatch-accent: oklch(0.73 0.12 210); }
+.theme-minecraft { --swatch-primary: oklch(0.43 0.11 145); --swatch-accent: oklch(0.78 0.1 230); }
+.theme-powerpuff { --swatch-primary: oklch(0.49 0.18 350); --swatch-accent: oklch(0.86 0.095 170); }
