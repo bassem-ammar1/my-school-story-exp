@@ -14,6 +14,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteNav } from "@/components/thinking/SiteNav";
+import { SchoolTheme } from "@/components/thinking/SchoolTheme";
 import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -134,6 +135,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SchoolTheme />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="min-h-screen bg-muted">
         <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-soft">
