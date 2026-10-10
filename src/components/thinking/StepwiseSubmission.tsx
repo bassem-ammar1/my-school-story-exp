@@ -67,6 +67,7 @@ export function StepwiseSubmission(p: Props) {
 
   const ask = async (message?: string) => {
     setCoachOpen(true);
+    setTimeout(() => document.getElementById("coach-panel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     setStatus((cur) => (cur === "submitted" || cur === "published" ? cur : "queued"));
     setLoading(true);
     try {
@@ -92,7 +93,7 @@ export function StepwiseSubmission(p: Props) {
       </div>
       <ThinkingChallenge challenge={p.challenge} />
       {coachOpen && (
-        <section className="relative rounded-2xl border-2 border-primary/30 bg-card p-5 shadow-soft">
+        <section id="coach-panel" className="relative scroll-mt-16 rounded-2xl border-2 border-primary/30 bg-card p-5 shadow-soft">
           <button aria-label="Close coach" className="absolute right-3 top-3 text-muted-foreground" onClick={() => setCoachOpen(false)}><X className="h-4 w-4" /></button>
           {coachPanel}
         </section>

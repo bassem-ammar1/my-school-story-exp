@@ -54,7 +54,7 @@ function ChallengePage() {
       step_images: s.images.map(({ step, path, alt }) => ({ step, path, alt })),
       voice_url: voicePath, voice_transcript: s.voice.transcript || null, voice_duration_s: s.voice.duration || null,
       concept_token: s.concept, confidence: s.confidence, confidence_initial: sub.confidence_initial ?? s.confidence,
-      version: sub.version, status: changed ? "revised" : sub.status, updated_at: new Date().toISOString(),
+      version: sub.version, status: changed && sub.status !== "submitted" ? "revised" : sub.status, updated_at: new Date().toISOString(),
     }).eq("id", sub.id);
     if (error) throw error;
     sub.confidence_initial ??= s.confidence;
@@ -77,8 +77,14 @@ function ChallengePage() {
           await supabase.from("submissions").update({ status: "queued" }).eq("id", sub.id);
         }
         const r = await hint({ data: message ? { submissionId: sub.id, message } : { submissionId: sub.id } });
-        sub.status = "hinted";
+        if (sub.status !== "submitted" && sub.status !== "published") sub.status = "hinted";
         return r;
+      }}
+      onSubmit={async () => {
+        const { error } = await supabase.from("submissions").update({ status: "submitted", updated_at: new Date().toISOString() }).eq("id", sub.id);
+        if (error) throw error;
+        sub.status = "submitted";
+        await track("challenge_submitted", { challenge_id: id });
       }}
       onPublish={async (s) => {
         await save(s);
