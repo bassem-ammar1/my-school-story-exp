@@ -55,27 +55,45 @@ async function names(ids: string[]) {
   return Object.fromEntries((data ?? []).map((p) => [p.id, p]));
 }
 
+/** A post owned by a school (its admin) is shown publicly as the school, never as the person. */
+export function authorDisplay(
+  p: { author_id: string | null; author_name: string | null; author_subtitle: string | null; school_id: string | null },
+  prof?: { display_name: string },
+  school?: { name: string; location: string | null } | null,
+): { author: string; subtitle: string } {
+  if (school) return { author: school.name, subtitle: `School${school.location ? ` · ${school.location}` : ""}` };
+  return {
+    author: p.author_name ?? prof?.display_name ?? "Someone",
+    subtitle: p.author_subtitle ?? (prof ? "Student" : "Member"),
+  };
+}
+
 export async function loadPosts(): Promise<FeedPost[]> {
   const { data: u } = await supabase.auth.getUser();
   const { data: posts } = await supabase.from("posts").select("*").eq("hidden", false).order("created_at", { ascending: false }).limit(100);
   const ids = (posts ?? []).map((p) => p.id);
   if (!ids.length) return [];
-  const [{ data: likes }, { data: comments }, people, { data: schools }] = await Promise.all([
+  const schoolIds = [...new Set((posts ?? []).map((p) => p.school_id).filter(Boolean))] as string[];
+  const [{ data: likes }, { data: comments }, people, { data: schools }, { data: postSchools }] = await Promise.all([
     supabase.from("post_likes").select("post_id,user_id,reaction").in("post_id", ids),
     supabase.from("post_comments").select("post_id").in("post_id", ids).eq("hidden", false),
     names((posts ?? []).map((p) => p.author_id).filter(Boolean) as string[]),
     supabase.rpc('current_school_labels', { _ids: (posts ?? []).map(p=>p.author_id).filter((id): id is string=>id!==null) }),
+    schoolIds.length ? supabase.from("schools").select("id,name,logo_url,location").in("id", schoolIds) : Promise.resolve({ data: [] } as { data: { id: string; name: string; logo_url: string | null; location: string | null }[] }),
   ]);
   return (posts ?? []).map((p) => {
     const prof = p.author_id ? people[p.author_id] : undefined;
+    const school = p.school_id ? (postSchools ?? []).find((s) => s.id === p.school_id) : undefined;
+    const d = authorDisplay(p, prof, school);
+    const student = schools?.find((s) => s.user_id === p.author_id);
     return {
       id: p.id, authorId: p.author_id, body: p.body, when: timeAgo(p.created_at),
       imageUrl: p.image_url, imageAlt: p.image_alt, challengeId: p.challenge_id,
-      author: p.author_name ?? prof?.display_name ?? "Someone",
-      avatar: p.author_avatar?.startsWith("/") ? "🏫" : p.author_avatar ?? "🙂",
-      avatarUrl: prof?.avatar_url ?? (p.author_avatar?.startsWith("/") ? p.author_avatar : null),
+      author: d.author,
+      avatar: school ? "🏫" : p.author_avatar?.startsWith("/") ? "🏫" : p.author_avatar ?? "🙂",
+      avatarUrl: school?.logo_url ?? prof?.avatar_url ?? (p.author_avatar?.startsWith("/") ? p.author_avatar : null),
       schoolId: p.school_id,
-      subtitle: schools?.find(s=>s.user_id===p.author_id) ? `${schools.find(s=>s.user_id===p.author_id)?.school_name} · Grade ${schools.find(s=>s.user_id===p.author_id)?.grade}` : p.author_subtitle ?? "Student",
+      subtitle: school ? d.subtitle : student ? `${student.school_name} · Grade ${student.grade}` : d.subtitle,
       reactions: (likes ?? []).filter((l) => l.post_id === p.id).reduce<ReactionCounts>((c, l) => applyReaction(c, null, l.reaction as ReactionId), {}),
       mine: ((likes ?? []).find((l) => l.post_id === p.id && l.user_id === u.user?.id)?.reaction as ReactionId | undefined) ?? null,
       comments: comments?.filter((c) => c.post_id === p.id).length ?? 0,
@@ -83,9 +101,9 @@ export async function loadPosts(): Promise<FeedPost[]> {
   });
 }
 
-export async function createPost(body: string) {
+export async function createPost(body: string, schoolId?: string | null) {
   const { data: u } = await supabase.auth.getUser();
-  const { error } = await supabase.from("posts").insert({ author_id: u.user!.id, body: body.trim().slice(0, 1000) });
+  const { error } = await supabase.from("posts").insert({ author_id: u.user!.id, body: body.trim().slice(0, 1000), school_id: schoolId ?? null });
   if (error) throw error;
 }
 
