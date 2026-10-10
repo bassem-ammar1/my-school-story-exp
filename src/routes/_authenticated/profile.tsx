@@ -39,6 +39,12 @@ function Profile() {
     if (error) throw error;
     return data ?? [];
   } });
+  const { data: mySchools = [] } = useQuery({ queryKey: ["my-schools", me?.id], enabled: !!me, queryFn: async () => {
+    if (!me) return [];
+    const { data, error } = await supabase.from("schools").select("id,name,logo_url,location").eq("owner_id", me.id).order("name");
+    if (error) throw error;
+    return data ?? [];
+  } });
   const [tab, setTab] = useState('posts');
   const [achievement, setAchievement] = useState<(typeof SAMPLE_ACHIEVEMENTS)[number] | null>(null);
   const [saving, setSaving] = useState(false);
