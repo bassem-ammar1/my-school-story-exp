@@ -66,6 +66,7 @@ function Demo() {
               if (msg && /answer/i.test(msg)) return { limited: false, hints: [COPY.refuse], next_step: demoHints.next_step, praise: "Asking for help is a smart move.", remaining: MAX_HINTS_PER_SUBMISSION - hintsUsed - 1 };
               return { limited: false, ...demoHints, remaining: MAX_HINTS_PER_SUBMISSION - hintsUsed - 1 };
             }}
+            onSubmit={async () => {}}
             onPublish={async () => { setTimeout(() => setStep(3), 1200); }}
           />
           {step === 1 && <div className="text-center"><Button variant="outline" onClick={next}>Next: publish →</Button></div>}
