@@ -57,7 +57,7 @@ function Profile() {
         <p className="mt-1 text-sm text-muted-foreground">A learner on MySchoolStory who shares how they think, step by step.</p>
       </section>
       <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />
-      {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: teacher requests</Link></Button></section>}
+      {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: reports & teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs defaultValue="thinking">
         <TabsList><TabsTrigger value="thinking">Thinking</TabsTrigger><TabsTrigger value="badges">Badges</TabsTrigger><TabsTrigger value="tasks">Tasks ({tasks.filter((t) => t.status !== "done").length})</TabsTrigger><TabsTrigger value="settings">Settings</TabsTrigger></TabsList>

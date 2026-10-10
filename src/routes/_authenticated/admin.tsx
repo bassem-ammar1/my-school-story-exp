@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { ModerationPanel } from "@/components/thinking/ModerationPanel";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     const { data } = await supabase.rpc("has_role", { _user_id: u.user!.id, _role: "school_admin" });
     if (!data) throw redirect({ to: "/lab" });
   },
-  head: () => ({ meta: [{ title: "School admin · MySchoolStory" }, { name: "description", content: "Review teacher access requests and manage teacher roles." }, { property: "og:title", content: "School admin · MySchoolStory" }, { property: "og:description", content: "Review teacher access requests and manage teacher roles." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  head: () => ({ meta: [{ title: "School admin · MySchoolStory" }, { name: "description", content: "Review reports, teacher access requests and teacher roles." }, { property: "og:title", content: "School admin · MySchoolStory" }, { property: "og:description", content: "Review reports, teacher access requests and teacher roles." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Admin,
 });
 
@@ -53,6 +54,7 @@ function Admin() {
   return (
     <main className="space-y-4 px-4 py-6">
       <h1 className="text-2xl font-bold">School admin</h1>
+      <ModerationPanel />
       <section>
         <h2 className="text-lg font-semibold">Teacher requests</h2>
         {requests.length === 0 ? <p className="mt-1 text-sm text-muted-foreground">No requests waiting.</p> : (

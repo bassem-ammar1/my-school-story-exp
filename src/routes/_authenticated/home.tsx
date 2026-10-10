@@ -10,6 +10,7 @@ import { track } from "@/lib/track";
 import { useMe } from "@/hooks/use-me";
 import { SAMPLE_POSTS, PEOPLE, loadMyPosts, type Post } from "@/lib/social-data";
 import type { ArtifactView } from "@/components/thinking/types";
+import { ReportButton } from "@/components/thinking/ReportButton";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({ meta: [{ title: "Feed · MySchoolStory" }, { name: "description", content: "See the latest posts from schools and students." }, { property: "og:title", content: "Feed · MySchoolStory" }, { property: "og:description", content: "See the latest posts from schools and students." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -22,11 +23,12 @@ function PostCard({ p }: { p: Post }) {
     <article className="bg-card">
       <div className="flex items-start gap-3 px-3 pt-3">
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate font-semibold leading-tight">{p.author}</p>
           <p className="truncate text-xs text-muted-foreground">{p.subtitle}</p>
           <p className="text-xs text-muted-foreground">{p.when}</p>
         </div>
+        <ReportButton targetType="post" targetId={String(p.id)} label={`${p.author}: ${p.body}`} />
       </div>
       <p className="whitespace-pre-wrap px-3 py-3 text-sm">{p.body}</p>
       <div className="flex justify-between px-3 pb-2 text-xs text-muted-foreground">
