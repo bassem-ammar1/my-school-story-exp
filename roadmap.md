@@ -5,3 +5,4 @@
 - [x] Sign-up: Student / Teacher / School buttons each show an icon
 - [x] Sign-up: date-of-birth calendar icon moved to the right of the field
 - [x] Sign-in brand: tighter gap between the logo and the MySchoolStory name (trimmed invisible padding in the logo image)
+- [x] Sign-in: ~4px more space between the logo block and the section heading

@@ -71,7 +71,7 @@ export function AuthForm() {
       <div className="text-center">
         <img src={logo} alt="MySchoolStory logo" width={96} height={96} className="mx-auto h-24 w-24 object-contain" />
         <p className="mt-0 text-2xl font-extrabold tracking-tight text-primary">MySchoolStory</p>
-        <h1 className="mt-4 text-3xl font-bold">{mode === "in" ? "Welcome back" : "Create your account"}</h1>
+        <h1 className="mt-5 text-3xl font-bold">{mode === "in" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1 text-muted-foreground">Your learning. Your community. Your story.</p>
       </div>
       {mode === 'up' && <section className="space-y-3"><Label>Account type</Label><div className="grid grid-cols-3 gap-2">{ACCOUNT_CHOICES.map(choice => { const Icon = choice === 'student' ? GraduationCap : choice === 'teacher' ? Presentation : School; return <Button key={choice} type="button" variant={role === choice ? 'default' : 'outline'} aria-pressed={role === choice} onClick={() => setRole(choice)} className="capitalize"><Icon className="size-4" />{choice}</Button>; })}</div>{role !== 'student' && <div className="space-y-1"><Label htmlFor="signup-school">School name</Label><Input id="signup-school" maxLength={120} value={school} onChange={e => setSchool(e.target.value)} required /><p className="text-xs text-muted-foreground">{role === 'teacher' ? 'Teacher' : 'School'} access needs approval from a school administrator.</p></div>}</section>}
