@@ -11,6 +11,8 @@
 
 # Project rules
 
+- Account themes are allowlisted profile preferences applied through semantic CSS tokens by SchoolTheme; example portfolio achievements stay separate from verified teacher awards to preserve trust.
+
 - Thinking Lab rules (limits, answer-leak guard, curation validity, copy detection) live as pure functions in `src/lib/thinking.ts` with tests in `src/lib/thinking.test.ts` — one source of truth for client and server.
 - All AI calls go through `src/lib/ai.server.ts` (Lovable AI, streamed structured output) and are invoked only from server functions in `src/lib/thinking.functions.ts` — keeps prompts, keys and the private final answer server-side.
 - A challenge's final answer is stored in a separate teacher-only table (`challenge_answers`) and never selected by client code — so it can't leak through student queries.
