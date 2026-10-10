@@ -24,6 +24,7 @@ export function AuthForm() {
   const [school, setSchool] = useState('');
   const [dob, setDob] = useState('');
   const [guardians, setGuardians] = useState('');
+  const [showPw, setShowPw] = useState(false);
 
   const done = async () => {
     await applyPendingSignupChoice();
