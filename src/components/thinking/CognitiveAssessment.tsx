@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, QUESTIONS, AGREEMENT, INTEREST, scoreAssessment, assessmentProgress, categoryRing, knownAnswers, QUESTIONNAIRE_VERSION, SCORING_VERSION, type Answers } from "@/lib/cognitive";
 import { getCognitiveAttempts, saveCognitiveAttempt, deleteCognitiveAttempt, setCognitiveCoachPermission } from "@/lib/cognitive.functions";
+import { QUESTION_EMOJIS } from '@/lib/question-emojis';
 
 type Attempt = Awaited<ReturnType<typeof getCognitiveAttempts>>[number];
 export function CognitiveAssessment({ studentId }: { studentId: string }) {
@@ -75,7 +76,7 @@ function Assessment({ studentId }: { studentId: string }) {
         <div role="progressbar" aria-label="Questions answered" aria-valuenow={answered} aria-valuemin={0} aria-valuemax={total} className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${percent}%` }} /></div></div>
       {finalStep ? <div className="flex-1 space-y-4"><h2 className="text-2xl font-bold">One last thing</h2><label htmlFor="reflection-goal" className="block font-medium">A goal I would like to explore (optional)</label><Textarea id="reflection-goal" value={goal} maxLength={300} onChange={e => setGoal(e.target.value)} placeholder="For example: try a new way of planning my homework" /><label className="flex items-start gap-3 text-sm"><Checkbox checked={coach} onCheckedChange={value => setCoach(value === true)} /><span>Use a summary of this reflection for my thinking coach. I can turn this off later.</span></label><p className="text-xs text-muted-foreground">Skipped questions stay unanswered. Partial results will show their coverage.</p></div>
       : <div key={q.id} className="flex flex-1 flex-col justify-center gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
-        <div className="text-center"><p className="text-xs font-semibold uppercase tracking-wide text-primary">{cat.label}</p><h2 className="mt-3 text-2xl font-bold leading-snug">{q.text}</h2></div>
+        <div className="text-center"><span aria-hidden="true" className="mb-3 block text-5xl">{QUESTION_EMOJIS[q.dimension] ?? '💭'}</span><p className="text-xs font-semibold uppercase tracking-wide text-primary">{cat.label}</p><h2 className="mt-3 text-2xl font-bold leading-snug">{q.text}</h2></div>
         <div role="radiogroup" aria-label={q.text} className="space-y-3">
           <div className="flex items-center justify-between gap-1">{labels.map((label, i) => { const v = i + 1; const on = answers[q.id] === v; const tone = i < 2 ? "border-destructive/60" : i === 2 ? "border-muted-foreground/40" : "border-primary"; return <Button variant="outline" size="icon" key={label} type="button" role="radio" aria-checked={on} aria-label={label} title={label} onClick={() => pick(v)} className={`${sizes[i]} shrink-0 rounded-full border-2 transition hover:scale-110 ${tone} ${on ? (i < 2 ? "bg-destructive/70" : i === 2 ? "bg-muted-foreground/50" : "bg-primary") : "bg-card"}`} />; })}</div>
           <div className="flex justify-between text-xs font-medium text-muted-foreground"><span>{labels[0]}</span><span>{labels[4]}</span></div>

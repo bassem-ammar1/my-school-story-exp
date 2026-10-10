@@ -3,6 +3,7 @@ export function studentAge(dob: string | null, today = new Date().toISOString().
   const birth = new Date(`${dob}T00:00:00Z`);
   if (!Number.isFinite(birth.getTime()) || birth.toISOString().slice(0, 10) !== dob) return null;
   const [year, month, day] = today.split('-').map(Number);
+  if (year === undefined || month === undefined || day === undefined) return null;
   return year - birth.getUTCFullYear() - (month < birth.getUTCMonth() + 1 || (month === birth.getUTCMonth() + 1 && day < birth.getUTCDate()) ? 1 : 0);
 }
 export function guardianEmails(value: string): string[] {
