@@ -6,8 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { COPY, MAX_IMAGE_BYTES, MAX_STEP_CHARS, STEP_LABELS, canSubmit } from "@/lib/thinking";
 import { ThinkingChallenge } from "./ThinkingChallenge";
 import { ConfidenceScale } from "./ConfidenceScale";
@@ -35,9 +33,10 @@ type Props = {
   onSave: (s: SubmissionState) => Promise<void>;
   onRequestHint: (s: SubmissionState, message?: string) => Promise<HintResult>;
   onPublish: (s: SubmissionState) => Promise<void>;
+  onSubmit: (s: SubmissionState) => Promise<void>;
 };
 
-const STATUS_LABEL: Record<string, string> = { draft: "Draft", queued: "Queued", hinted: "Hint ready", revised: "Revised", published: "Published" };
+const STATUS_LABEL: Record<string, string> = { draft: "Draft", queued: "Queued", hinted: "Hint ready", revised: "Revised", submitted: "Submitted", published: "Published" };
 
 export function StepwiseSubmission(p: Props) {
   const [s, setS] = useState<SubmissionState>(p.initial);
@@ -49,7 +48,6 @@ export function StepwiseSubmission(p: Props) {
   const [sketchFor, setSketchFor] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const isMobile = useIsMobile();
 
   const ready = canSubmit({ step1: s.steps[0], step2: s.steps[1], step3: s.steps[2], hasVoice: !!s.voice.url, concept: s.concept, confidence: s.confidence });
 
@@ -69,15 +67,16 @@ export function StepwiseSubmission(p: Props) {
 
   const ask = async (message?: string) => {
     setCoachOpen(true);
-    setStatus("queued");
+    setStatus((cur) => (cur === "submitted" || cur === "published" ? cur : "queued"));
     setLoading(true);
     try {
       const r = await p.onRequestHint(s, message);
-      if (r.limited) { setLimited(true); setStatus("hinted"); }
-      else { setCoach({ hints: r.hints, next_step: r.next_step, praise: r.praise, remaining: r.remaining }); setLimited(r.remaining <= 0); setStatus("hinted"); }
+      const keep = (cur: string) => (cur === "submitted" || cur === "published" ? cur : "hinted");
+      if (r.limited) { setLimited(true); setStatus(keep); }
+      else { setCoach({ hints: r.hints, next_step: r.next_step, praise: r.praise, remaining: r.remaining }); setLimited(r.remaining <= 0); setStatus(keep); }
     } catch (e) {
       toast.error((e as Error).message);
-      setStatus("draft");
+      setStatus((cur) => (cur === "queued" ? "draft" : cur));
     } finally { setLoading(false); }
   };
 
@@ -92,6 +91,12 @@ export function StepwiseSubmission(p: Props) {
         {coach && !coachOpen && <Button size="sm" variant="outline" onClick={() => setCoachOpen(true)}>Open coach</Button>}
       </div>
       <ThinkingChallenge challenge={p.challenge} />
+      {coachOpen && (
+        <section className="relative rounded-2xl border-2 border-primary/30 bg-card p-5 shadow-soft">
+          <button aria-label="Close coach" className="absolute right-3 top-3 text-muted-foreground" onClick={() => setCoachOpen(false)}><X className="h-4 w-4" /></button>
+          {coachPanel}
+        </section>
+      )}
 
       {STEP_LABELS.map((label, i) => {
         const img = s.images.find((x) => x.step === i + 1);
@@ -138,18 +143,17 @@ export function StepwiseSubmission(p: Props) {
       <div className="flex flex-wrap justify-end gap-2">
         <Button variant="outline" disabled={busy} onClick={() => wrap(async () => { await p.onSave(s); toast.success("Draft saved"); })}>Save draft</Button>
         <Button disabled={!ready || loading || busy} onClick={() => wrap(async () => { await p.onSave(s); await ask(); })}>{COPY.submit}</Button>
-        {status !== "draft" && status !== "published" && (
+        {status !== "submitted" && status !== "published" && (
+          <Button variant="secondary" disabled={!ready || busy || loading}
+            onClick={() => wrap(async () => { await p.onSave(s); await p.onSubmit(s); setStatus("submitted"); toast.success(COPY.submitted); })}>{COPY.submitChallenge}</Button>
+        )}
+        {status === "submitted" && (
           <Button className="bg-gold text-gold-foreground hover:bg-gold/90" disabled={busy || !ready}
             onClick={() => wrap(async () => { await p.onPublish(s); setStatus("published"); toast.success(COPY.published); })}>{COPY.publish}</Button>
         )}
       </div>
       {!ready && <p className="text-right text-xs text-muted-foreground">Fill in Step 1, add a voice note or Step 3, then pick a concept and confidence.</p>}
 
-      <Sheet open={coachOpen} onOpenChange={setCoachOpen} modal={false}>
-        <SheetContent side={isMobile ? "bottom" : "right"} className={isMobile ? "max-h-[80vh] overflow-y-auto" : "w-[380px] overflow-y-auto"}>
-          {coachPanel}
-        </SheetContent>
-      </Sheet>
 
       <SketchCanvas open={sketchFor != null} onClose={() => setSketchFor(null)} onSave={(b) => sketchFor && addImage(sketchFor, b, "png")} />
     </div>
