@@ -49,3 +49,25 @@ describe("hurtful comments", () => {
     expect(isHurtful("I think step 2 could be clearer")).toBe(false);
   });
 });
+
+import { authorDisplay } from "./posts";
+describe("school-attributed posts", () => {
+  it("shows a school-owned post under the school, never the admin's name", () => {
+    const d = authorDisplay(
+      { author_id: "admin-1", author_name: null, author_subtitle: null, school_id: "gs-1" },
+      { display_name: "Bassem Ammar" },
+      { name: "Green School", location: "Beirut" },
+    );
+    expect(d.author).toBe("Green School");
+    expect(d.subtitle).toBe("School · Beirut");
+  });
+  it("keeps personal posts under the person's own name", () => {
+    const d = authorDisplay(
+      { author_id: "s1", author_name: null, author_subtitle: null, school_id: null },
+      { display_name: "Mariam Mando" },
+      null,
+    );
+    expect(d.author).toBe("Mariam Mando");
+    expect(d.subtitle).toBe("Student");
+  });
+});
