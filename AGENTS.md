@@ -15,6 +15,7 @@
 - Profile covers and post images use durable media URLs on their existing rows and render through the shared profile/post views, keeping media consistent across feed and member pages.
 
 - Account themes are allowlisted profile preferences applied through semantic CSS tokens by SchoolTheme; example portfolio achievements stay separate from verified teacher awards to preserve trust.
+- ThemePicker groups school and kids choices; global theme tokens control wallpaper and shared app-button shapes without changing route layouts.
 
 - Thinking Lab rules (limits, answer-leak guard, curation validity, copy detection) live as pure functions in `src/lib/thinking.ts` with tests in `src/lib/thinking.test.ts` — one source of truth for client and server.
 - All AI calls go through `src/lib/ai.server.ts` (Lovable AI, streamed structured output) and are invoked only from server functions in `src/lib/thinking.functions.ts` — keeps prompts, keys and the private final answer server-side.
