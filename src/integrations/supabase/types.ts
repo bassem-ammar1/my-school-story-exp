@@ -1194,6 +1194,14 @@ export type Database = {
         Returns: boolean
       }
       challenge_class: { Args: { _challenge_id: string }; Returns: string }
+      current_school_labels: {
+        Args: { _ids: string[] }
+        Returns: {
+          grade: number
+          school_name: string
+          user_id: string
+        }[]
+      }
       find_session_by_code: { Args: { _code: string }; Returns: string }
       has_role: {
         Args: {
@@ -1214,6 +1222,7 @@ export type Database = {
       is_hurtful_text: { Args: { _t: string }; Returns: boolean }
       is_sso_teacher: { Args: { _user_id: string }; Returns: boolean }
       join_class: { Args: { _code: string }; Returns: string }
+      my_age_13_plus: { Args: never; Returns: boolean }
       request_school_enrollment: {
         Args: { _education: string; _school: string }
         Returns: undefined
