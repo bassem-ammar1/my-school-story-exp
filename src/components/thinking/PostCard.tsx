@@ -72,12 +72,12 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
   return (
     <article className="bg-card">
       <div className="flex items-start gap-3 px-3 pt-3">
-        <Who id={p.authorId} className="shrink-0">
+        <Who id={p.authorId} name={p.author} label={`Open ${p.author} profile`} className="shrink-0">
           {p.avatarUrl ? <img src={p.avatarUrl} alt="" className="h-12 w-12 rounded-full object-cover" /> :
             <span className="grid h-12 w-12 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>}
         </Who>
         <div className="min-w-0 flex-1">
-          <Who id={p.authorId} className="block truncate font-semibold leading-tight">{p.author}</Who>
+          <Who id={p.authorId} name={p.author} className="block truncate font-semibold leading-tight">{p.author}</Who>
           <p className="truncate text-xs text-muted-foreground">{p.subtitle}</p>
           <p className="text-xs text-muted-foreground">{p.when}</p>
         </div>
