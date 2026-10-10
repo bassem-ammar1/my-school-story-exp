@@ -468,6 +468,110 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          hidden: boolean
+          id: string
+          parent_id: string | null
+          post_id: string
+        }
+        Insert: {
+          author_id?: string
+          body: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          parent_id?: string | null
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          parent_id?: string | null
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_avatar: string | null
+          author_id: string | null
+          author_name: string | null
+          author_subtitle: string | null
+          body: string
+          created_at: string
+          hidden: boolean
+          id: string
+        }
+        Insert: {
+          author_avatar?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          author_subtitle?: string | null
+          body: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+        }
+        Update: {
+          author_avatar?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          author_subtitle?: string | null
+          body?: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_13_plus: boolean

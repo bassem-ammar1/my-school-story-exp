@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SAMPLE_POSTS, loadMyPosts } from "@/lib/social-data";
+import { loadPosts } from "@/lib/posts";
 
 export const Route = createFileRoute("/_authenticated/search")({
   validateSearch: (s: Record<string, unknown>) => ({ q: typeof s["q"] === "string" ? s["q"] : "" }),
@@ -25,7 +25,8 @@ function SearchPage() {
     queryFn: async () => (await supabase.rpc("search_people", { _term: t })).data ?? [],
   });
 
-  const posts = [...loadMyPosts(), ...SAMPLE_POSTS].filter(
+  const { data: allPosts = [] } = useQuery({ queryKey: ["posts"], queryFn: loadPosts });
+  const posts = allPosts.filter(
     (p) => !t || `${p.author} ${p.body}`.toLowerCase().includes(t.toLowerCase()),
   );
 
