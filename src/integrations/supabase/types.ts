@@ -148,6 +148,9 @@ export type Database = {
       }
       artifacts: {
         Row: {
+          endorsed_at: string | null
+          endorsed_by: string | null
+          endorsement_note: string | null
           id: string
           public_approved: boolean
           published_at: string
@@ -155,6 +158,9 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          endorsed_at?: string | null
+          endorsed_by?: string | null
+          endorsement_note?: string | null
           id?: string
           public_approved?: boolean
           published_at?: string
@@ -162,6 +168,9 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          endorsed_at?: string | null
+          endorsed_by?: string | null
+          endorsement_note?: string | null
           id?: string
           public_approved?: boolean
           published_at?: string
@@ -654,6 +663,7 @@ export type Database = {
           author_name: string | null
           author_subtitle: string | null
           body: string
+          challenge_id: string | null
           created_at: string
           hidden: boolean
           id: string
@@ -666,6 +676,7 @@ export type Database = {
           author_name?: string | null
           author_subtitle?: string | null
           body: string
+          challenge_id?: string | null
           created_at?: string
           hidden?: boolean
           id?: string
@@ -678,13 +689,22 @@ export type Database = {
           author_name?: string | null
           author_subtitle?: string | null
           body?: string
+          challenge_id?: string | null
           created_at?: string
           hidden?: boolean
           id?: string
           image_alt?: string | null
           image_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -1194,6 +1214,17 @@ export type Database = {
         Returns: boolean
       }
       challenge_class: { Args: { _challenge_id: string }; Returns: string }
+      challenge_preview: {
+        Args: { _id: string }
+        Returns: {
+          concept_tokens: string[]
+          eligible: boolean
+          id: string
+          prompt_image: string
+          prompt_text: string
+          title: string
+        }[]
+      }
       current_school_labels: {
         Args: { _ids: string[] }
         Returns: {

@@ -84,6 +84,9 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
         {p.authorId !== meId && <ReportButton targetType="post" targetId={p.id} label={`${p.author}: ${p.body}`} />}
       </div>
       <p className="whitespace-pre-wrap px-3 py-3 text-sm">{p.body}</p>
+      {p.challengeId && (
+        <div className="px-3 pb-3"><Link to="/challenge/$id" params={{ id: p.challengeId }} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold text-primary">🧪 View challenge</Link></div>
+      )}
       {p.imageUrl && <img src={p.imageUrl} alt={p.imageAlt || 'Learning project'} loading="lazy" className="mb-3 block h-auto w-full object-contain" />}
       <div className="flex justify-between px-3 pb-2 text-xs text-muted-foreground">
         <span aria-label={`${total} reactions`}>{top.length ? top.map((r) => r.emoji).join("") : "👍"} {total}</span><button onClick={() => setOpen(!open)}>{p.comments} comments</button>

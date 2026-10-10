@@ -57,3 +57,37 @@ export async function generateJson<T>(schema: z.ZodType<T>, instructions: string
     throw new AiError("The coach couldn't respond right now. Please try again.", status);
   }
 }
+
+export type ChatTurn = { role: "user" | "assistant"; content: string };
+
+/** Streams a plain-text chat reply from Lovable AI and returns the full text. */
+export async function generateChat(instructions: string, messages: ChatTurn[]): Promise<string> {
+  const apiKey = process.env["LOVABLE_API_KEY"];
+  if (!apiKey) throw new AiError("AI is not configured.");
+  const provider = createOpenAI({
+    baseURL: "https://ai.gateway.lovable.dev/v1",
+    apiKey,
+    headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
+    fetch: runIdFetch(),
+  });
+  try {
+    const result = streamText({
+      model: provider.responses(MODEL),
+      instructions,
+      messages,
+      providerOptions: {
+        openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] },
+      },
+    });
+    const text = (await result.text).trim();
+    if (!text) throw new AiError("The coach couldn't respond to that. Try asking another way.");
+    return text;
+  } catch (e: unknown) {
+    if (e instanceof AiError) throw e;
+    const status = (e as { statusCode?: number })?.statusCode;
+    console.error("AI error", status, e);
+    if (status === 429) throw new AiError("The coach is busy. Please try again in a moment.", 429);
+    if (status === 402) throw new AiError("AI credits have run out. Ask the workspace owner to add more.", 402);
+    throw new AiError("The coach couldn't respond right now. Please try again.", status);
+  }
+}

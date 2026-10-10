@@ -9,7 +9,7 @@ import type { CoachState } from "./types";
 export function SocraticCoach({ coach, loading, limited, onAsk }: { coach: CoachState; loading: boolean; limited: boolean; onAsk: (msg: string) => void }) {
   const [shown, setShown] = useState(1);
   const [msg, setMsg] = useState("");
-  useEffect(() => setShown(1), [coach]);
+  useEffect(() => { setShown(1); }, [coach]);
 
   return (
     <aside className="flex h-full flex-col gap-4" aria-label="Socratic coach">

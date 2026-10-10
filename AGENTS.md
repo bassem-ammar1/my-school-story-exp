@@ -27,16 +27,15 @@
 - ThemePicker groups school and kids choices; global theme tokens control wallpaper and shared app-button shapes without changing route layouts.
 - Education entries are owner-managed with explicit member-profile sharing; chronology groups consecutive years at one school and labels planned moves separately from completed history.
 
-- Thinking Lab rules (limits, answer-leak guard, curation validity, copy detection) live as pure functions in `src/lib/thinking.ts` with tests in `src/lib/thinking.test.ts` — one source of truth for client and server.
 - All AI calls go through `src/lib/ai.server.ts` (Lovable AI, streamed structured output) and are invoked only from server functions in `src/lib/thinking.functions.ts` — keeps prompts, keys and the private final answer server-side.
 - A challenge's final answer is stored in a separate teacher-only table (`challenge_answers`) and never selected by client code — so it can't leak through student queries.
 - Teacher-only privileges = `teacher` role AND a school identity (Google/Microsoft/SAML) via `is_sso_teacher()`; enforced in database policies, route guards are only UX.
 - The synthesis misconception pick is stored as a teacher-only `flags` row until reveal — session rows are readable by students.
 - Writes students must not forge (AI interactions, AI flags) are done with the admin client inside server functions after verifying ownership.
 - Demo mode uses static data in `src/lib/demo-data.ts` with no database writes except analytics — so it needs no login and resets each visit.
-- Cognitive question mapping and scoring live in a versioned pure `src/lib/cognitive.ts` module with adjacent tests — client and server must derive identical self-report results, separate from teacher evidence.
 - Cognitive attempts are account-owned and owner-only in database policies; a trigger freezes submitted responses while permitting coach-consent revocation and owner deletion — school roles never imply access.
 - Cognitive persistence uses authenticated server functions in `src/lib/cognitive.functions.ts`; optional minimal context reaches the existing coach through `thinking.functions.ts` only — raw responses and identities are excluded from prompts.
 - Feed posts, likes, comments/replies live in `posts`/`post_likes`/`post_comments` via `src/lib/posts.ts`; reports in `reports` are moderated only by school admins — database policies enforce who can write what.
 - The bottom-nav Assessment tab (/lab) is only the private cognitive assessment; class joining and teacher challenges live on the Thinking Lab page (/challenges) — keeps self-reflection separate from teacher work.
 - The shared header derives its actions from reactive router state using `header-actions.ts`; sign-out cancels queries and clears cached private data before auth teardown and a history-replacing redirect — prevents stale actions and protected-state restoration.
+- Endorsements on `artifacts` are trigger-guarded to the class teacher; published thinking also posts to `posts.challenge_id`, and non-members see it only via view-only `challenge_preview` RPC — membership stays the solve boundary.

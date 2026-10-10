@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
+import { Route as AuthenticatedCoachRouteImport } from './routes/_authenticated/coach'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
 import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authenticated/orchestrator'
@@ -57,6 +58,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 const AuthenticatedChallengesRoute = AuthenticatedChallengesRouteImport.update({
   id: '/challenges',
   path: '/challenges',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCoachRoute = AuthenticatedCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/challenges': typeof AuthenticatedChallengesRoute
+  '/coach': typeof AuthenticatedCoachRoute
   '/home': typeof AuthenticatedHomeRoute
   '/lab': typeof AuthenticatedLabRoute
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/challenges': typeof AuthenticatedChallengesRoute
+  '/coach': typeof AuthenticatedCoachRoute
   '/home': typeof AuthenticatedHomeRoute
   '/lab': typeof AuthenticatedLabRoute
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
+  '/_authenticated/coach': typeof AuthenticatedCoachRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/lab': typeof AuthenticatedLabRoute
   '/_authenticated/orchestrator': typeof AuthenticatedOrchestratorRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/admin'
     | '/challenges'
+    | '/coach'
     | '/home'
     | '/lab'
     | '/orchestrator'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/admin'
     | '/challenges'
+    | '/coach'
     | '/home'
     | '/lab'
     | '/orchestrator'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/_authenticated/admin'
     | '/_authenticated/challenges'
+    | '/_authenticated/coach'
     | '/_authenticated/home'
     | '/_authenticated/lab'
     | '/_authenticated/orchestrator'
@@ -317,6 +329,13 @@ declare module '@tanstack/react-router' {
       path: '/challenges'
       fullPath: '/challenges'
       preLoaderRoute: typeof AuthenticatedChallengesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/coach': {
+      id: '/_authenticated/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof AuthenticatedCoachRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/home': {
@@ -423,6 +442,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedChallengesRoute: typeof AuthenticatedChallengesRoute
+  AuthenticatedCoachRoute: typeof AuthenticatedCoachRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedLabRoute: typeof AuthenticatedLabRoute
   AuthenticatedOrchestratorRoute: typeof AuthenticatedOrchestratorRoute
@@ -442,6 +462,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedChallengesRoute: AuthenticatedChallengesRoute,
+  AuthenticatedCoachRoute: AuthenticatedCoachRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedLabRoute: AuthenticatedLabRoute,
   AuthenticatedOrchestratorRoute: AuthenticatedOrchestratorRoute,

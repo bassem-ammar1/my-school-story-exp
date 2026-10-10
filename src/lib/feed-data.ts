@@ -6,7 +6,7 @@ import { signedUrl } from "./track";
 export async function loadArtifacts(opts: { classId?: string; challengeId?: string; studentId?: string; ids?: string[] }): Promise<ArtifactView[]> {
   const { data: u } = await supabase.auth.getUser();
   let q = supabase.from("artifacts")
-    .select("id, visibility, published_at, submission_id, submissions!inner(id, student_id, challenge_id, step1_text, step2_text, step3_text, step_images, voice_url, voice_transcript, concept_token, confidence, challenges!inner(class_id, classes!inner(anonymous_mode)))")
+    .select("id, visibility, published_at, endorsed_by, endorsed_at, endorsement_note, submission_id, submissions!inner(id, student_id, challenge_id, step1_text, step2_text, step3_text, step_images, voice_url, voice_transcript, concept_token, confidence, challenges!inner(class_id, classes!inner(anonymous_mode)))")
     .order("published_at", { ascending: false });
   if (opts.classId) q = q.eq("submissions.challenges.class_id", opts.classId);
   if (opts.challengeId) q = q.eq("submissions.challenge_id", opts.challengeId);
@@ -41,6 +41,7 @@ export async function loadArtifacts(opts: { classId?: string; challengeId?: stri
       voiceUrl: await signedUrl(s.voice_url), transcript: s.voice_transcript,
       reactions, mine, annotationCount: anns?.filter((x) => x.artifact_id === r.id).length ?? 0,
       publishedAt: r.published_at, visibility: r.visibility,
+      endorsed: !!r.endorsed_by, endorsementNote: r.endorsement_note ?? null,
     } satisfies ArtifactView;
   }));
 }
