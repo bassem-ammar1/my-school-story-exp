@@ -1,54 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { ThumbsUp, MessageSquare, Share2 } from "lucide-react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArtifactFeed } from "@/components/thinking/ArtifactFeed";
 import { ArtifactDetail } from "@/components/thinking/ArtifactDetail";
 import { loadArtifacts, toggleReaction } from "@/lib/feed-data";
 import { track } from "@/lib/track";
 import { useMe } from "@/hooks/use-me";
-import { SAMPLE_POSTS, PEOPLE, loadMyPosts, type Post } from "@/lib/social-data";
+import { PEOPLE } from "@/lib/social-data";
+import { loadPosts } from "@/lib/posts";
+import { PostCard } from "@/components/thinking/PostCard";
 import type { ArtifactView } from "@/components/thinking/types";
-import { ReportButton } from "@/components/thinking/ReportButton";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({ meta: [{ title: "Feed · MySchoolStory" }, { name: "description", content: "See the latest posts from schools and students." }, { property: "og:title", content: "Feed · MySchoolStory" }, { property: "og:description", content: "See the latest posts from schools and students." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Home,
 });
 
-function PostCard({ p }: { p: Post }) {
-  const [liked, setLiked] = useState(false);
-  return (
-    <article className="bg-card">
-      <div className="flex items-start gap-3 px-3 pt-3">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold leading-tight">{p.author}</p>
-          <p className="truncate text-xs text-muted-foreground">{p.subtitle}</p>
-          <p className="text-xs text-muted-foreground">{p.when}</p>
-        </div>
-        <ReportButton targetType="post" targetId={String(p.id)} label={`${p.author}: ${p.body}`} />
-      </div>
-      <p className="whitespace-pre-wrap px-3 py-3 text-sm">{p.body}</p>
-      <div className="flex justify-between px-3 pb-2 text-xs text-muted-foreground">
-        <span>👍 {p.likes + (liked ? 1 : 0)}</span><span>{p.comments} comments</span>
-      </div>
-      <div className="grid grid-cols-3 border-t text-sm font-medium text-muted-foreground">
-        <button onClick={() => setLiked(!liked)} className={`flex items-center justify-center gap-1.5 py-2.5 ${liked ? "text-primary" : ""}`}><ThumbsUp className="h-4 w-4" />Like</button>
-        <button className="flex items-center justify-center gap-1.5 py-2.5"><MessageSquare className="h-4 w-4" />Comment</button>
-        <button className="flex items-center justify-center gap-1.5 py-2.5"><Share2 className="h-4 w-4" />Share</button>
-      </div>
-    </article>
-  );
-}
-
 function Home() {
   const { data: me } = useMe();
   const qc = useQueryClient();
   const [open, setOpen] = useState<ArtifactView | null>(null);
-  const [mine, setMine] = useState<Post[]>([]);
-  useEffect(() => setMine(loadMyPosts()), []);
+  const { data: posts = [] } = useQuery({ queryKey: ["posts"], queryFn: loadPosts });
   const { data = [] } = useQuery({ queryKey: ["feed", "all"], queryFn: () => loadArtifacts({}) });
   const { data: anns = [] } = useQuery({
     queryKey: ["anns", open?.id], enabled: !!open,
@@ -65,7 +38,7 @@ function Home() {
           </Link>
         ))}
       </section>
-      {[...mine, ...SAMPLE_POSTS].map((p) => <PostCard key={p.id} p={p} />)}
+      {posts.map((p) => <PostCard key={`${p.id}-${p.liked}`} p={p} meId={me?.id} />)}
       {data.length > 0 && (
         <section className="bg-card p-3">
           <h2 className="mb-2 font-semibold">Thinking from your classes</h2>
