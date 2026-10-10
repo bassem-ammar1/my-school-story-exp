@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Add question-specific assessment emojis and current school/grade beneath feed author names
+
 - [ ] Collect private DOB at signup, derive read-only age status, remove student-controlled consent toggles, and set Mariam's requested DOB
 - [ ] Collect guardian emails and verify guardian permission before sharing student performance
 - [ ] Add school-specific enrollment requests/approval and permission-scoped post management and assessment results
