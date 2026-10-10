@@ -26,6 +26,7 @@ import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedAuthorNameRouteImport } from './routes/_authenticated/author.$name'
 import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
 import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
+import { Route as AuthenticatedSchoolsIdRouteImport } from './routes/_authenticated/schools.$id'
 import { Route as AuthenticatedSynthesisJoinRouteImport } from './routes/_authenticated/synthesis.join'
 import { Route as AuthenticatedTraceClassIdRouteImport } from './routes/_authenticated/trace.$classId'
 import { Route as AuthenticatedUIdRouteImport } from './routes/_authenticated/u.$id'
@@ -118,6 +119,11 @@ const AuthenticatedFeedClassIdRoute =
     path: '/feed/$classId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSchoolsIdRoute = AuthenticatedSchoolsIdRouteImport.update({
+  id: '/schools/$id',
+  path: '/schools/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSynthesisJoinRoute =
   AuthenticatedSynthesisJoinRouteImport.update({
     id: '/synthesis/join',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/schools/$id': typeof AuthenticatedSchoolsIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/schools/$id': typeof AuthenticatedSchoolsIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/_authenticated/author/$name': typeof AuthenticatedAuthorNameRoute
   '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
+  '/_authenticated/schools/$id': typeof AuthenticatedSchoolsIdRoute
   '/_authenticated/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/_authenticated/trace/$classId': typeof AuthenticatedTraceClassIdRoute
   '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/author/$name'
     | '/challenge/$id'
     | '/feed/$classId'
+    | '/schools/$id'
     | '/synthesis/join'
     | '/trace/$classId'
     | '/u/$id'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/author/$name'
     | '/challenge/$id'
     | '/feed/$classId'
+    | '/schools/$id'
     | '/synthesis/join'
     | '/trace/$classId'
     | '/u/$id'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/author/$name'
     | '/_authenticated/challenge/$id'
     | '/_authenticated/feed/$classId'
+    | '/_authenticated/schools/$id'
     | '/_authenticated/synthesis/join'
     | '/_authenticated/trace/$classId'
     | '/_authenticated/u/$id'
@@ -408,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedClassIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/schools/$id': {
+      id: '/_authenticated/schools/$id'
+      path: '/schools/$id'
+      fullPath: '/schools/$id'
+      preLoaderRoute: typeof AuthenticatedSchoolsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/synthesis/join': {
       id: '/_authenticated/synthesis/join'
       path: '/synthesis/join'
@@ -453,6 +472,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuthorNameRoute: typeof AuthenticatedAuthorNameRoute
   AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
   AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
+  AuthenticatedSchoolsIdRoute: typeof AuthenticatedSchoolsIdRoute
   AuthenticatedSynthesisJoinRoute: typeof AuthenticatedSynthesisJoinRoute
   AuthenticatedTraceClassIdRoute: typeof AuthenticatedTraceClassIdRoute
   AuthenticatedUIdRoute: typeof AuthenticatedUIdRoute
@@ -473,6 +493,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuthorNameRoute: AuthenticatedAuthorNameRoute,
   AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,
   AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
+  AuthenticatedSchoolsIdRoute: AuthenticatedSchoolsIdRoute,
   AuthenticatedSynthesisJoinRoute: AuthenticatedSynthesisJoinRoute,
   AuthenticatedTraceClassIdRoute: AuthenticatedTraceClassIdRoute,
   AuthenticatedUIdRoute: AuthenticatedUIdRoute,
