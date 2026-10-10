@@ -1,6 +1,9 @@
 import { CATEGORIES, QUESTIONNAIRE_VERSION, SCORING_VERSION, knownAnswers, scoreCategory } from './cognitive';
 import { addMonths } from 'date-fns';
 export type HistoryAttempt = {status:string;submitted_at:string|null;created_at:string;questionnaire_version:string;scoring_version:string;responses:unknown};
+export function allHistoryPoints(attempts: HistoryAttempt[], category: string) {
+ return attempts.filter(a=>a.status==='submitted'&&a.questionnaire_version===QUESTIONNAIRE_VERSION&&a.scoring_version===SCORING_VERSION).map(a=>({date:a.submitted_at??a.created_at,value:scoreCategory(category,knownAnswers(a.responses)).average})).filter(a=>a.value!==null).sort((a,b)=>a.date.localeCompare(b.date));
+}
 export function historyPoints(attempts: HistoryAttempt[], category: string) {
  const rows=attempts.filter(a=>a.status==='submitted'&&a.questionnaire_version===QUESTIONNAIRE_VERSION&&a.scoring_version===SCORING_VERSION).map(a=>({date:(a.submitted_at??a.created_at).slice(0,10),value:scoreCategory(category,knownAnswers(a.responses)).average})).filter(a=>a.value!==null).sort((a,b)=>a.date.localeCompare(b.date));
  const result:typeof rows=[];

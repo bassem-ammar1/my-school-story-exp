@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Collapse assessment sections, unify My results with every submission, and verify optional chart/result feed sharing
 - [x] Verify blank-screen recovery on assessment and profile; pre-optimize chart dependencies to prevent mid-navigation React cache invalidation
 - [x] Simplify assessment overview and add six history charts with six clearly labeled example dates across two years, at least three months apart
 
