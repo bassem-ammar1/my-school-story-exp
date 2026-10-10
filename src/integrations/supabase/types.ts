@@ -669,6 +669,7 @@ export type Database = {
           id: string
           image_alt: string | null
           image_url: string | null
+          school_id: string | null
         }
         Insert: {
           author_avatar?: string | null
@@ -682,6 +683,7 @@ export type Database = {
           id?: string
           image_alt?: string | null
           image_url?: string | null
+          school_id?: string | null
         }
         Update: {
           author_avatar?: string | null
@@ -695,6 +697,7 @@ export type Database = {
           id?: string
           image_alt?: string | null
           image_url?: string | null
+          school_id?: string | null
         }
         Relationships: [
           {
@@ -702,6 +705,13 @@ export type Database = {
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
             referencedColumns: ["id"]
           },
         ]
@@ -877,25 +887,75 @@ export type Database = {
           },
         ]
       }
+      school_follows: {
+        Row: {
+          created_at: string
+          school_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          school_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          school_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_follows_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       schools: {
         Row: {
+          cover_url: string | null
+          founded_year: number | null
           id: string
+          languages: string[]
+          location: string | null
+          logo_url: string | null
+          mission: string | null
           name: string
           owner_id: string
+          student_count: number | null
+          teacher_count: number | null
           test_only: boolean
           verified: boolean
         }
         Insert: {
+          cover_url?: string | null
+          founded_year?: number | null
           id?: string
+          languages?: string[]
+          location?: string | null
+          logo_url?: string | null
+          mission?: string | null
           name: string
           owner_id: string
+          student_count?: number | null
+          teacher_count?: number | null
           test_only?: boolean
           verified?: boolean
         }
         Update: {
+          cover_url?: string | null
+          founded_year?: number | null
           id?: string
+          languages?: string[]
+          location?: string | null
+          logo_url?: string | null
+          mission?: string | null
           name?: string
           owner_id?: string
+          student_count?: number | null
+          teacher_count?: number | null
           test_only?: boolean
           verified?: boolean
         }
