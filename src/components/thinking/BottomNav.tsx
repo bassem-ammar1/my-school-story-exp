@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, ClipboardCheck, PlusSquare, User, FlaskConical } from "lucide-react";
+import { Home, ClipboardCheck, PlusSquare, Bot, FlaskConical } from "lucide-react";
 import { useMe } from "@/hooks/use-me";
 
 const items = [
@@ -7,7 +7,7 @@ const items = [
   { to: "/lab", label: "Assessment", Icon: ClipboardCheck },
   { to: "/post", label: "Post", Icon: PlusSquare },
   { to: "/challenges", label: "Lab", Icon: FlaskConical },
-  { to: "/profile", label: "Profile", Icon: User },
+  { to: "/coach", label: "AI Coach", Icon: Bot },
 ] as const;
 
 export function BottomNav() {
