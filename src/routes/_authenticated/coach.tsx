@@ -46,7 +46,7 @@ function CoachPage() {
           </div>
         )}
         {msgs.map((m, i) => (
-          <div key={i} className={m.role === "user" ? "ml-auto max-w-[85%] rounded-2xl bg-primary px-4 py-2 text-sm text-primary-foreground" : "max-w-[90%] whitespace-pre-wrap rounded-2xl bg-card px-4 py-2 text-sm shadow-soft"}>{m.content}</div>
+          <div key={i} className={m.role === "user" ? "ml-auto max-w-[85%] rounded-2xl bg-primary px-4 py-2 text-sm text-primary-foreground" : "max-w-[90%] whitespace-pre-wrap rounded-2xl bg-card px-4 py-2 text-sm shadow-soft"}>{m.role === "assistant" ? m.content.replace(/\*\*/g, "") : m.content}</div>
         ))}
         {busy && <p className="text-sm text-muted-foreground" aria-live="polite">Your coach is thinking…</p>}
         {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
