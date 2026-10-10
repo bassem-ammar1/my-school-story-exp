@@ -7,7 +7,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, GraduationCap, Presentation, School } from "lucide-react";
 import { track } from "@/lib/track";
 import { ACCOUNT_CHOICES, type AccountChoice } from '@/lib/account-choices';
 import { applyPendingSignupChoice } from '@/lib/signup-choice';
