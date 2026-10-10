@@ -103,7 +103,7 @@ export function Orchestrator() {
         <h1 className="text-3xl font-bold">Orchestrator</h1>
         <div className="flex gap-2">
           {cls && <Button variant="outline" asChild><Link to="/trace/$classId" params={{ classId: cls.id }}>Reasoning traces</Link></Button>}
-          <Button variant="outline" onClick={() => { localStorage.setItem("studentView", "1"); navigate({ to: "/lab" }); }}>Student view</Button>
+          <Button variant="outline" onClick={() => { localStorage.setItem("studentView", "1"); navigate({ to: "/challenges" }); }}>Student view</Button>
         </div>
       </div>
       <div className="grid gap-6 lg:grid-cols-[260px_1fr_300px]">

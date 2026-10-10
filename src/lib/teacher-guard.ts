@@ -9,6 +9,6 @@ export async function requireSsoTeacher() {
   const { data } = await supabase.rpc("is_sso_teacher", { _user_id: u.user.id });
   if (!data) {
     toast.error("403 · Teachers with school sign-in only", { description: "Taking you back to the Thinking Lab." });
-    throw redirect({ to: "/lab" });
+    throw redirect({ to: "/challenges" });
   }
 }

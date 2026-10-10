@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     const { data } = await supabase.rpc("has_role", { _user_id: u.user!.id, _role: "school_admin" });
-    if (!data) throw redirect({ to: "/lab" });
+    if (!data) throw redirect({ to: "/home" });
   },
   head: () => ({ meta: [{ title: "School admin · MySchoolStory" }, { name: "description", content: "Review reports, teacher access requests and teacher roles." }, { property: "og:title", content: "School admin · MySchoolStory" }, { property: "og:description", content: "Review reports, teacher access requests and teacher roles." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Admin,

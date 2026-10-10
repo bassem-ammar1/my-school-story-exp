@@ -48,7 +48,7 @@ function Profile() {
           <p className="mt-1 text-sm font-semibold text-primary">{arts.length} published thinking posts</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
             <Button className="rounded-full" asChild><Link to="/post">New post</Link></Button>
-            <Button variant="outline" className="rounded-full" asChild><Link to="/lab">Assessments</Link></Button>
+            <Button variant="outline" className="rounded-full" asChild><Link to="/lab">Assessment</Link></Button>
           </div>
         </div>
       </section>
