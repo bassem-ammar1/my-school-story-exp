@@ -17,7 +17,7 @@
 - School owners are scoped through schools and school_enrollments, never a global school_admin grant; test schools have no assessment or post-management access.
 - Guardian emails create pending connections only; verified email acceptance and separate student/guardian approvals never substitute for a jurisdiction-specific consent policy.
 - Assessment question illustrations are presentation-only dimension emojis, leaving versioned questions and scoring unchanged.
-- Reflection history plots every compatible submitted attempt; static example curves appear only without real submitted results and remain explicitly labeled, preventing fabricated grades from becoming student evidence.
+- Reflection history plots every compatible submitted attempt; portfolio example curves use separate labeled chart series and share payloads even alongside real results, preventing fabricated grades from becoming student evidence.
 - Reflection feed sharing publishes only a previewed image and category summary through the existing posts table; raw answers, goals, identity details and coach consent never enter the share payload.
 
 - Signup choices are non-authoritative preferences in account_preferences; only school-admin review assigns privileged roles in user_roles, so signup metadata cannot elevate access.

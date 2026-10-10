@@ -122,7 +122,7 @@ function Assessment({ studentId }: { studentId: string }) {
         <p><b>Suggested environment:</b> {env}.</p>
         <div><b>Activities to try:</b><ul className="mt-1 list-disc pl-5 text-muted-foreground">{[...interests, ...grow].slice(0, 3).map(d => <li key={d.id}>{d.activity}</li>)}</ul></div></section>
       {selected.goal && <section className="border-t pt-4"><h3 className="font-bold">My reflection goal</h3><p className="mt-2 whitespace-pre-wrap text-sm">{selected.goal}</p></section>}
-      <ReflectionShare series={CATEGORIES.map(c=>({label:c.label,points:[{date:selected.submitted_at??selected.created_at,value:scoreCategory(c.id,knownAnswers(selected.responses)).average}]}))} label="Share my result to feed" />
+      <div className="flex flex-wrap gap-2">{(['line','donut'] as const).map(format=><ReflectionShare key={format} format={format} series={CATEGORIES.map(c=>({label:c.label,kind:c.kind,points:[{date:selected.submitted_at??selected.created_at,value:scoreCategory(c.id,knownAnswers(selected.responses)).average}]}))} label={format==='donut'?'Share donut charts':'Share my result to feed'} />)}</div>
        <TeacherEvidence studentId={studentId} />
       <label className="flex items-start gap-3 border-t pt-4 text-sm"><Checkbox disabled={busy} checked={selected.use_for_coach} onCheckedChange={value => updatePermission(value === true)} /><span>Let my thinking coach use a summary of this reflection. Only the latest reflection can supply context.</span></label>
       <p className="text-xs text-muted-foreground">Private unless you choose to publish a chart or summary to your feed. Your answers stay private. You can delete or download this reflection.</p>
