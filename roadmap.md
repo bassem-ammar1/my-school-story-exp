@@ -8,3 +8,4 @@
 - [x] Audit stage 4: real saved posts, comments, replies, likes; Lab & Assessment re-check
 - [ ] Assessment school sharing and minors' production rollout — waiting on age range, jurisdiction and guardian-consent policy
 - [ ] SAML sign-in — waiting on the school's identity provider details
+- [x] Bug pass: five positive post reactions; Assessment page shows only cognitive assessment (classes/challenges moved to Thinking Lab tab); badge details; interaction audit
