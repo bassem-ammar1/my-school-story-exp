@@ -39,6 +39,12 @@ function Profile() {
     if (error) throw error;
     return data ?? [];
   } });
+  const { data: mySchools = [] } = useQuery({ queryKey: ["my-schools", me?.id], enabled: !!me, queryFn: async () => {
+    if (!me) return [];
+    const { data, error } = await supabase.from("schools").select("id,name,logo_url,location").eq("owner_id", me.id).order("name");
+    if (error) throw error;
+    return data ?? [];
+  } });
   const [tab, setTab] = useState('posts');
   const [achievement, setAchievement] = useState<(typeof SAMPLE_ACHIEVEMENTS)[number] | null>(null);
   const [saving, setSaving] = useState(false);
@@ -85,7 +91,18 @@ function Profile() {
       </section>
       {showAccessRequest(me.signupRole) && !me.isAdmin && <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />}
       <EducationJourney userId={me.id} editable />
-      {me.signupRole === 'school' && <section className="mt-2 bg-card p-4"><Button variant="outline" asChild><Link to="/school">My school</Link></Button></section>}
+      {mySchools.length > 0 && <section className="mt-2 bg-card p-4">
+        <h2 className="text-lg font-semibold">{mySchools.length > 1 ? 'My schools' : 'My school'}</h2>
+        <div className="mt-2 space-y-2">
+          {mySchools.map(s => (
+            <Link key={s.id} to="/schools/$id" params={{ id: s.id }} className="flex items-center gap-3 rounded-2xl border p-3">
+              <MemberAvatar url={s.logo_url} name={s.name} className="h-12 w-12 text-lg" />
+              <div><p className="font-semibold">{s.name}</p>{s.location && <p className="text-sm text-muted-foreground">{s.location}</p>}</div>
+            </Link>
+          ))}
+        </div>
+      </section>}
+      {me.signupRole === 'school' && mySchools.length === 0 && <section className="mt-2 bg-card p-4"><Button variant="outline" asChild><Link to="/school">My school</Link></Button></section>}
       {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: reports & teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs value={tab} onValueChange={setTab}>
