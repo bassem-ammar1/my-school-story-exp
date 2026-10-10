@@ -1,7 +1,10 @@
 import { expect,it } from 'vitest';
 import { allHistoryPoints } from './reflection-history';
 import { QUESTIONS, QUESTIONNAIRE_VERSION, SCORING_VERSION } from './cognitive';
-import { reflectionCaption } from './reflection-share';
+import { reflectionCaption,donutGrades } from './reflection-share';
+it('donut shares use selected answer-derived grades out of five without filling missing categories',()=>{
+ expect(donutGrades([{label:'Personal skills',kind:'habit',points:[{date:'2026-01-10',value:2},{date:'2026-10-10',value:4.2}]},{label:'Social skills',points:[{date:'2026-10-10',value:null}]}])).toEqual([{label:'Personal skills',kind:'habit',grade:4.2},{label:'Social skills',kind:undefined,grade:null}]);
+});
 it('labels shared sample records as examples, never personal results',()=>{
  expect(reflectionCaption([{label:'Personal skills',points:[{date:'2026-10-10',value:4}]}],true)).toBe('Sample reflection charts (example records, not my assessment results)\nPersonal skills\nGrades out of 5 · current self-reported tendencies, not ability.');
 });
