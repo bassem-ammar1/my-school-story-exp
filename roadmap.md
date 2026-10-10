@@ -1,5 +1,10 @@
 # Roadmap
 
+- [ ] Collect private DOB at signup, derive read-only age status, remove student-controlled consent toggles, and set Mariam's requested DOB
+- [ ] Collect guardian emails and verify guardian permission before sharing student performance
+- [ ] Add school-specific enrollment requests/approval and permission-scoped post management and assessment results
+- [ ] Set up Green School test account and verify the school perspective without granting platform-wide administration
+
 - [x] Add image posts, profile/cover pictures, signup role preferences, and enroll Mariam in a Thinking Lab with materials
 - [x] Add a Themes tab in Settings with existing school themes and SpongeBob, Minecraft, and Powerpuff kids themes affecting backgrounds and button shapes
 - [x] Add editable dated education tree, newest years first, grouped by school with Green School/CIS HighSchool sample names and planned moves
