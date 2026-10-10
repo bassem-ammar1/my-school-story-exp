@@ -6,14 +6,21 @@ import { toast } from "sonner";
 import { ReportButton } from "@/components/thinking/ReportButton";
 import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, isHurtful, HURTFUL_MESSAGE, shareTargets, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
 
-function Who({ id, children, className }: { id: string | null; children: React.ReactNode; className?: string }) {
-  if (!id) return <span className={className}>{children}</span>;
-  return <Link to="/u/$id" params={{ id }} className={`${className ?? ""} hover:underline`}>{children}</Link>;
+function Who({ id, name, children, className, label }: { id: string | null; name?: string; children: React.ReactNode; className?: string; label?: string }) {
+  const cls = `${className ?? ""} cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded`;
+  if (id) return <Link to="/u/$id" params={{ id }} aria-label={label} className={cls}>{children}</Link>;
+  if (name) return <Link to="/author/$name" params={{ name }} aria-label={label} className={cls}>{children}</Link>;
+  return <span className={className}>{children}</span>;
 }
 
 function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?: string | undefined; onReply: (c: CommentNode) => void; onDelete: (id: string) => void; reply?: boolean }) {
   return (
-    <div className={reply ? "ml-8" : ""}>
+    <div className={`flex gap-2 ${reply ? "ml-8" : ""}`}>
+      <Who id={c.author_id} label={`Open ${c.author}'s profile`} className="shrink-0">
+        {c.avatarUrl ? <img src={c.avatarUrl} alt="" className="h-8 w-8 rounded-full object-cover" /> :
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{c.author.charAt(0).toUpperCase()}</span>}
+      </Who>
+      <div className="min-w-0 flex-1">
       <div className="rounded-xl bg-secondary px-3 py-2">
         <p className="text-xs font-semibold"><Who id={c.author_id}>{c.author}</Who> <span className="font-normal text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
         <p className="whitespace-pre-wrap text-sm">{c.body}</p>
@@ -22,6 +29,7 @@ function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?:
         <button onClick={() => onReply(c)} className="font-medium">Reply</button>
         {c.author_id === me && <button onClick={() => onDelete(c.id)} aria-label="Delete comment"><Trash2 className="h-3 w-3" /></button>}
         {c.author_id !== me && <ReportButton targetType="comment" targetId={c.id} label={`${c.author}: ${c.body}`} />}
+      </div>
       </div>
     </div>
   );
