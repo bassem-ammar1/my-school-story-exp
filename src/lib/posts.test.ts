@@ -36,3 +36,16 @@ describe("reactions", () => {
     expect(applyReaction({}, "celebrate", null)).toEqual({ celebrate: 0 });
   });
 });
+
+import { isHurtful } from "./posts";
+describe("hurtful comments", () => {
+  it("rejects insults about a student's personality", () => {
+    expect(isHurtful("you are so stupid")).toBe(true);
+    expect(isHurtful("Nobody likes you")).toBe(true);
+    expect(isHurtful("انت غبي")).toBe(true);
+  });
+  it("allows kind or neutral comments", () => {
+    expect(isHurtful("Great work, well explained!")).toBe(false);
+    expect(isHurtful("I think step 2 could be clearer")).toBe(false);
+  });
+});

@@ -57,6 +57,13 @@
       "when": 1791593639954,
       "tag": "0007_post_reaction_types",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791595238334,
+      "tag": "0008_reject_hurtful_language",
+      "breakpoints": true
     }
   ]
 }
