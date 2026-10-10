@@ -15,8 +15,10 @@ export function EducationJourney({ userId, editable = false }: { userId: string;
   const qc = useQueryClient();
   const [form, setForm] = useState<EducationEntry | null>(null);
   const [busy, setBusy] = useState(false);
-  const { data: entries = [], isError } = useQuery({ queryKey: ['education', userId], queryFn: async () => {
-    const { data, error } = await supabase.from('education_entries').select('*').eq('user_id',userId).order('start_year');
+  const { data: entries = [], isError } = useQuery({ queryKey: ['education', userId, editable], queryFn: async () => {
+    let query = supabase.from('education_entries').select('*').eq('user_id',userId).order('start_year', { ascending: false });
+    if (!editable) query = query.eq('shared',true);
+    const { data, error } = await query;
     if (error) throw error;
     return data ?? [];
   } });
