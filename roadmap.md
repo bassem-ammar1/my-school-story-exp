@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Add six clearly labeled illustrative history records from October 2024 alongside real results, and verify donut-image feed sharing
+- [x] Add six clearly labeled illustrative history records from October 2024 alongside real results, and verify donut-image feed sharing
 - [x] Collapse assessment sections, unify My results with every submission, and verify optional chart/result feed sharing
 - [x] Verify blank-screen recovery on assessment and profile; pre-optimize chart dependencies to prevent mid-navigation React cache invalidation
 - [x] Simplify assessment overview and add six history charts with six clearly labeled example dates across two years, at least three months apart
