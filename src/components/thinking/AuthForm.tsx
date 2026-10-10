@@ -70,7 +70,7 @@ export function AuthForm() {
     <main className="mx-auto flex max-w-md flex-col gap-6 px-6 py-12">
       <div className="text-center">
         <img src={logo} alt="MySchoolStory logo" width={96} height={96} className="mx-auto h-24 w-24 object-contain" />
-        <p className="mt-2 text-2xl font-extrabold tracking-tight text-primary">MySchoolStory</p>
+        <p className="mt-0 text-2xl font-extrabold tracking-tight text-primary">MySchoolStory</p>
         <h1 className="mt-4 text-3xl font-bold">{mode === "in" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1 text-muted-foreground">Your learning. Your community. Your story.</p>
       </div>
