@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { loadPosts } from "@/lib/posts";
+import { searchSchools } from "@/lib/schools";
 
 export const Route = createFileRoute("/_authenticated/search")({
   validateSearch: (s: Record<string, unknown>) => ({ q: typeof s["q"] === "string" ? s["q"] : "" }),
@@ -25,6 +26,8 @@ function SearchPage() {
     queryFn: async () => (await supabase.rpc("search_people", { _term: t })).data ?? [],
   });
 
+  const { data: schools = [] } = useQuery({ queryKey: ["search-schools", t.toLowerCase()], queryFn: () => searchSchools(t) });
+
   const { data: allPosts = [] } = useQuery({ queryKey: ["posts"], queryFn: loadPosts });
   const posts = allPosts.filter(
     (p) => !t || `${p.author} ${p.body}`.toLowerCase().includes(t.toLowerCase()),
@@ -34,6 +37,25 @@ function SearchPage() {
     <main className="space-y-4 px-3 py-4">
       <input autoFocus value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Type a school or student name"
         className="h-10 w-full rounded-md border bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+
+      <section>
+        <h2 className="mb-1 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Schools</h2>
+        <ul className="divide-y rounded-xl bg-card shadow-soft">
+          {schools.map((s) => (
+            <li key={s.id}>
+              <Link to="/schools/$id" params={{ id: s.id }} className="flex items-center gap-3 p-3 hover:bg-secondary/50">
+                {s.logo_url ? <img src={s.logo_url} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
+                  : <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-secondary text-xl">🏫</span>}
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">{s.name}</p>
+                  <p className="truncate text-sm text-muted-foreground">School{s.location ? ` · ${s.location}` : ""}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+          {schools.length === 0 && <li className="p-6 text-center text-sm text-muted-foreground">No schools found.</li>}
+        </ul>
+      </section>
 
       <section>
         <h2 className="mb-1 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">People</h2>
