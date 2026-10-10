@@ -577,30 +577,42 @@ export type Database = {
       }
       profiles: {
         Row: {
+          about: string
           age_13_plus: boolean
           avatar_url: string | null
           created_at: string
           display_name: string
           grade: number | null
+          headline: string
           id: string
+          sample_portfolio: boolean
+          theme: string
           voice_consent: boolean
         }
         Insert: {
+          about?: string
           age_13_plus?: boolean
           avatar_url?: string | null
           created_at?: string
           display_name?: string
           grade?: number | null
+          headline?: string
           id: string
+          sample_portfolio?: boolean
+          theme?: string
           voice_consent?: boolean
         }
         Update: {
+          about?: string
           age_13_plus?: boolean
           avatar_url?: string | null
           created_at?: string
           display_name?: string
           grade?: number | null
+          headline?: string
           id?: string
+          sample_portfolio?: boolean
+          theme?: string
           voice_consent?: boolean
         }
         Relationships: []
