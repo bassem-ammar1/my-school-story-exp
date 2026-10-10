@@ -527,6 +527,51 @@ export type Database = {
           },
         ]
       }
+      reports: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          details: string | null
+          handled_by: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          status: string
+          target_id: string
+          target_label: string | null
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          details?: string | null
+          handled_by?: string | null
+          id?: string
+          reason: string
+          reporter_id?: string
+          status?: string
+          target_id: string
+          target_label?: string | null
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          details?: string | null
+          handled_by?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+          target_id?: string
+          target_label?: string | null
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       submission_versions: {
         Row: {
           confidence: number | null
