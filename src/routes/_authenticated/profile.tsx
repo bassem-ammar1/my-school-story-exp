@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ArtifactCard } from "@/components/thinking/ArtifactCard";
 import { BadgeWall } from "@/components/thinking/BadgeIssuer";
@@ -22,6 +21,7 @@ import { MemberAvatar } from '@/components/thinking/MemberAvatar';
 import { showAccessRequest } from '@/lib/account-choices';
 import { ThemePicker } from '@/components/thinking/ThemePicker';
 import { EducationJourney } from '@/components/thinking/EducationJourney';
+import { StudentSafety } from '@/components/thinking/StudentSafety';
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My profile · MySchoolStory" }, { name: "description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:title", content: "My profile · MySchoolStory" }, { property: "og:description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -42,8 +42,8 @@ function Profile() {
   const [tab, setTab] = useState('posts');
   const [achievement, setAchievement] = useState<(typeof SAMPLE_ACHIEVEMENTS)[number] | null>(null);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ display_name: "", grade: "", age_13_plus: false, voice_consent: false, about: '', headline: '' });
-  useEffect(() => { if (me?.profile) setForm({ display_name: me.profile.display_name, grade: me.profile.grade?.toString() ?? "", age_13_plus: me.profile.age_13_plus, voice_consent: me.profile.voice_consent, about: me.profile.about, headline: me.profile.headline }); }, [me?.profile]);
+  const [form, setForm] = useState({ display_name: "", grade: "", about: '', headline: '' });
+  useEffect(() => { if (me?.profile) setForm({ display_name: me.profile.display_name, grade: me.profile.grade?.toString() ?? "", about: me.profile.about, headline: me.profile.headline }); }, [me?.profile]);
   if (!me) return null;
 
   const saveProfile = async () => {
@@ -85,6 +85,7 @@ function Profile() {
       </section>
       {showAccessRequest(me.signupRole) && !me.isAdmin && <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />}
       <EducationJourney userId={me.id} editable />
+      {me.signupRole === 'school' && <section className="mt-2 bg-card p-4"><Button variant="outline" asChild><Link to="/school">My school</Link></Button></section>}
       {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: reports & teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs value={tab} onValueChange={setTab}>
@@ -116,8 +117,7 @@ function Profile() {
           <div className="grid gap-1"><Label htmlFor="profile-headline">Headline</Label><Input id="profile-headline" maxLength={120} value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} /></div>
           <div className="grid gap-1"><Label htmlFor="profile-about">About</Label><textarea id="profile-about" maxLength={1000} rows={4} className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={form.about} onChange={e => setForm({ ...form, about: e.target.value })} /></div>
           <div className="grid gap-1"><Label htmlFor="profile-grade">Grade</Label><Input id="profile-grade" type="number" min={1} max={12} value={form.grade} onChange={(e) => setForm({ ...form, grade: e.target.value })} /></div>
-          <div className="flex items-center justify-between"><Label>I am 13 or older</Label><Switch checked={form.age_13_plus} onCheckedChange={(v) => setForm({ ...form, age_13_plus: v })} /></div>
-          {!form.age_13_plus && <div className="flex items-center justify-between gap-3"><Label>My parent or guardian allows voice notes</Label><Switch checked={form.voice_consent} onCheckedChange={(v) => setForm({ ...form, voice_consent: v })} /></div>}
+           {me.signupRole === 'student' && <StudentSafety me={me} />}
           <Button onClick={saveProfile} disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
           </TabsContent><TabsContent value="themes"><ThemePicker current={me.profile?.theme ?? 'classic'} onChoose={chooseTheme} /></TabsContent></Tabs>
         </TabsContent>
