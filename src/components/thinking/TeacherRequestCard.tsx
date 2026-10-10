@@ -18,7 +18,7 @@ export function TeacherRequestCard({ userId, isTeacher }: { userId: string; isTe
   if (isTeacher || isLoading) return null;
 
   const send = async () => {
-    if (school.trim().length < 2) return toast.error("Please enter your school's name.");
+    if (school.trim().length < 2) { toast.error("Please enter your school's name."); return; }
     setBusy(true);
     const { error } = await supabase.from("teacher_requests").insert({ user_id: userId, school_name: school.trim(), note: note.trim() || null });
     setBusy(false);

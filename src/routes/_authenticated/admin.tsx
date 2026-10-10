@@ -40,7 +40,7 @@ function Admin() {
     setBusy(id);
     const { error } = await supabase.rpc("review_teacher_request", { _request_id: id, _approve: approve });
     setBusy(null);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(approve ? "Teacher access approved" : "Request declined");
     qc.invalidateQueries({ queryKey: ["teacher-requests"] });
     qc.invalidateQueries({ queryKey: ["admin-users"] });
