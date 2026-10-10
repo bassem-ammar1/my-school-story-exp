@@ -19,7 +19,7 @@ export function applyReaction(counts: ReactionCounts, from: ReactionId | null, t
 }
 export const totalReactions = (c: ReactionCounts) => Object.values(c).reduce((a, b) => a + (b ?? 0), 0);
 
-export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; imageUrl?: string | null; imageAlt?: string | null; challengeId?: string | null; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
+export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; imageUrl?: string | null; imageAlt?: string | null; challengeId?: string | null; schoolId?: string | null; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
 export type CommentRow = { id: string; post_id: string; parent_id: string | null; author_id: string; body: string; created_at: string };
 export type CommentNode = CommentRow & { author: string; avatarUrl?: string | null; replies: CommentNode[] };
 
@@ -72,7 +72,9 @@ export async function loadPosts(): Promise<FeedPost[]> {
       id: p.id, authorId: p.author_id, body: p.body, when: timeAgo(p.created_at),
       imageUrl: p.image_url, imageAlt: p.image_alt, challengeId: p.challenge_id,
       author: p.author_name ?? prof?.display_name ?? "Someone",
-      avatar: p.author_avatar ?? "🙂", avatarUrl: prof?.avatar_url ?? null,
+      avatar: p.author_avatar?.startsWith("/") ? "🏫" : p.author_avatar ?? "🙂",
+      avatarUrl: prof?.avatar_url ?? (p.author_avatar?.startsWith("/") ? p.author_avatar : null),
+      schoolId: p.school_id,
       subtitle: schools?.find(s=>s.user_id===p.author_id) ? `${schools.find(s=>s.user_id===p.author_id)?.school_name} · Grade ${schools.find(s=>s.user_id===p.author_id)?.grade}` : p.author_subtitle ?? "Student",
       reactions: (likes ?? []).filter((l) => l.post_id === p.id).reduce<ReactionCounts>((c, l) => applyReaction(c, null, l.reaction as ReactionId), {}),
       mine: ((likes ?? []).find((l) => l.post_id === p.id && l.user_id === u.user?.id)?.reaction as ReactionId | undefined) ?? null,
