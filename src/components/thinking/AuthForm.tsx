@@ -87,8 +87,8 @@ export function AuthForm() {
         {mode === "up" && (
           <div className="grid gap-1"><Label htmlFor="name">Your name</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} required /></div>
         )}
-        <div className="grid gap-1"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-        <div className="grid gap-1"><Label htmlFor="pw">Password</Label><Input id="pw" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
+        <div className="grid gap-1"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="you@school.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+        <div className="grid gap-1"><Label htmlFor="pw">Password</Label><div className="relative"><Input id="pw" type={showPw ? "text" : "password"} minLength={6} placeholder="At least 6 characters" autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" required /><Button type="button" variant="ghost" size="icon" aria-label={showPw ? "Hide password" : "Show password"} title={showPw ? "Hide password" : "Show password"} aria-pressed={showPw} onClick={() => setShowPw(v => !v)} className="absolute right-0 top-0 text-muted-foreground">{showPw ? <EyeOff /> : <Eye />}</Button></div></div>
         <Button type="submit" disabled={busy || (mode === 'up' && role !== 'student' && school.trim().length < 2)}>{mode === "in" ? "Sign in" : "Sign up"}</Button>
         <Button variant="link" type="button" className="text-sm hover:no-underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
           <span className="text-foreground">{mode === "in" ? "New here? " : "Already have an account? "}</span>
