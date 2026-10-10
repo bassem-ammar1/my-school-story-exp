@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Fix route-aware header actions and verify Home search/share and secure logout on desktop/mobile
+
 - [x] Correct cognitive result-circle numbers and validate question/answered counts
 - [x] Thinking Lab, feed, orchestrator, synthesis, demo, cognitive assessment
 - [x] Audit stage 1: teacher access requests with school-admin approval; first admin set (dinaalzareef0@gmail.com)

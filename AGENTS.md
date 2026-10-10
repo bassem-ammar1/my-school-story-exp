@@ -23,3 +23,4 @@
 - Cognitive persistence uses authenticated server functions in `src/lib/cognitive.functions.ts`; optional minimal context reaches the existing coach through `thinking.functions.ts` only — raw responses and identities are excluded from prompts.
 - Feed posts, likes, comments/replies live in `posts`/`post_likes`/`post_comments` via `src/lib/posts.ts`; reports in `reports` are moderated only by school admins — database policies enforce who can write what.
 - The bottom-nav Assessment tab (/lab) is only the private cognitive assessment; class joining and teacher challenges live on the Thinking Lab page (/challenges) — keeps self-reflection separate from teacher work.
+- The shared header derives its actions from reactive router state using `header-actions.ts`; sign-out cancels queries and clears cached private data before auth teardown and a history-replacing redirect — prevents stale actions and protected-state restoration.
