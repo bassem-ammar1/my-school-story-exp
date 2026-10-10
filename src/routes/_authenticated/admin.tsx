@@ -42,7 +42,7 @@ function Admin() {
     const { error } = await supabase.rpc("review_teacher_request", { _request_id: id, _approve: approve });
     setBusy(null);
     if (error) { toast.error(error.message); return; }
-    toast.success(approve ? "Teacher access approved" : "Request declined");
+    toast.success(approve ? "Account access approved" : "Request declined");
     qc.invalidateQueries({ queryKey: ["teacher-requests"] });
     qc.invalidateQueries({ queryKey: ["admin-users"] });
   };
@@ -56,12 +56,12 @@ function Admin() {
       <h1 className="text-2xl font-bold">School admin</h1>
       <ModerationPanel />
       <section>
-        <h2 className="text-lg font-semibold">Teacher requests</h2>
+        <h2 className="text-lg font-semibold">Teacher & school requests</h2>
         {requests.length === 0 ? <p className="mt-1 text-sm text-muted-foreground">No requests waiting.</p> : (
           <ul className="mt-2 divide-y rounded-2xl bg-card shadow-soft">
             {requests.map((r) => (
               <li key={r.id} className="space-y-2 px-4 py-3">
-                <div><p className="font-medium">{r.name}</p><p className="text-sm text-muted-foreground">{r.school_name}{r.note ? ` · ${r.note}` : ""}</p></div>
+                <div><p className="font-medium">{r.name} · {r.requested_role === 'school' ? 'School' : 'Teacher'}</p><p className="text-sm text-muted-foreground">{r.school_name}{r.note ? ` · ${r.note}` : ""}</p></div>
                 <div className="flex gap-2">
                   <Button size="sm" className="rounded-full" disabled={busy === r.id} onClick={() => review(r.id, true)}>Approve</Button>
                   <Button size="sm" variant="outline" className="rounded-full" disabled={busy === r.id} onClick={() => review(r.id, false)}>Decline</Button>

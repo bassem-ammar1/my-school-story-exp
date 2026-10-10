@@ -14,6 +14,29 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_preferences: {
+        Row: {
+          signup_role: string
+          user_id: string
+        }
+        Insert: {
+          signup_role?: string
+          user_id: string
+        }
+        Update: {
+          signup_role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_interactions: {
         Row: {
           blocked_answer_attempt: boolean
@@ -386,6 +409,50 @@ export type Database = {
         }
         Relationships: []
       }
+      education_entries: {
+        Row: {
+          end_year: number
+          grade: number
+          id: string
+          is_example: boolean
+          school_name: string
+          shared: boolean
+          start_year: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          end_year: number
+          grade: number
+          id?: string
+          is_example?: boolean
+          school_name: string
+          shared?: boolean
+          start_year: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          end_year?: number
+          grade?: number
+          id?: string
+          is_example?: boolean
+          school_name?: string
+          shared?: boolean
+          start_year?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flags: {
         Row: {
           created_at: string
@@ -552,6 +619,8 @@ export type Database = {
           created_at: string
           hidden: boolean
           id: string
+          image_alt: string | null
+          image_url: string | null
         }
         Insert: {
           author_avatar?: string | null
@@ -562,6 +631,8 @@ export type Database = {
           created_at?: string
           hidden?: boolean
           id?: string
+          image_alt?: string | null
+          image_url?: string | null
         }
         Update: {
           author_avatar?: string | null
@@ -572,6 +643,8 @@ export type Database = {
           created_at?: string
           hidden?: boolean
           id?: string
+          image_alt?: string | null
+          image_url?: string | null
         }
         Relationships: []
       }
@@ -580,6 +653,7 @@ export type Database = {
           about: string
           age_13_plus: boolean
           avatar_url: string | null
+          cover_url: string | null
           created_at: string
           display_name: string
           grade: number | null
@@ -593,6 +667,7 @@ export type Database = {
           about?: string
           age_13_plus?: boolean
           avatar_url?: string | null
+          cover_url?: string | null
           created_at?: string
           display_name?: string
           grade?: number | null
@@ -606,6 +681,7 @@ export type Database = {
           about?: string
           age_13_plus?: boolean
           avatar_url?: string | null
+          cover_url?: string | null
           created_at?: string
           display_name?: string
           grade?: number | null
@@ -870,6 +946,7 @@ export type Database = {
           created_at: string
           id: string
           note: string | null
+          requested_role: string
           reviewed_at: string | null
           reviewed_by: string | null
           school_name: string
@@ -880,6 +957,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string | null
+          requested_role?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           school_name: string
@@ -890,6 +968,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string | null
+          requested_role?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           school_name?: string
@@ -999,6 +1078,10 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["app_role"]
         }[]
+      }
+      set_signup_role: {
+        Args: { _role: string; _school_name?: string }
+        Returns: undefined
       }
       submission_class: { Args: { _submission_id: string }; Returns: string }
     }

@@ -33,9 +33,9 @@ export function TeacherRequestCard({ userId, isTeacher }: { userId: string; isTe
 
   return (
     <section className="mt-2 bg-card p-4">
-      <h2 className="text-lg font-semibold">Are you a teacher?</h2>
+      <h2 className="text-lg font-semibold">{req?.requested_role === 'school' ? 'School access' : 'Teacher access'}</h2>
       {req?.status === "pending" && <p className="mt-1 text-sm text-muted-foreground">Your request for {req.school_name} is waiting for a school admin.</p>}
-      {req?.status === "approved" && <p className="mt-1 text-sm text-muted-foreground">Approved! Sign in with your school Google or Microsoft account to unlock teacher tools.</p>}
+      {req?.status === "approved" && <p className="mt-1 text-sm text-muted-foreground">{req.requested_role === 'school' ? 'School access approved.' : 'Approved! Sign in with your school Google or Microsoft account to unlock teacher tools.'}</p>}
       {req?.status === "rejected" && <p className="mt-1 text-sm text-muted-foreground">Your last request wasn't approved. You can send a new one.</p>}
       {req && req.status !== "approved" && <Button variant="outline" size="sm" className="mt-2 rounded-full" onClick={withdraw}>{req.status === "pending" ? "Cancel request" : "Clear and try again"}</Button>}
       {!req && (

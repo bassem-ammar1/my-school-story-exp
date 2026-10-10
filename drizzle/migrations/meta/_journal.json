@@ -71,6 +71,27 @@
       "when": 1791610336470,
       "tag": "0009_profile_themes_and_sample_portfolio",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791610699077,
+      "tag": "0010_profile_media_and_signup_choices",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791610862909,
+      "tag": "0011_kids_theme_allowlist",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791611072688,
+      "tag": "0012_education_journey",
+      "breakpoints": true
     }
   ]
 }

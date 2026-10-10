@@ -16,8 +16,12 @@ import { useMe } from "@/hooks/use-me";
 import { TeacherRequestCard } from "@/components/thinking/TeacherRequestCard";
 import { PostCard } from "@/components/thinking/PostCard";
 import { loadPosts } from "@/lib/posts";
-import { SCHOOL_THEMES, SAMPLE_ACHIEVEMENTS } from "@/lib/profile-themes";
+import { SAMPLE_ACHIEVEMENTS } from "@/lib/profile-themes";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MemberAvatar } from '@/components/thinking/MemberAvatar';
+import { showAccessRequest } from '@/lib/account-choices';
+import { ThemePicker } from '@/components/thinking/ThemePicker';
+import { EducationJourney } from '@/components/thinking/EducationJourney';
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My profile · MySchoolStory" }, { name: "description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:title", content: "My profile · MySchoolStory" }, { property: "og:description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -60,14 +64,12 @@ function Profile() {
   return (
     <main className="bg-muted pb-4">
       <section className="bg-card pb-4">
-        <div className="h-24 bg-gradient-to-r from-primary to-accent" />
+        {me.profile?.cover_url ? <img src={me.profile.cover_url} alt="Profile cover" width={1536} height={768} className="h-32 w-full object-cover" /> : <div className="h-24 bg-gradient-to-r from-primary to-accent" />}
         <div className="px-4">
-          <div className="-mt-12 grid h-24 w-24 place-items-center rounded-full border-4 border-card bg-primary text-4xl font-bold text-primary-foreground">
-            {(me.profile?.display_name ?? "?").charAt(0).toUpperCase()}
-          </div>
+          <MemberAvatar url={me.profile?.avatar_url} name={me.profile?.display_name ?? 'Student'} className="relative -mt-12 h-24 w-24 border-4 border-card text-4xl" />
           <h1 className="mt-2 text-2xl font-bold">{me.profile?.display_name}</h1>
           <p className="mt-1 text-sm">{me.profile?.headline}</p>
-          <p className="text-sm">{me.ssoTeacher ? "Teacher" : "Student"}{me.profile?.grade ? ` · Grade ${me.profile.grade}` : ""}</p>
+          <p className="text-sm">{me.isAdmin ? 'School' : me.ssoTeacher ? "Teacher" : "Student"}{me.profile?.grade ? ` · Grade ${me.profile.grade}` : ""}</p>
           <p className="text-sm text-muted-foreground">{me.email}</p>
           <p className="mt-1 text-sm font-semibold text-primary">{myPosts.length} posts · {arts.length} published thinking posts</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -81,7 +83,8 @@ function Profile() {
         <h2 className="text-lg font-semibold">About</h2>
         <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{me.profile?.about || "A learner on MySchoolStory who shares how they think, step by step."}</p>
       </section>
-      <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />
+      {showAccessRequest(me.signupRole) && !me.isAdmin && <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />}
+      <EducationJourney userId={me.id} editable />
       {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: reports & teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs value={tab} onValueChange={setTab}>
@@ -108,6 +111,7 @@ function Profile() {
           ))}
         </TabsContent>
         <TabsContent value="settings" className="max-w-md space-y-4 rounded-2xl bg-card p-5 shadow-soft">
+          <Tabs defaultValue="details"><TabsList className="w-full"><TabsTrigger value="details">Profile details</TabsTrigger><TabsTrigger value="themes">Themes</TabsTrigger></TabsList><TabsContent value="details" className="space-y-4">
           <div className="grid gap-1"><Label htmlFor="profile-name">Display name</Label><Input id="profile-name" value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })} /></div>
           <div className="grid gap-1"><Label htmlFor="profile-headline">Headline</Label><Input id="profile-headline" maxLength={120} value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} /></div>
           <div className="grid gap-1"><Label htmlFor="profile-about">About</Label><textarea id="profile-about" maxLength={1000} rows={4} className="w-full rounded-md border bg-background px-3 py-2 text-sm" value={form.about} onChange={e => setForm({ ...form, about: e.target.value })} /></div>
@@ -115,7 +119,7 @@ function Profile() {
           <div className="flex items-center justify-between"><Label>I am 13 or older</Label><Switch checked={form.age_13_plus} onCheckedChange={(v) => setForm({ ...form, age_13_plus: v })} /></div>
           {!form.age_13_plus && <div className="flex items-center justify-between gap-3"><Label>My parent or guardian allows voice notes</Label><Switch checked={form.voice_consent} onCheckedChange={(v) => setForm({ ...form, voice_consent: v })} /></div>}
           <Button onClick={saveProfile} disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
-          <section className="space-y-2"><h2 className="font-semibold">School theme</h2><div className="grid grid-cols-3 gap-2">{SCHOOL_THEMES.map(t => <Button key={t.id} variant="outline" aria-pressed={me.profile?.theme === t.id} onClick={() => chooseTheme(t.id)} className={`h-auto min-w-0 flex-col gap-2 whitespace-normal px-2 py-3 ${me.profile?.theme === t.id ? 'border-primary ring-1 ring-ring' : ''}`}><span className={`theme-swatch ${t.swatch} h-6 w-full rounded-sm`} /><span className="text-xs">{t.name}</span><span className="text-[10px] text-muted-foreground">{t.idea}</span></Button>)}</div></section>
+          </TabsContent><TabsContent value="themes"><ThemePicker current={me.profile?.theme ?? 'classic'} onChoose={chooseTheme} /></TabsContent></Tabs>
         </TabsContent>
       </Tabs>
       </div>

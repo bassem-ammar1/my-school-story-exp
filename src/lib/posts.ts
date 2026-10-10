@@ -19,7 +19,7 @@ export function applyReaction(counts: ReactionCounts, from: ReactionId | null, t
 }
 export const totalReactions = (c: ReactionCounts) => Object.values(c).reduce((a, b) => a + (b ?? 0), 0);
 
-export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
+export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; imageUrl?: string | null; imageAlt?: string | null; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
 export type CommentRow = { id: string; post_id: string; parent_id: string | null; author_id: string; body: string; created_at: string };
 export type CommentNode = CommentRow & { author: string; avatarUrl?: string | null; replies: CommentNode[] };
 
@@ -69,6 +69,7 @@ export async function loadPosts(): Promise<FeedPost[]> {
     const prof = p.author_id ? people[p.author_id] : undefined;
     return {
       id: p.id, authorId: p.author_id, body: p.body, when: timeAgo(p.created_at),
+      imageUrl: p.image_url, imageAlt: p.image_alt,
       author: p.author_name ?? prof?.display_name ?? "Someone",
       avatar: p.author_avatar ?? "🙂", avatarUrl: prof?.avatar_url ?? null,
       subtitle: p.author_subtitle ?? "MySchoolStory member",
@@ -119,7 +120,7 @@ export async function addComment(postId: string, body: string, parentId?: string
 }
 
 export async function loadProfile(id: string) {
-  const { data } = await supabase.from("profiles").select("id,display_name,avatar_url,grade").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("profiles").select("id,display_name,avatar_url,cover_url,grade,headline,about").eq("id", id).maybeSingle();
   return data;
 }
 

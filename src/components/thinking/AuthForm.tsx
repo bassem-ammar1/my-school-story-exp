@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { track } from "@/lib/track";
+import { ACCOUNT_CHOICES, type AccountChoice } from '@/lib/account-choices';
+import { applyPendingSignupChoice } from '@/lib/signup-choice';
 
 export function AuthForm() {
   const navigate = useNavigate();
@@ -16,8 +18,11 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [role, setRole] = useState<AccountChoice>('student');
+  const [school, setSchool] = useState('');
 
   const done = async () => {
+    await applyPendingSignupChoice();
     if (sessionStorage.getItem("demo_started")) { await track("demo_converted"); sessionStorage.removeItem("demo_started"); }
     navigate({ to: "/home" });
   };
@@ -27,7 +32,7 @@ export function AuthForm() {
     setBusy(true);
     try {
       if (mode === "up") {
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + "/home", data: { full_name: name } } });
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: { full_name: name, signup_role: role, school_name: school.trim() } } });
         if (error) throw error;
         if (!data.session) toast.success("Check your email to confirm your account.");
         else await done();
@@ -44,6 +49,10 @@ export function AuthForm() {
   };
 
   const sso = async (p: "google" | "microsoft") => {
+    if (mode === 'up') {
+      if (role !== 'student' && school.trim().length < 2) { toast.error('Please enter your school name.'); return; }
+      sessionStorage.setItem('signup-choice', JSON.stringify({ role, school: school.trim() }));
+    }
     const r = await lovable.auth.signInWithOAuth(p, { redirect_uri: window.location.origin });
     if (r.error) toast.error(r.error.message);
     else if (!r.redirected) await done();
@@ -55,15 +64,16 @@ export function AuthForm() {
         <img src={logo} alt="MySchoolStory logo" width={96} height={96} className="mx-auto h-24 w-24 object-contain" />
         <p className="mt-2 text-2xl font-extrabold tracking-tight text-primary">MySchoolStory</p>
         <h1 className="mt-4 text-3xl font-bold">{mode === "in" ? "Welcome back" : "Create your account"}</h1>
-        <p className="mt-1 text-muted-foreground">Teachers: use school sign-in to unlock the Orchestrator.</p>
+        <p className="mt-1 text-muted-foreground">Your learning. Your community. Your story.</p>
       </div>
+      {mode === 'up' && <section className="space-y-3"><Label>Account type</Label><div className="grid grid-cols-3 gap-2">{ACCOUNT_CHOICES.map(choice => <Button key={choice} type="button" variant={role === choice ? 'default' : 'outline'} aria-pressed={role === choice} onClick={() => setRole(choice)} className="capitalize">{choice}</Button>)}</div>{role !== 'student' && <div className="space-y-1"><Label htmlFor="signup-school">School name</Label><Input id="signup-school" maxLength={120} value={school} onChange={e => setSchool(e.target.value)} required /><p className="text-xs text-muted-foreground">{role === 'teacher' ? 'Teacher' : 'School'} access needs approval from a school administrator.</p></div>}</section>}
       <div className="grid gap-2 rounded-2xl bg-card p-5 shadow-soft">
         <p className="text-sm font-semibold">Quick sign-in</p>
         <Button variant="outline" onClick={() => sso("google")}>
           {mode === "in" ? "Sign in with Google" : "Sign up with Google"}
         </Button>
         <Button variant="outline" onClick={() => sso("microsoft")}>Microsoft Entra ID</Button>
-        <p className="text-xs text-muted-foreground">Teachers: use school sign-in to unlock the Orchestrator.</p>
+        {mode === 'up' && role === 'teacher' && <p className="text-xs text-muted-foreground">Approved teachers also use their school Google or Microsoft account.</p>}
       </div>
       <form onSubmit={submit} className="grid gap-3 rounded-2xl bg-card p-5 shadow-soft">
         {mode === "up" && (
@@ -71,10 +81,10 @@ export function AuthForm() {
         )}
         <div className="grid gap-1"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
         <div className="grid gap-1"><Label htmlFor="pw">Password</Label><Input id="pw" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
-        <Button type="submit" disabled={busy}>{mode === "in" ? "Sign in" : "Sign up"}</Button>
-        <button type="button" className="text-sm text-primary underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+        <Button type="submit" disabled={busy || (mode === 'up' && role !== 'student' && school.trim().length < 2)}>{mode === "in" ? "Sign in" : "Sign up"}</Button>
+        <Button variant="link" type="button" className="text-sm text-primary underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
           {mode === "in" ? "New here? Create an account" : "Already have an account? Sign in"}
-        </button>
+        </Button>
       </form>
     </main>
   );

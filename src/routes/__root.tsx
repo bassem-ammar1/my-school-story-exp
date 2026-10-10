@@ -137,7 +137,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <SchoolTheme />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <div className="min-h-screen bg-muted">
+      <div className="app-shell min-h-screen bg-muted">
         <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-soft">
           <SiteNav />
           <div className="flex-1"><Outlet /></div>
