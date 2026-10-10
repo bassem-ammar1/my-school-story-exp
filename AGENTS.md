@@ -16,6 +16,7 @@
 
 - Account themes are allowlisted profile preferences applied through semantic CSS tokens by SchoolTheme; example portfolio achievements stay separate from verified teacher awards to preserve trust.
 - ThemePicker groups school and kids choices; global theme tokens control wallpaper and shared app-button shapes without changing route layouts.
+- Education entries are owner-managed with explicit member-profile sharing; chronology groups consecutive years at one school and labels planned moves separately from completed history.
 
 - Thinking Lab rules (limits, answer-leak guard, curation validity, copy detection) live as pure functions in `src/lib/thinking.ts` with tests in `src/lib/thinking.test.ts` — one source of truth for client and server.
 - All AI calls go through `src/lib/ai.server.ts` (Lovable AI, streamed structured output) and are invoked only from server functions in `src/lib/thinking.functions.ts` — keeps prompts, keys and the private final answer server-side.

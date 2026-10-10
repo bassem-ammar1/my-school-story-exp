@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { loadPostsBy, loadProfile } from "@/lib/posts";
 import { PostCard } from "@/components/thinking/PostCard";
 import { useMe } from "@/hooks/use-me";
+import { EducationJourney } from '@/components/thinking/EducationJourney';
 
 export const Route = createFileRoute("/_authenticated/u/$id")({
   head: () => ({ meta: [{ title: "Profile · MySchoolStory" }, { name: "description", content: "See a member's public profile and posts." }, { property: "og:title", content: "Profile · MySchoolStory" }, { property: "og:description", content: "See a member's public profile and posts." }, { property: "og:type", content: "profile" }, { name: "twitter:card", content: "summary" }] }),
@@ -30,6 +31,7 @@ function PublicProfile() {
         </div>
       </section>
       {prof.about && <section className="bg-card p-4"><h2 className="font-semibold">About</h2><p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{prof.about}</p></section>}
+      <EducationJourney userId={id} />
       {posts.length === 0 && <p className="bg-card p-8 text-center text-muted-foreground">No posts yet.</p>}
       {posts.map((p) => <PostCard key={`${p.id}-${p.mine}`} p={p} meId={me?.id} />)}
     </main>

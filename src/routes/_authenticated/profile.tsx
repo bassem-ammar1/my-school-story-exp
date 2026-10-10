@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MemberAvatar } from '@/components/thinking/MemberAvatar';
 import { showAccessRequest } from '@/lib/account-choices';
 import { ThemePicker } from '@/components/thinking/ThemePicker';
+import { EducationJourney } from '@/components/thinking/EducationJourney';
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My profile · MySchoolStory" }, { name: "description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:title", content: "My profile · MySchoolStory" }, { property: "og:description", content: "Your posts, achievements, thinking, tasks and school theme." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -83,6 +84,7 @@ function Profile() {
         <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{me.profile?.about || "A learner on MySchoolStory who shares how they think, step by step."}</p>
       </section>
       {showAccessRequest(me.signupRole) && !me.isAdmin && <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />}
+      <EducationJourney userId={me.id} editable />
       {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: reports & teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs value={tab} onValueChange={setTab}>

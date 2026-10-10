@@ -207,7 +207,7 @@
   --input: var(--border);
   --ring: oklch(0.55 0.11 210);
   --kids-button-radius: 14px 14px 7px 7px;
-  --kids-wallpaper: url('./assets/theme-spongebob.jpg');
+  --kids-wallpaper: url('/__l5e/assets-v1/9413a955-1c93-4836-ac36-808ae2a4c9ce/theme-spongebob.jpg');
 }
 :root[data-school-theme="minecraft"] {
   --background: oklch(0.94 0.04 145);
@@ -227,7 +227,7 @@
   --ring: var(--primary);
   --radius: 0.3rem;
   --kids-button-radius: 2px;
-  --kids-wallpaper: url('./assets/theme-minecraft.jpg');
+  --kids-wallpaper: url('/__l5e/assets-v1/256efcc9-f3b8-4b4d-802f-b96f361c35cc/theme-minecraft.jpg');
 }
 :root[data-school-theme="powerpuff"] {
   --background: oklch(0.95 0.04 350);
@@ -246,13 +246,16 @@
   --input: var(--border);
   --ring: var(--primary);
   --kids-button-radius: 999px;
-  --kids-wallpaper: url('./assets/theme-powerpuff.jpg');
+  --kids-wallpaper: url('/__l5e/assets-v1/a39fb571-34e5-4a4e-a491-bfe4a95fd482/theme-powerpuff.jpg');
 }
 :root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) body {
   background-image: var(--kids-wallpaper);
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
+}
+:root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) .app-shell {
+  background: var(--background) var(--kids-wallpaper) center / cover fixed;
 }
 :root:is([data-school-theme="spongebob"],[data-school-theme="minecraft"],[data-school-theme="powerpuff"]) main {
   background-image: linear-gradient(var(--muted), var(--muted)), var(--kids-wallpaper);
