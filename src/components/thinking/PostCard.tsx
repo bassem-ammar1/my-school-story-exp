@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ReportButton } from "@/components/thinking/ReportButton";
 import { addComment, deleteComment, loadComments, setLike, timeAgo, type CommentNode, type FeedPost } from "@/lib/posts";
 
-function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?: string; onReply: (c: CommentNode) => void; onDelete: (id: string) => void; reply?: boolean }) {
+function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?: string | undefined; onReply: (c: CommentNode) => void; onDelete: (id: string) => void; reply?: boolean }) {
   return (
     <div className={reply ? "ml-8" : ""}>
       <div className="rounded-xl bg-secondary px-3 py-2">
@@ -21,7 +21,7 @@ function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?:
   );
 }
 
-export function PostCard({ p, meId }: { p: FeedPost; meId?: string }) {
+export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
