@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ThumbsUp, MessageSquare, Share2, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { ReportButton } from "@/components/thinking/ReportButton";
+import { MemberAvatar } from "@/components/thinking/MemberAvatar";
 import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, isHurtful, HURTFUL_MESSAGE, shareTargets, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
 
 function Who({ id, name, children, className, label }: { id: string | null; name?: string; children: React.ReactNode; className?: string; label?: string }) {
@@ -17,8 +18,7 @@ function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?:
   return (
     <div className={`flex gap-2 ${reply ? "ml-8" : ""}`}>
       <Who id={c.author_id} label={`Open ${c.author}'s profile`} className="shrink-0">
-        {c.avatarUrl ? <img src={c.avatarUrl} alt="" className="h-8 w-8 rounded-full object-cover" /> :
-          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{c.author.charAt(0).toUpperCase()}</span>}
+        <MemberAvatar url={c.avatarUrl} name={c.author} className="h-8 w-8 text-xs" />
       </Who>
       <div className="min-w-0 flex-1">
       <div className="rounded-xl bg-secondary px-3 py-2">
@@ -73,7 +73,7 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
     <article className="bg-card">
       <div className="flex items-start gap-3 px-3 pt-3">
         <Who id={p.authorId} name={p.author} label={`Open ${p.author} profile`} className="shrink-0">
-          {p.avatarUrl ? <img src={p.avatarUrl} alt="" className="h-12 w-12 rounded-full object-cover" /> :
+          {p.avatarUrl ? <MemberAvatar url={p.avatarUrl} name={p.author} className="h-12 w-12 text-xl" /> :
             <span className="grid h-12 w-12 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>}
         </Who>
         <div className="min-w-0 flex-1">
