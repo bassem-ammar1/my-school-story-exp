@@ -84,7 +84,7 @@ export function AuthForm() {
         <Button variant="secondary" onClick={() => sso("microsoft")}>Microsoft Entra ID</Button>
         {mode === 'up' && role === 'teacher' && <p className="text-xs text-muted-foreground">Approved teachers also use their school Google or Microsoft account.</p>}
       </div>
-      <form onSubmit={submit} className="grid gap-3 rounded-2xl bg-card p-5 shadow-soft">
+      <form onSubmit={submit} className="grid gap-5 rounded-2xl bg-card p-5 shadow-soft">
         {mode === "up" && (
           <div className="grid gap-1"><Label htmlFor="name">Full name</Label><Input id="name" placeholder="e.g. Lina Haddad" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required /></div>
         )}
