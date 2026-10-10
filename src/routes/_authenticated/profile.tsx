@@ -13,6 +13,7 @@ import { BadgeWall } from "@/components/thinking/BadgeIssuer";
 import { loadArtifacts } from "@/lib/feed-data";
 import { COPY } from "@/lib/thinking";
 import { useMe } from "@/hooks/use-me";
+import { TeacherRequestCard } from "@/components/thinking/TeacherRequestCard";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My thinking · Thinking Lab" }, { name: "description", content: "Your published thinking, badges and tasks." }, { property: "og:title", content: "My thinking · Thinking Lab" }, { property: "og:description", content: "Your published thinking, badges and tasks." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
