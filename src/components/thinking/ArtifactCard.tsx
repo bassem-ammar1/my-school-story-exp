@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MessageSquare } from "lucide-react";
+import { Award, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { REACTIONS } from "@/lib/thinking";
@@ -7,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ConfidenceDots } from "./ConfidenceScale";
 import type { ArtifactView } from "./types";
 
-export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView; onOpen?: (() => void) | undefined; onReact?: ((emoji: string) => void) | undefined; tag?: string | undefined; why?: string | undefined }) {
+export function ArtifactCard({ a, onOpen, onReact, onEndorse, tag, why }: { a: ArtifactView; onOpen?: (() => void) | undefined; onReact?: ((emoji: string) => void) | undefined; onEndorse?: (() => void) | undefined; tag?: string | undefined; why?: string | undefined }) {
   const [showT, setShowT] = useState(false);
   return (
     <article className="flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-soft">
@@ -16,6 +17,10 @@ export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView
         <span className="text-sm font-semibold">{a.name}</span>
         {tag && <Badge variant="destructive" className="ml-auto text-[10px]">{tag}</Badge>}
       </header>
+      {a.endorsed && (
+        <p className="flex items-start gap-1.5 rounded-lg bg-gold/20 px-2 py-1.5 text-xs"><Award className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span><b>Endorsed by teacher</b>{a.endorsementNote ? ` · ${a.endorsementNote}` : ""}</span></p>
+      )}
       {why && <p className="text-xs italic text-muted-foreground">Why this one? {why}</p>}
       <button onClick={onOpen} className="grid grid-cols-3 gap-2 text-left" aria-label={`Open ${a.name}'s thinking`}>
         {[0, 1, 2].map((i) => {
@@ -46,6 +51,11 @@ export function ArtifactCard({ a, onOpen, onReact, tag, why }: { a: ArtifactView
           </button>
         ))}
       </div>
+      {onEndorse && (
+        <Button size="sm" variant={a.endorsed ? "outline" : "default"} onClick={onEndorse}>
+          <Award className="mr-1 h-4 w-4" />{a.endorsed ? "Remove endorsement" : "Endorse"}
+        </Button>
+      )}
     </article>
   );
 }
