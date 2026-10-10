@@ -1,12 +1,14 @@
 # Roadmap
-- [ ] Simplify assessment overview and add six history charts with six clearly labeled example dates across two years, at least three months apart
+- [x] Simplify assessment overview and add six history charts with six clearly labeled example dates across two years, at least three months apart
 
-- [ ] Add question-specific assessment emojis and current school/grade beneath feed author names
+- [x] Add question-specific assessment emojis and current school/grade beneath feed author names
 
-- [ ] Collect private DOB at signup, derive read-only age status, remove student-controlled consent toggles, and set Mariam's requested DOB
-- [ ] Collect guardian emails and verify guardian permission before sharing student performance
-- [ ] Add school-specific enrollment requests/approval and permission-scoped post management and assessment results
-- [ ] Set up Green School test account and verify the school perspective without granting platform-wide administration
+- [x] Collect private DOB at signup, derive read-only age status, remove student-controlled consent toggles, and set Mariam's requested DOB
+- [x] Collect guardian emails as private pending connections; prohibit self-attested consent
+- [ ] Complete guardian verification/consent and performance sharing — waiting on country, supported ages and guardian-consent policy
+- [x] Add school-scoped enrollment requests/approval with approval reset on education changes; test schools cannot manage posts or read private assessments
+- [ ] Verify school enrollment end-to-end and set up Green School test account — supplied password rejected as weak; requires stronger password through signup
+- [ ] Enable school post management and shared assessment summaries — blocked by restricted-test-school choice and unconfirmed guardian/jurisdiction policy
 
 - [x] Add image posts, profile/cover pictures, signup role preferences, and enroll Mariam in a Thinking Lab with materials
 - [x] Add a Themes tab in Settings with existing school themes and SpongeBob, Minecraft, and Powerpuff kids themes affecting backgrounds and button shapes
