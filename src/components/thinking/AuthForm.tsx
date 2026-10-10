@@ -89,8 +89,9 @@ export function AuthForm() {
         <div className="grid gap-1"><Label htmlFor="email">Email</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
         <div className="grid gap-1"><Label htmlFor="pw">Password</Label><Input id="pw" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
         <Button type="submit" disabled={busy || (mode === 'up' && role !== 'student' && school.trim().length < 2)}>{mode === "in" ? "Sign in" : "Sign up"}</Button>
-        <Button variant="link" type="button" className="text-sm text-primary underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
-          {mode === "in" ? "New here? Create an account" : "Already have an account? Sign in"}
+        <Button variant="link" type="button" className="text-sm hover:no-underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+          <span className="text-foreground">{mode === "in" ? "New here? " : "Already have an account? "}</span>
+          <span className="underline">{mode === "in" ? "Create an account" : "Sign in"}</span>
         </Button>
       </form>
     </main>
