@@ -409,6 +409,50 @@ export type Database = {
         }
         Relationships: []
       }
+      education_entries: {
+        Row: {
+          end_year: number
+          grade: number
+          id: string
+          is_example: boolean
+          school_name: string
+          shared: boolean
+          start_year: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          end_year: number
+          grade: number
+          id?: string
+          is_example?: boolean
+          school_name: string
+          shared?: boolean
+          start_year: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          end_year?: number
+          grade?: number
+          id?: string
+          is_example?: boolean
+          school_name?: string
+          shared?: boolean
+          start_year?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flags: {
         Row: {
           created_at: string

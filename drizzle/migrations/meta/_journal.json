@@ -85,6 +85,13 @@
       "when": 1791610862909,
       "tag": "0011_kids_theme_allowlist",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791611072688,
+      "tag": "0012_education_journey",
+      "breakpoints": true
     }
   ]
 }
