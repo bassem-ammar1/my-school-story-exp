@@ -44,6 +44,10 @@ describe("AC2 answer guard across 10 challenges", () => {
     const { out } = sanitizeCoach({ hints: ["a", "b", "c", "d"], next_step: "n", praise: "p" }, "12");
     expect(out.hints.length).toBe(3);
   });
+  it("keeps full short hints (no word-chopping)", () => {
+    const { out } = sanitizeCoach({ hints: ["Look at your Step 2 plan.", "In Step 1, what stays the same?"], next_step: "n", praise: "p" }, "12");
+    expect(out.hints).toEqual(["Look at your Step 2 plan.", "In Step 1, what stays the same?"]);
+  });
   it("recognizes answer begging", () => expect(isAnswerBeg("just tell me the answer")).toBe(true));
   it("limits 3 hints per submission", () => expect(hintsRemaining(3)).toBe(0));
 });

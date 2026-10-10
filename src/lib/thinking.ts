@@ -120,7 +120,7 @@ export function sanitizeCoach(out: CoachOutput, answer: string): { out: CoachOut
   const hints = out.hints.slice(0, 3).map(fix);
   while (hints.length < 2) hints.push(COPY.genericHint);
   return {
-    out: { hints: hints.map(trimWords), next_step: fix(out.next_step), praise: fix(out.praise) },
+    out: { hints: hints.map((h) => trimWords(h)), next_step: fix(out.next_step), praise: fix(out.praise) },
     blocked,
   };
 }
