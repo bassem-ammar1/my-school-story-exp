@@ -28,6 +28,8 @@ export function SiteNav() {
         clear: () => qc.clear(),
         signOut: () => supabase.auth.signOut(),
         redirect: async () => {
+          await qc.cancelQueries();
+          qc.clear();
           qc.setQueryData(["me"], null);
           await navigate({ to: "/", replace: true });
         },
