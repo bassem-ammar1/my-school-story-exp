@@ -44,6 +44,7 @@ function ThinkingLab() {
         </form>
       </div>
       {classes.length === 0 && <p className="rounded-2xl bg-card p-10 text-center text-muted-foreground shadow-soft">Ask your teacher for a class code to get started.</p>}
+      {me && <MySubmissions userId={me.id} />}
       {classes.map((c: any) => (
         <section key={c.id} className="space-y-3">
           <div className="flex items-center justify-between">
