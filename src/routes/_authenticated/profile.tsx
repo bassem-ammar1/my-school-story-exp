@@ -13,6 +13,7 @@ import { BadgeWall } from "@/components/thinking/BadgeIssuer";
 import { loadArtifacts } from "@/lib/feed-data";
 import { COPY } from "@/lib/thinking";
 import { useMe } from "@/hooks/use-me";
+import { TeacherRequestCard } from "@/components/thinking/TeacherRequestCard";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My thinking · Thinking Lab" }, { name: "description", content: "Your published thinking, badges and tasks." }, { property: "og:title", content: "My thinking · Thinking Lab" }, { property: "og:description", content: "Your published thinking, badges and tasks." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -55,6 +56,8 @@ function Profile() {
         <h2 className="text-lg font-semibold">About</h2>
         <p className="mt-1 text-sm text-muted-foreground">A learner on MySchoolStory who shares how they think, step by step.</p>
       </section>
+      <TeacherRequestCard userId={me.id} isTeacher={me.roles.includes("teacher")} />
+      {me.isAdmin && <section className="mt-2 bg-card p-4"><Button variant="outline" className="rounded-full" asChild><Link to="/admin">School admin: teacher requests</Link></Button></section>}
       <div className="mt-2 bg-card p-4">
       <Tabs defaultValue="thinking">
         <TabsList><TabsTrigger value="thinking">Thinking</TabsTrigger><TabsTrigger value="badges">Badges</TabsTrigger><TabsTrigger value="tasks">Tasks ({tasks.filter((t) => t.status !== "done").length})</TabsTrigger><TabsTrigger value="settings">Settings</TabsTrigger></TabsList>
