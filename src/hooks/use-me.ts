@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { studentAge } from '@/lib/student-safety';
 
 export type Me = {
   id: string;
@@ -26,6 +27,7 @@ export const meQuery = {
       supabase.from('student_safety').select('date_of_birth').eq('user_id', u.id).maybeSingle(),
     ]);
     const r = (roles ?? []).map((x) => x.role as string);
+    if (profile) { profile.age_13_plus = (studentAge(safety?.date_of_birth ?? null) ?? 0) >= 13; profile.voice_consent = false; }
     return { id: u.id, email: u.email ?? null, profile, dateOfBirth: safety?.date_of_birth ?? null, roles: r, signupRole: preference?.signup_role ?? 'student', ssoTeacher: !!sso, isAdmin: r.includes("school_admin") };
   },
   staleTime: 30_000,
