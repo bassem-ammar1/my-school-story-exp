@@ -825,6 +825,16 @@ export type Database = {
         Args: { _approve: boolean; _request_id: string }
         Returns: undefined
       }
+      search_people: {
+        Args: { _term: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          grade: number
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       submission_class: { Args: { _submission_id: string }; Returns: string }
     }
     Enums: {
