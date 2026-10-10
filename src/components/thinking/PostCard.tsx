@@ -1,15 +1,21 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ThumbsUp, MessageSquare, Share2, Trash2 } from "lucide-react";
+import { ThumbsUp, MessageSquare, Share2, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { ReportButton } from "@/components/thinking/ReportButton";
-import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
+import { addComment, deleteComment, loadComments, setReaction, applyReaction, totalReactions, REACTIONS, timeAgo, isHurtful, HURTFUL_MESSAGE, shareTargets, type ReactionId, type CommentNode, type FeedPost } from "@/lib/posts";
+
+function Who({ id, children, className }: { id: string | null; children: React.ReactNode; className?: string }) {
+  if (!id) return <span className={className}>{children}</span>;
+  return <Link to="/u/$id" params={{ id }} className={`${className ?? ""} hover:underline`}>{children}</Link>;
+}
 
 function CommentItem({ c, me, onReply, onDelete, reply }: { c: CommentNode; me?: string | undefined; onReply: (c: CommentNode) => void; onDelete: (id: string) => void; reply?: boolean }) {
   return (
     <div className={reply ? "ml-8" : ""}>
       <div className="rounded-xl bg-secondary px-3 py-2">
-        <p className="text-xs font-semibold">{c.author} <span className="font-normal text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
+        <p className="text-xs font-semibold"><Who id={c.author_id}>{c.author}</Who> <span className="font-normal text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
         <p className="whitespace-pre-wrap text-sm">{c.body}</p>
       </div>
       <div className="flex items-center gap-3 px-2 pt-0.5 text-xs text-muted-foreground">
@@ -28,6 +34,7 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
   const [replyTo, setReplyTo] = useState<CommentNode | null>(null);
   const [mine, setMine] = useState<ReactionId | null>(p.mine);
   const [picker, setPicker] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const counts = applyReaction(p.reactions, p.mine, mine);
   const total = totalReactions(counts);
   const top = REACTIONS.filter((r) => (counts[r.id] ?? 0) > 0).sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)).slice(0, 3);
@@ -40,20 +47,29 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
   };
   const send = async () => {
     if (!text.trim()) return;
-    try { await addComment(p.id, text, replyTo?.id); setText(""); setReplyTo(null); refresh(); } catch { toast.error("Couldn't post your comment."); }
+    if (isHurtful(text)) { toast.error(HURTFUL_MESSAGE); return; }
+    try { await addComment(p.id, text, replyTo?.id); setText(""); setReplyTo(null); refresh(); }
+    catch (e) { toast.error(e instanceof Error && e.message === HURTFUL_MESSAGE ? HURTFUL_MESSAGE : "Couldn't post your comment."); }
   };
   const remove = async (id: string) => { if (!confirm("Delete this comment?")) return; try { await deleteComment(id); refresh(); } catch { toast.error("Couldn't delete."); } };
-  const share = async () => {
-    const text = `${p.author}: ${p.body}`;
-    try { if (navigator.share) await navigator.share({ text }); else { await navigator.clipboard.writeText(text); toast.success("Copied to share"); } } catch { /* cancelled */ }
+  const shareText = `${p.author}: ${p.body}`.slice(0, 280);
+  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/home` : "";
+  const nativeShare = async () => {
+    try { await navigator.share({ title: "MySchoolStory", text: shareText, url: shareUrl }); setShareOpen(false); } catch { /* cancelled or blocked */ }
+  };
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`); toast.success("Copied — paste it anywhere"); } catch { toast.error("Couldn't copy."); }
+    setShareOpen(false);
   };
   return (
     <article className="bg-card">
       <div className="flex items-start gap-3 px-3 pt-3">
-        {p.avatarUrl ? <img src={p.avatarUrl} alt="" className="h-12 w-12 shrink-0 rounded-full object-cover" /> :
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>}
+        <Who id={p.authorId} className="shrink-0">
+          {p.avatarUrl ? <img src={p.avatarUrl} alt="" className="h-12 w-12 rounded-full object-cover" /> :
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-secondary text-2xl">{p.avatar}</span>}
+        </Who>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold leading-tight">{p.author}</p>
+          <Who id={p.authorId} className="block truncate font-semibold leading-tight">{p.author}</Who>
           <p className="truncate text-xs text-muted-foreground">{p.subtitle}</p>
           <p className="text-xs text-muted-foreground">{p.when}</p>
         </div>
@@ -72,10 +88,19 @@ export function PostCard({ p, meId }: { p: FeedPost; meId?: string | undefined }
             ))}
           </div>
         )}
-        <button onClick={() => setPicker(!picker)} aria-expanded={picker} aria-label={current ? `Your reaction: ${current.label}. Change reaction` : "React"} className={`flex items-center justify-center gap-1.5 py-2.5 ${current ? "text-primary" : ""}`}>
+        {shareOpen && (
+          <div role="menu" aria-label="Share to" className="absolute bottom-full right-2 z-20 mb-1 w-48 rounded-2xl border bg-card p-1.5 text-foreground shadow-soft animate-in fade-in zoom-in-95">
+            {typeof navigator !== "undefined" && "share" in navigator && <button role="menuitem" onClick={nativeShare} className="block w-full rounded-lg px-3 py-2 text-left hover:bg-secondary">More apps…</button>}
+            {shareTargets(shareText, shareUrl).map((t) => (
+              <a key={t.name} role="menuitem" href={t.href} target="_blank" rel="noopener noreferrer" onClick={() => setShareOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-secondary">{t.name}</a>
+            ))}
+            <button role="menuitem" onClick={copy} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-secondary"><Copy className="h-4 w-4" />Copy text</button>
+          </div>
+        )}
+        <button onClick={() => { setPicker(!picker); setShareOpen(false); }} aria-expanded={picker} aria-label={current ? `Your reaction: ${current.label}. Change reaction` : "React"} className={`flex items-center justify-center gap-1.5 py-2.5 ${current ? "text-primary" : ""}`}>
           {current ? <span className="text-base leading-none">{current.emoji}</span> : <ThumbsUp className="h-4 w-4" />}{current?.label ?? "Like"}</button>
         <button onClick={() => setOpen(!open)} className="flex items-center justify-center gap-1.5 py-2.5"><MessageSquare className="h-4 w-4" />Comment</button>
-        <button onClick={share} className="flex items-center justify-center gap-1.5 py-2.5"><Share2 className="h-4 w-4" />Share</button>
+        <button onClick={() => { setShareOpen(!shareOpen); setPicker(false); }} aria-expanded={shareOpen} className="flex items-center justify-center gap-1.5 py-2.5"><Share2 className="h-4 w-4" />Share</button>
       </div>
       {open && (
         <div className="space-y-2 border-t px-3 py-3">
