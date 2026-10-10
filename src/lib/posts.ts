@@ -60,10 +60,11 @@ export async function loadPosts(): Promise<FeedPost[]> {
   const { data: posts } = await supabase.from("posts").select("*").eq("hidden", false).order("created_at", { ascending: false }).limit(100);
   const ids = (posts ?? []).map((p) => p.id);
   if (!ids.length) return [];
-  const [{ data: likes }, { data: comments }, people] = await Promise.all([
+  const [{ data: likes }, { data: comments }, people, { data: schools }] = await Promise.all([
     supabase.from("post_likes").select("post_id,user_id,reaction").in("post_id", ids),
     supabase.from("post_comments").select("post_id").in("post_id", ids).eq("hidden", false),
     names((posts ?? []).map((p) => p.author_id).filter(Boolean) as string[]),
+    supabase.rpc('current_school_labels', { _ids: (posts ?? []).map(p=>p.author_id).filter((id): id is string=>id!==null) }),
   ]);
   return (posts ?? []).map((p) => {
     const prof = p.author_id ? people[p.author_id] : undefined;
@@ -72,7 +73,7 @@ export async function loadPosts(): Promise<FeedPost[]> {
       imageUrl: p.image_url, imageAlt: p.image_alt,
       author: p.author_name ?? prof?.display_name ?? "Someone",
       avatar: p.author_avatar ?? "🙂", avatarUrl: prof?.avatar_url ?? null,
-      subtitle: p.author_subtitle ?? "MySchoolStory member",
+      subtitle: schools?.find(s=>s.user_id===p.author_id) ? `${schools.find(s=>s.user_id===p.author_id)?.school_name} · Grade ${schools.find(s=>s.user_id===p.author_id)?.grade}` : p.author_subtitle ?? "Student",
       reactions: (likes ?? []).filter((l) => l.post_id === p.id).reduce<ReactionCounts>((c, l) => applyReaction(c, null, l.reaction as ReactionId), {}),
       mine: ((likes ?? []).find((l) => l.post_id === p.id && l.user_id === u.user?.id)?.reaction as ReactionId | undefined) ?? null,
       comments: comments?.filter((c) => c.post_id === p.id).length ?? 0,

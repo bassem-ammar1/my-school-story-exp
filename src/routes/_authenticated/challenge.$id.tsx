@@ -67,7 +67,7 @@ function ChallengePage() {
       challenge={data.ch}
       initial={data.initial}
       initialStatus={sub.status}
-      voiceDisabledReason={!me.profile?.age_13_plus && !me.profile?.voice_consent ? "Voice notes need a parent's permission for students under 13. You can turn this on in My thinking → Settings once a parent agrees." : undefined}
+      voiceDisabledReason={!me.profile?.age_13_plus ? "Voice notes require verified age and guardian permission. Profile switches cannot provide this permission." : undefined}
       uploadImage={async (b, ext) => { const path = await uploadMedia(me.id, b, ext); return { path, url: URL.createObjectURL(b) }; }}
       onSave={save}
       onRequestHint={async (s, message) => {

@@ -1,0 +1,1 @@
+CREATE TRIGGER guard_voice_permission_on_insert BEFORE INSERT ON public.submissions FOR EACH ROW EXECUTE FUNCTION public.guard_voice_permission();

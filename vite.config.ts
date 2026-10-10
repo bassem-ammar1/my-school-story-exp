@@ -7,6 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    // Optimize charts alongside React at startup, not during a signed-in navigation.
+    optimizeDeps: { include: ['recharts', 'react', 'react-dom/client', 'react/jsx-runtime'] },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

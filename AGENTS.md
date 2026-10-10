@@ -11,6 +11,14 @@
 
 # Project rules
 
+- Pre-optimize Recharts with React in Vite so opening assessment history cannot invalidate the active React dependency graph during navigation.
+
+- Birth dates live in owner-only student_safety, not publicly readable profiles; age is derived and consent fields cannot be self-edited.
+- School owners are scoped through schools and school_enrollments, never a global school_admin grant; test schools have no assessment or post-management access.
+- Guardian emails create pending connections only; verified email acceptance and separate student/guardian approvals never substitute for a jurisdiction-specific consent policy.
+- Assessment question illustrations are presentation-only dimension emojis, leaving versioned questions and scoring unchanged.
+- Reflection history compares compatible submitted versions with points at least three calendar months apart; static example curves are explicitly separate from saved student responses.
+
 - Signup choices are non-authoritative preferences in account_preferences; only school-admin review assigns privileged roles in user_roles, so signup metadata cannot elevate access.
 - Profile covers and post images use durable media URLs on their existing rows and render through the shared profile/post views, keeping media consistent across feed and member pages.
 

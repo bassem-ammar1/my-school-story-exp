@@ -20,6 +20,7 @@ import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/la
 import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authenticated/orchestrator'
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedSchoolRouteImport } from './routes/_authenticated/school'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedAuthorNameRouteImport } from './routes/_authenticated/author.$name'
 import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
@@ -84,6 +85,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSchoolRoute = AuthenticatedSchoolRouteImport.update({
+  id: '/school',
+  path: '/school',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/school': typeof AuthenticatedSchoolRoute
   '/search': typeof AuthenticatedSearchRoute
   '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/school': typeof AuthenticatedSchoolRoute
   '/search': typeof AuthenticatedSearchRoute
   '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/_authenticated/orchestrator': typeof AuthenticatedOrchestratorRoute
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/school': typeof AuthenticatedSchoolRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/author/$name': typeof AuthenticatedAuthorNameRoute
   '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/orchestrator'
     | '/post'
     | '/profile'
+    | '/school'
     | '/search'
     | '/author/$name'
     | '/challenge/$id'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/orchestrator'
     | '/post'
     | '/profile'
+    | '/school'
     | '/search'
     | '/author/$name'
     | '/challenge/$id'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/_authenticated/orchestrator'
     | '/_authenticated/post'
     | '/_authenticated/profile'
+    | '/_authenticated/school'
     | '/_authenticated/search'
     | '/_authenticated/author/$name'
     | '/_authenticated/challenge/$id'
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/school': {
+      id: '/_authenticated/school'
+      path: '/school'
+      fullPath: '/school'
+      preLoaderRoute: typeof AuthenticatedSchoolRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/search': {
       id: '/_authenticated/search'
       path: '/search'
@@ -409,6 +428,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOrchestratorRoute: typeof AuthenticatedOrchestratorRoute
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedSchoolRoute: typeof AuthenticatedSchoolRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedAuthorNameRoute: typeof AuthenticatedAuthorNameRoute
   AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
@@ -427,6 +447,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOrchestratorRoute: AuthenticatedOrchestratorRoute,
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedSchoolRoute: AuthenticatedSchoolRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedAuthorNameRoute: AuthenticatedAuthorNameRoute,
   AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { track } from "@/lib/track";
 import { ACCOUNT_CHOICES, type AccountChoice } from '@/lib/account-choices';
 import { applyPendingSignupChoice } from '@/lib/signup-choice';
+import { guardianEmails, safetyError } from '@/lib/student-safety';
 
 export function AuthForm() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export function AuthForm() {
   const [busy, setBusy] = useState(false);
   const [role, setRole] = useState<AccountChoice>('student');
   const [school, setSchool] = useState('');
+  const [dob, setDob] = useState('');
+  const [guardians, setGuardians] = useState('');
 
   const done = async () => {
     await applyPendingSignupChoice();
@@ -32,7 +35,9 @@ export function AuthForm() {
     setBusy(true);
     try {
       if (mode === "up") {
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: { full_name: name, signup_role: role, school_name: school.trim() } } });
+        const emails = guardianEmails(guardians);
+        if (role === 'student') { const problem = safetyError(dob, emails, email); if (problem) throw new Error(problem); }
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: { full_name: name, signup_role: role, school_name: school.trim(), ...(role === 'student' ? { date_of_birth: dob, guardian_emails: emails } : {}) } } });
         if (error) throw error;
         if (!data.session) toast.success("Check your email to confirm your account.");
         else await done();
@@ -50,8 +55,9 @@ export function AuthForm() {
 
   const sso = async (p: "google" | "microsoft") => {
     if (mode === 'up') {
+      if (role === 'student') { const problem = safetyError(dob, guardianEmails(guardians), email); if (problem) { toast.error(problem); return; } }
       if (role !== 'student' && school.trim().length < 2) { toast.error('Please enter your school name.'); return; }
-      sessionStorage.setItem('signup-choice', JSON.stringify({ role, school: school.trim() }));
+      sessionStorage.setItem('signup-choice', JSON.stringify({ role, school: school.trim(), dob: role === 'student' ? dob : null, emails: guardianEmails(guardians) }));
     }
     const r = await lovable.auth.signInWithOAuth(p, { redirect_uri: window.location.origin });
     if (r.error) toast.error(r.error.message);
@@ -67,6 +73,7 @@ export function AuthForm() {
         <p className="mt-1 text-muted-foreground">Your learning. Your community. Your story.</p>
       </div>
       {mode === 'up' && <section className="space-y-3"><Label>Account type</Label><div className="grid grid-cols-3 gap-2">{ACCOUNT_CHOICES.map(choice => <Button key={choice} type="button" variant={role === choice ? 'default' : 'outline'} aria-pressed={role === choice} onClick={() => setRole(choice)} className="capitalize">{choice}</Button>)}</div>{role !== 'student' && <div className="space-y-1"><Label htmlFor="signup-school">School name</Label><Input id="signup-school" maxLength={120} value={school} onChange={e => setSchool(e.target.value)} required /><p className="text-xs text-muted-foreground">{role === 'teacher' ? 'Teacher' : 'School'} access needs approval from a school administrator.</p></div>}</section>}
+      {mode === 'up' && role === 'student' && <section className="space-y-3"><div className="space-y-1"><Label htmlFor="signup-dob">Date of birth</Label><Input id="signup-dob" type="date" max={new Date().toISOString().slice(0,10)} value={dob} onChange={e=>setDob(e.target.value)} required /></div><div className="space-y-1"><Label htmlFor="signup-guardians">Guardian email addresses</Label><Input id="signup-guardians" value={guardians} onChange={e=>setGuardians(e.target.value)} placeholder="parent@email.com, guardian@email.com" required /><p className="text-xs text-muted-foreground">Both you and your verified guardian must approve before results can be shared.</p></div></section>}
       <div className="grid gap-2 rounded-2xl bg-card p-5 shadow-soft">
         <p className="text-sm font-semibold">Quick sign-in</p>
         <Button variant="outline" onClick={() => sso("google")}>
