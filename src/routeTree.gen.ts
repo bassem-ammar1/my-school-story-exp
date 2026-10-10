@@ -25,6 +25,7 @@ import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
 import { Route as AuthenticatedSynthesisJoinRouteImport } from './routes/_authenticated/synthesis.join'
 import { Route as AuthenticatedTraceClassIdRouteImport } from './routes/_authenticated/trace.$classId'
+import { Route as AuthenticatedUIdRouteImport } from './routes/_authenticated/u.$id'
 import { Route as AuthenticatedSynthesisHostIdRouteImport } from './routes/_authenticated/synthesis.host.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -111,6 +112,11 @@ const AuthenticatedTraceClassIdRoute =
     path: '/trace/$classId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedUIdRoute = AuthenticatedUIdRouteImport.update({
+  id: '/u/$id',
+  path: '/u/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSynthesisHostIdRoute =
   AuthenticatedSynthesisHostIdRouteImport.update({
     id: '/synthesis/host/$id',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/u/$id': typeof AuthenticatedUIdRoute
   '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesByTo {
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/u/$id': typeof AuthenticatedUIdRoute
   '/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRoutesById {
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/_authenticated/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
   '/_authenticated/trace/$classId': typeof AuthenticatedTraceClassIdRoute
+  '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
   '/_authenticated/synthesis/host/$id': typeof AuthenticatedSynthesisHostIdRoute
 }
 export interface FileRouteTypes {
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/feed/$classId'
     | '/synthesis/join'
     | '/trace/$classId'
+    | '/u/$id'
     | '/synthesis/host/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/feed/$classId'
     | '/synthesis/join'
     | '/trace/$classId'
+    | '/u/$id'
     | '/synthesis/host/$id'
   id:
     | '__root__'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/_authenticated/feed/$classId'
     | '/_authenticated/synthesis/join'
     | '/_authenticated/trace/$classId'
+    | '/_authenticated/u/$id'
     | '/_authenticated/synthesis/host/$id'
   fileRoutesById: FileRoutesById
 }
@@ -353,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTraceClassIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/u/$id': {
+      id: '/_authenticated/u/$id'
+      path: '/u/$id'
+      fullPath: '/u/$id'
+      preLoaderRoute: typeof AuthenticatedUIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/synthesis/host/$id': {
       id: '/_authenticated/synthesis/host/$id'
       path: '/synthesis/host/$id'
@@ -376,6 +395,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
   AuthenticatedSynthesisJoinRoute: typeof AuthenticatedSynthesisJoinRoute
   AuthenticatedTraceClassIdRoute: typeof AuthenticatedTraceClassIdRoute
+  AuthenticatedUIdRoute: typeof AuthenticatedUIdRoute
   AuthenticatedSynthesisHostIdRoute: typeof AuthenticatedSynthesisHostIdRoute
 }
 
@@ -392,6 +412,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
   AuthenticatedSynthesisJoinRoute: AuthenticatedSynthesisJoinRoute,
   AuthenticatedTraceClassIdRoute: AuthenticatedTraceClassIdRoute,
+  AuthenticatedUIdRoute: AuthenticatedUIdRoute,
   AuthenticatedSynthesisHostIdRoute: AuthenticatedSynthesisHostIdRoute,
 }
 
