@@ -21,7 +21,7 @@ export const totalReactions = (c: ReactionCounts) => Object.values(c).reduce((a,
 
 export type FeedPost = { id: string; authorId: string | null; avatar: string; avatarUrl: string | null; author: string; subtitle: string; when: string; body: string; reactions: ReactionCounts; mine: ReactionId | null; comments: number };
 export type CommentRow = { id: string; post_id: string; parent_id: string | null; author_id: string; body: string; created_at: string };
-export type CommentNode = CommentRow & { author: string; replies: CommentNode[] };
+export type CommentNode = CommentRow & { author: string; avatarUrl?: string | null; replies: CommentNode[] };
 
 export function timeAgo(iso: string, now = Date.now()): string {
   const s = Math.max(0, Math.floor((now - new Date(iso).getTime()) / 1000));
@@ -96,7 +96,13 @@ export async function setReaction(postId: string, reaction: ReactionId | null) {
 export async function loadComments(postId: string): Promise<CommentNode[]> {
   const { data } = await supabase.from("post_comments").select("id,post_id,parent_id,author_id,body,created_at").eq("post_id", postId).eq("hidden", false).order("created_at");
   const people = await names((data ?? []).map((c) => c.author_id));
-  return buildThread(data ?? [], Object.fromEntries(Object.entries(people).map(([k, v]) => [k, v.display_name])));
+  const withAvatar = (n: CommentNode): CommentNode => ({ ...n, avatarUrl: people[n.author_id]?.avatar_url ?? null, replies: n.replies.map(withAvatar) });
+  return buildThread(data ?? [], Object.fromEntries(Object.entries(people).map(([k, v]) => [k, v.display_name]))).map(withAvatar);
+}
+
+/** Posts from sample/organisation authors that have no account (e.g. a school page), matched by their public name. */
+export async function loadPostsByName(name: string): Promise<FeedPost[]> {
+  return (await loadPosts()).filter((p) => !p.authorId && p.author === name);
 }
 
 /** Mirrors the database `is_hurtful_text` rule so users get instant feedback. The database is the real gate. */

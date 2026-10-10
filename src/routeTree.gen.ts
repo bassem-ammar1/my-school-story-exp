@@ -21,6 +21,7 @@ import { Route as AuthenticatedOrchestratorRouteImport } from './routes/_authent
 import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedAuthorNameRouteImport } from './routes/_authenticated/author.$name'
 import { Route as AuthenticatedChallengeIdRouteImport } from './routes/_authenticated/challenge.$id'
 import { Route as AuthenticatedFeedClassIdRouteImport } from './routes/_authenticated/feed.$classId'
 import { Route as AuthenticatedSynthesisJoinRouteImport } from './routes/_authenticated/synthesis.join'
@@ -88,6 +89,11 @@ const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAuthorNameRoute = AuthenticatedAuthorNameRouteImport.update({
+  id: '/author/$name',
+  path: '/author/$name',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedChallengeIdRoute =
   AuthenticatedChallengeIdRouteImport.update({
     id: '/challenge/$id',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByTo {
   '/post': typeof AuthenticatedPostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/author/$name': typeof AuthenticatedAuthorNameRoute
   '/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
+  '/_authenticated/author/$name': typeof AuthenticatedAuthorNameRoute
   '/_authenticated/challenge/$id': typeof AuthenticatedChallengeIdRoute
   '/_authenticated/feed/$classId': typeof AuthenticatedFeedClassIdRoute
   '/_authenticated/synthesis/join': typeof AuthenticatedSynthesisJoinRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/search'
+    | '/author/$name'
     | '/challenge/$id'
     | '/feed/$classId'
     | '/synthesis/join'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/profile'
     | '/search'
+    | '/author/$name'
     | '/challenge/$id'
     | '/feed/$classId'
     | '/synthesis/join'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/_authenticated/post'
     | '/_authenticated/profile'
     | '/_authenticated/search'
+    | '/_authenticated/author/$name'
     | '/_authenticated/challenge/$id'
     | '/_authenticated/feed/$classId'
     | '/_authenticated/synthesis/join'
@@ -337,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/author/$name': {
+      id: '/_authenticated/author/$name'
+      path: '/author/$name'
+      fullPath: '/author/$name'
+      preLoaderRoute: typeof AuthenticatedAuthorNameRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/challenge/$id': {
       id: '/_authenticated/challenge/$id'
       path: '/challenge/$id'
@@ -391,6 +410,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
+  AuthenticatedAuthorNameRoute: typeof AuthenticatedAuthorNameRoute
   AuthenticatedChallengeIdRoute: typeof AuthenticatedChallengeIdRoute
   AuthenticatedFeedClassIdRoute: typeof AuthenticatedFeedClassIdRoute
   AuthenticatedSynthesisJoinRoute: typeof AuthenticatedSynthesisJoinRoute
@@ -408,6 +428,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
+  AuthenticatedAuthorNameRoute: AuthenticatedAuthorNameRoute,
   AuthenticatedChallengeIdRoute: AuthenticatedChallengeIdRoute,
   AuthenticatedFeedClassIdRoute: AuthenticatedFeedClassIdRoute,
   AuthenticatedSynthesisJoinRoute: AuthenticatedSynthesisJoinRoute,
